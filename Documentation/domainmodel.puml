@@ -274,8 +274,8 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         value: string
     }
 
-    Class WifiSpotManagment <<ValueObject>> {
-        value: WifiSpotManagmentType
+    Class WifiSpotManagement <<ValueObject>> {
+        value: WifiSpotManagementType
     }
     
     
@@ -290,7 +290,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot -- WifiSpotFacilities
     WifiSpot -- WifiSpotWeatherFeatures
     WifiSpot -- WifiSpotPartner
-    WifiSpot "1" --> "1..*" WifiSpotManagment
+    WifiSpot "1" --> "1..*" WifiSpotManagement
 
     
 
@@ -346,7 +346,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         LOUD
     }
 
-    Enum WifiSpotManagmentType {
+    Enum WifiSpotManagementType {
         SPONSOR
         VERIFIED
         UNVERIFIED
