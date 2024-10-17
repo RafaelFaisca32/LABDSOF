@@ -1,5 +1,6 @@
 @startuml Domain Model
 
+
 ' Define colors and styles for elements
 skinparam Class {
     BackgroundColor #F0F0F0
@@ -59,9 +60,16 @@ footer "Generated with PlantUML on %date%"
             FontColor #DAA520
         }
 
+        .wifispotvisit {
+            BackgroundColor #E0FFFF
+            BorderColor #4682B4
+            FontColor #4682B4               
+        }
+
     }
 
 </style>
+
 
 frame "User Aggregate" <<user>> {
 
@@ -106,10 +114,6 @@ frame "User Aggregate" <<user>> {
         value: Role
     }
 
-    Class UserPoints <<ValueObject>> {
-        value: int
-    }
-
     'VO, maybe entity so that has attributes to be an actually Avatar, such like reddit and others?
     Class UserAvatar <<ValueObject>>{
         value: blob
@@ -150,6 +154,7 @@ frame "User Aggregate" <<user>> {
         PARTNER
         OFFER_MANAGER
         USER
+        USER_PREMIUM
     }
 
 
@@ -164,7 +169,6 @@ frame "User Aggregate" <<user>> {
     User -- UserBirthDate
     User -- UserAvatar
     User "1"-->"1..*" UserRole 
-    User -- UserPoints 
 
     'User Address Entity Relationships w/ VOs
     UserAddress -- UserAddressLine1
@@ -189,14 +193,6 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     Class WifiSpotId <<ValueObject>> {
         value: UUIDv4
-    }
-
-    Class WifiSpotVerified <<ValueObject>> {
-        value: bool
-    }
-
-    Class WifiSpotPartner <<ValueObject>> {
-        value: bool
     }
 
     'List of offers maybe ? instead of true v false
@@ -277,6 +273,10 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     Class WifiSpotAddressZipCode <<ValueObject>>{
         value: string
     }
+
+    Class WifiSpotManagment <<ValueObject>> {
+        value: WifiSpotManagmentType
+    }
     
     
 
@@ -290,6 +290,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot -- WifiSpotFacilities
     WifiSpot -- WifiSpotWeatherFeatures
     WifiSpot -- WifiSpotPartner
+    WifiSpot "1" --> "1..*" WifiSpotManagment
 
     
 
@@ -305,6 +306,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     'WifiSpot Entity Relationships w/ Entities
     WifiSpot "1" --> "1" WifiSpotAddress : is located
     WifiSpot "1" --> "1" User : is submitted by
+    WifiSpot "1" --> "0..*" User : is owned/managed by (when verified)
 
 
     
@@ -344,6 +346,12 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         LOUD
     }
 
+    Enum WifiSpotManagmentType {
+        SPONSOR
+        VERIFIED
+        UNVERIFIED
+    }
+
 }
 
 
@@ -371,11 +379,16 @@ frame "Review Aggregate" <<review>> {
         value: string
     }
 
+    Class ReviewVerified <<ValueObject>> {
+        value: bool
+    }
+
 
     'Review Entity Relationships w/ VOs
     Review -- ReviewOverallClassification
     Review -- ReviewAttributeClassification
     Review -- ReviewComment
+    Review -- ReviewVerified
 
     'Review Entity Relationships w/ Entities
     Review "1" --> "1" WifiSpot
@@ -465,10 +478,42 @@ frame "Invite Aggregate Root" <<invite>>{
     Invite -- InviteState
 
     'Invite Entity Relationships w/ Entities
-    Invite "1" -- "1" User : creates invite
-    Invite "1" -- "1" User : receives invite
-    Invite "1" -- "1" WifiSpot : is allocated to a
+    Invite "1" --> "1" User : creates invite
+    Invite "1" --> "1" User : receives invite
+    Invite "1" --> "1" WifiSpot : is allocated to a
 }
+
+frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
+    Class WifiSpotVisit <<AggregateRoot>> {
+
+    }
+
+    Class WifiSpotVisitId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    Class WifiSpotVisitBeginDateTime <<ValueObject>> {
+        value: datetime
+    }
+
+    Class WifiSpotVisitEndDateTime <<ValueObject>> {
+        value: datetime
+    }
+
+
+
+    'WifiSpotVisit Relationships w/ VOs
+    WifiSpotVisit -- WifiSpotVisitId
+    WifiSpotVisit -- WifiSpotVisitBeginDateTime
+    WifiSpotVisit -- WifiSpotVisitEndDateTime
+
+    'WifiSpot Relationships w/ Entities
+    WifiSpotVisit "1" --> "1" User : is done by
+    WifiSpotVisit "1" --> "1" WifiSpot : a visit is in a spot
+    
+
+}
+
 
 frame "Points Transaction Aggregate" <<pointstransaction>> {
 
@@ -481,6 +526,10 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
 
     Class PointsTransactionDate <<ValueObject>> {
         value: datetime
+    }
+
+    Class PointsTransactionId <<ValueObject>> {
+        value: UUIDv4
     }
 
     Class PointsEarnTransaction <<Entity>> {
@@ -503,6 +552,7 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
 
     'PointsTransaction Relationships w/ VOs
     PointsTransaction -- PointsTransactionDate
+    PointsTransaction -- PointsTransactionId
 
     'PointsTransaction Relationships w/ Entities
     PointsTransaction "*" <-- "1" User : a user makes
@@ -512,9 +562,10 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
 
     'PointsEarnTransaction Relationships w/ Entities
     PointsEarnTransaction --o PointsTransaction
-    PointsEarnTransaction "1" --> "0..1" Review
-    PointsEarnTransaction "1" --> "0..1" WifiSpot
-    PointsEarnTransaction "1" --> "0..1" Invite
+    PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
+    PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
+    PointsEarnTransaction "1" --> "0..1" Invite : points are earned by inviting users
+    PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
 
     'PointsWasteTransaction Relationships w/ VOs
     PointsWasteTransaction -- PointsWasteTransactionAmount
@@ -522,12 +573,11 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
 
     'PointsWasteTransaction Relationships w/ Entities
     PointsWasteTransaction --o PointsTransaction
-    PointsWasteTransaction "1" --> "1" Offer
+    PointsWasteTransaction "1" --> "1" Offer : points are wasted by buying offers
     
 }
 
 'By quering the PointsEarnTransaction we can make a leaderboard based on the two aspects 
 'There is no need to create de business concept for Leaderboard, yet.
-
 
 @enduml
