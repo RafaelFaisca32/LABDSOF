@@ -91,7 +91,7 @@ frame "User Aggregate" <<user>> {
     }
 
     Class UserGender <<ValueObject>>{
-        value: bool
+        value: Gender
     }
 
     Class UserName <<ValueObject>>{
@@ -113,12 +113,6 @@ frame "User Aggregate" <<user>> {
     Class UserRole <<ValueObject>> {
         value: Role
     }
-
-    'VO, maybe entity so that has attributes to be an actually Avatar, such like reddit and others?
-    Class UserAvatar <<ValueObject>>{
-        value: blob
-    }
-
 
     'Entity UserAddress
     Class UserAddress <<Entity>>{
@@ -157,6 +151,12 @@ frame "User Aggregate" <<user>> {
         USER_PREMIUM
     }
 
+    Enum Gender {
+        MALE
+        FEMALE
+        OTHER
+    }
+
 
     'User Entity Relationships w/ VOs
     User -- UserId
@@ -167,7 +167,6 @@ frame "User Aggregate" <<user>> {
     User -- UserEmail
     User -- UserPassword
     User -- UserBirthDate
-    User -- UserAvatar
     User "1"-->"1..*" UserRole 
 
     'User Address Entity Relationships w/ VOs
@@ -177,6 +176,7 @@ frame "User Aggregate" <<user>> {
     UserAddress -- UserAddressDistrict
     UserAddress -- UserAddressCountry
     UserAddress -- UserAddressZipCode
+
 
     'User Entity Relationships w/ Entities
     User "1"-->"1" UserAddress : lives/is placed
@@ -193,11 +193,6 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     Class WifiSpotId <<ValueObject>> {
         value: UUIDv4
-    }
-
-    'List of offers maybe ? instead of true v false
-    Class WifiSpotSpecialOffers <<ValueOject>>{
-        value: bool
     }
 
     Class WifiSpotCoordinates <<ValueObject>> {
@@ -443,8 +438,7 @@ frame "Offer Aggregate" <<offer>>{
 
     'Offer Entity Relationships w/ Entities
     Offer "1" --> "1" User : added by [ADMIN, PARTNER, OFFER_MANAGER] user
-    Offer "1" --> "1" WifiSpot : available on
-    'Offer "1" <-- "1" UserReedemedOffer
+    Offer "1" --> "0..1" WifiSpot : available on
 
 }
 
