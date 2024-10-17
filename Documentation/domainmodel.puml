@@ -1,0 +1,533 @@
+@startuml Domain Model
+
+' Define colors and styles for elements
+skinparam Class {
+    BackgroundColor #F0F0F0
+    BorderColor #333333
+    ArrowColor #336699
+    FontColor #333333
+    FontSize 12
+    FontStyle Bold
+    Shadowing true
+}
+
+' Style for relationships
+skinparam linetype ortho
+skinparam arrowThickness 2
+skinparam arrowColor #336699
+
+' Header/footer with additional info
+header "Domain Model - [Your System Name]"
+footer "Generated with PlantUML on %date%"
+
+<style>
+
+    frame {
+        .user {
+            BackgroundColor #FFFAF0       
+            BorderColor #CC5500           
+            FontColor #CC5500 
+        }
+
+        .wifispot {
+            BackgroundColor #E6FFE6 
+            BorderColor #008000
+            FontColor #008000
+        }
+
+        .review {
+            BackgroundColor #F0F8FF       
+            BorderColor #4682B4          
+            FontColor #4682B4             
+        }
+
+        .offer {
+            BackgroundColor #FFE4E1
+            BorderColor #FF4500           
+            FontColor #FF4500
+        }
+
+        .invite {
+            BackgroundColor #FFFFE0
+            BorderColor #FFD700           
+            FontColor #FFD700             
+        }
+
+        .pointstransaction {
+            BackgroundColor #FFFACD
+            BorderColor #DAA520
+            FontColor #DAA520
+        }
+
+    }
+
+</style>
+
+frame "User Aggregate" <<user>> {
+
+    ' User AggregateRoot
+    class User <<AggregateRoot>> {
+
+    } 
+
+    Class UserId <<ValueObject>>{
+        value: UUIDv4
+    }
+
+    Class UserFirstName <<ValueObject>>{
+        value: string
+    }
+
+    Class UserLastName <<ValueObject>>{
+        value: string
+    }
+
+    Class UserGender <<ValueObject>>{
+        value: bool
+    }
+
+    Class UserName <<ValueObject>>{
+        value: string
+    }
+
+    Class UserEmail <<ValueObject>>{
+        value: string
+    }
+
+    Class UserPassword <<ValueObject>>{
+        value: string
+    }
+
+    Class UserBirthDate <<ValueObject>>{
+        value: date
+    }
+
+    Class UserRole <<ValueObject>> {
+        value: Role
+    }
+
+    Class UserPoints <<ValueObject>> {
+        value: int
+    }
+
+    'VO, maybe entity so that has attributes to be an actually Avatar, such like reddit and others?
+    Class UserAvatar <<ValueObject>>{
+        value: blob
+    }
+
+
+    'Entity UserAddress
+    Class UserAddress <<Entity>>{
+
+    }
+
+    Class UserAddressLine1 <<ValueObject>>{
+        value: string
+    }
+
+    Class UserAddressLine2 <<ValueObject>>{
+        value: string
+    }
+
+    Class UserAddressCity <<ValueObject>>{
+        value: string
+    }
+
+    Class UserAddressDistrict <<ValueObject>>{
+        value: string
+    }
+
+    Class UserAddressCountry <<ValueObject>>{
+        value: string
+    }
+
+    Class UserAddressZipCode <<ValueObject>>{
+        value: string
+    }
+
+    Enum Role {
+        ADMIN
+        PARTNER
+        OFFER_MANAGER
+        USER
+    }
+
+
+    'User Entity Relationships w/ VOs
+    User -- UserId
+    User -- UserFirstName
+    User -- UserLastName
+    User -- UserGender
+    User -- UserName
+    User -- UserEmail
+    User -- UserPassword
+    User -- UserBirthDate
+    User -- UserAvatar
+    User "1"-->"1..*" UserRole 
+    User -- UserPoints 
+
+    'User Address Entity Relationships w/ VOs
+    UserAddress -- UserAddressLine1
+    UserAddress -- UserAddressLine2
+    UserAddress -- UserAddressCity
+    UserAddress -- UserAddressDistrict
+    UserAddress -- UserAddressCountry
+    UserAddress -- UserAddressZipCode
+
+    'User Entity Relationships w/ Entities
+    User "1"-->"1" UserAddress : lives/is placed
+
+}
+
+
+
+frame "Wifi Spot Aggregate" <<wifispot>> {
+
+    Class WifiSpot <<AggregateRoot>> {
+        
+    }
+
+    Class WifiSpotId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    Class WifiSpotVerified <<ValueObject>> {
+        value: bool
+    }
+
+    Class WifiSpotPartner <<ValueObject>> {
+        value: bool
+    }
+
+    'List of offers maybe ? instead of true v false
+    Class WifiSpotSpecialOffers <<ValueOject>>{
+        value: bool
+    }
+
+    Class WifiSpotCoordinates <<ValueObject>> {
+        latitude: double
+        longitude: double
+    }
+
+    Class WifiSpotLocationType <<ValueObject>> {
+        value: LocationType
+    }
+
+    Class WifiSpotQualityIndicators <<ValueObject>> {
+        wifiQuality: QualityType
+        sinalStrength: StrengthType
+        bandwithLimitations: BandwithType
+        peakUsageHourInterval: time[2]
+    }
+
+    Class WifiSpotEnvironmentalFeatures <<ValueObject>> {
+        crowded: bool
+        coveredArea: bool
+        airConditioning: bool
+        outdoorSeating: bool
+        goodView: bool
+        noiseLevel: NoiseType
+        petFriendly: bool
+        childFriendly: bool
+        disabledAccess: bool
+    }
+
+    Class WifiSpotFacilities <<ValueObject>> {
+        availablePowerOutlets: bool
+        chargingStations: bool
+        restroomsAvailable: bool
+        parkingAvailability: bool
+        foodOptions: bool
+        drinkOptions: bool
+    }
+
+    Class WifiSpotWeatherFeatures <<ValueObject>>{
+        openDuringRain: bool
+        openDuringHear: bool
+        heatedInWinter: bool
+        shadedAreas: bool
+        outdoorFans: bool
+    }
+
+    'Entity WifiSpotAddress
+    Class WifiSpotAddress <<Entity>>{
+
+    }
+
+    Class WifiSpotAddressLine1 <<ValueObject>>{
+        value: string
+    }
+
+    Class WifiSpotAddressLine2 <<ValueObject>>{
+        value: string
+    }
+
+    Class WifiSpotAddressCity <<ValueObject>>{
+        value: string
+    }
+
+    Class WifiSpotAddressDistrict <<ValueObject>>{
+        value: string
+    }
+
+    Class WifiSpotAddressCountry <<ValueObject>>{
+        value: string
+    }
+
+    Class WifiSpotAddressZipCode <<ValueObject>>{
+        value: string
+    }
+    
+    
+
+    'WifiSpot Entity Relationships w/ VOs
+    WifiSpot -- WifiSpotId
+    WifiSpot -- WifiSpotCoordinates
+    WifiSpot -- WifiSpotVerified
+    WifiSpot -- WifiSpotLocationType
+    WifiSpot -- WifiSpotQualityIndicators
+    WifiSpot -- WifiSpotEnvironmentalFeatures
+    WifiSpot -- WifiSpotFacilities
+    WifiSpot -- WifiSpotWeatherFeatures
+    WifiSpot -- WifiSpotPartner
+
+    
+
+    'WifiSpotAddress Entity Relationships w/ VOs
+    WifiSpotAddress -- WifiSpotAddressLine1
+    WifiSpotAddress -- WifiSpotAddressLine2
+    WifiSpotAddress -- WifiSpotAddressCity
+    WifiSpotAddress -- WifiSpotAddressDistrict
+    WifiSpotAddress -- WifiSpotAddressCountry
+    WifiSpotAddress -- WifiSpotAddressZipCode
+    
+
+    'WifiSpot Entity Relationships w/ Entities
+    WifiSpot "1" --> "1" WifiSpotAddress : is located
+    WifiSpot "1" --> "1" User : is submitted by
+
+
+    
+    
+    'ENUMS 
+    Enum LocationType {
+        PUBLIC
+        CAFE
+        LIBRARY
+        PARK
+        SCHOOL
+        RESTAURANT
+        OTHERS
+    }
+
+    Enum QualityType {
+        HIGH
+        MEDIUM
+        LOW
+    }
+
+    Enum BandwithType {
+        LIMITED
+        UNLIMITED
+    }
+
+    Enum StrengthType {
+        STRONG
+        MEDIUM
+        LOW
+    }
+
+    Enum NoiseType {
+        NONE
+        QUIET
+        MODERATE
+        LOUD
+    }
+
+}
+
+
+frame "Review Aggregate" <<review>> {
+
+    'Entity Review
+    Class Review <<Entity>>{
+
+    }
+
+    Class ReviewOverallClassification <<ValueObject>> {
+        value: int
+    }
+
+    Class ReviewComment <<ValueObject>> {
+        value: string
+    }
+
+    'Can be anything, qualitative/quantitative EX:
+    'Internet Speed: fast
+    'Internet Speed: 500mbps
+    'Sofas: comfy
+    Class ReviewAttributeClassification <<ValueObject>> {
+        name: string
+        value: string
+    }
+
+
+    'Review Entity Relationships w/ VOs
+    Review -- ReviewOverallClassification
+    Review -- ReviewAttributeClassification
+    Review -- ReviewComment
+
+    'Review Entity Relationships w/ Entities
+    Review "1" --> "1" WifiSpot
+    Review "1" --> "1" User : is created by
+
+
+}
+
+
+frame "Offer Aggregate" <<offer>>{
+
+    Class Offer <<AggregateRoot>>{
+
+    }
+
+    Class OfferId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    class OfferCost <<ValueObject>> {
+        value: int
+    }
+
+    Class OfferDescription <<ValueObject>> {
+        value: string
+    }
+
+    Class OfferImage <<ValueObject>> {
+        value: blob
+    }
+
+    Class OfferExpirationDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class OfferAvailableAmount <<ValueObject>> {
+        value: int 
+    }
+
+    Class OfferActive <<ValueObject>> {
+        value: bool
+    }
+
+    'Offer Entity Relationships w/ VOs
+    Offer -- OfferId
+    Offer -- OfferCost
+    Offer -- OfferDescription
+    Offer -- OfferImage
+    Offer -- OfferExpirationDate
+    Offer -- OfferAvailableAmount
+    Offer -- OfferActive
+
+    'Offer Entity Relationships w/ Entities
+    Offer "1" --> "1" User : added by [ADMIN, PARTNER, OFFER_MANAGER] user
+    Offer "1" --> "1" WifiSpot : available on
+    'Offer "1" <-- "1" UserReedemedOffer
+
+}
+
+frame "Invite Aggregate Root" <<invite>>{
+
+    Class Invite <<AggregateRoot>> {
+
+    }
+
+    Class InviteId <<ValueObject>> {
+        value: UUIDv4
+    } 
+
+    Class InviteDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class InviteState <<ValueObject>> {
+        value: InvitationState
+    }
+
+    Enum InvitationState {
+        PENDING
+        ACCEPTED
+        DECLINED
+    }
+
+    'Invite Entity Relationships w/ VOs
+    Invite -- InviteId
+    Invite -- InviteDate
+    Invite -- InviteState
+
+    'Invite Entity Relationships w/ Entities
+    Invite "1" -- "1" User : creates invite
+    Invite "1" -- "1" User : receives invite
+    Invite "1" -- "1" WifiSpot : is allocated to a
+}
+
+frame "Points Transaction Aggregate" <<pointstransaction>> {
+
+
+    
+
+    Class PointsTransaction <<AggregateRoot>> {
+
+    }
+
+    Class PointsTransactionDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class PointsEarnTransaction <<Entity>> {
+
+    }
+
+    Class PointsEarnTransactionAmount <<ValueObject>> {
+        value: int
+    }
+
+    Class PointsWasteTransaction <<Entity>>{
+
+    }
+
+    Class PointsWasteTransactionAmount <<ValueObject>> {
+        value: int
+    }
+
+    
+
+    'PointsTransaction Relationships w/ VOs
+    PointsTransaction -- PointsTransactionDate
+
+    'PointsTransaction Relationships w/ Entities
+    PointsTransaction "*" <-- "1" User : a user makes
+
+    'PointsEarnTransaction Relationships w/ VOs
+    PointsEarnTransaction -- PointsEarnTransactionAmount
+
+    'PointsEarnTransaction Relationships w/ Entities
+    PointsEarnTransaction --o PointsTransaction
+    PointsEarnTransaction "1" --> "0..1" Review
+    PointsEarnTransaction "1" --> "0..1" WifiSpot
+    PointsEarnTransaction "1" --> "0..1" Invite
+
+    'PointsWasteTransaction Relationships w/ VOs
+    PointsWasteTransaction -- PointsWasteTransactionAmount
+
+
+    'PointsWasteTransaction Relationships w/ Entities
+    PointsWasteTransaction --o PointsTransaction
+    PointsWasteTransaction "1" --> "1" Offer
+    
+}
+
+'By quering the PointsEarnTransaction we can make a leaderboard based on the two aspects 
+'There is no need to create de business concept for Leaderboard, yet.
+
+
+@enduml
