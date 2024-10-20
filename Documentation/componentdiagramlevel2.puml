@@ -1,0 +1,51 @@
+@startuml Component Diagram Level 2
+
+left to right direction
+
+actor User
+
+component reactive_frontend as "React Reactive Frontend" {
+    portout " " as port_frontend_to_user
+    portin " " as port_frontend_to_backend
+}
+component system_backend as "Java System Backend" {
+    portout " " as port_backend_from_frontend
+    portin " " as port_backend_to_ai_api
+    portin " " as port_backend_to_google_api
+    portin " " as port_backend_to_email_system
+    portin " " as port_backend_from_db
+}
+
+'component component_email_system as "Email System" {
+'    portout " " as port_email_system_from_backend
+'}
+database database_mysql_db as "MySQL Relational Database" {
+    portout " " as port_db_from_backend
+}
+
+
+
+interface interface_frontendpage as " "
+
+interface interface_ai_api as "AI API"  
+interface interface_google_api as "Google API"
+interface interface_backend as "Backend API" 
+interface interface_mysql_db as "MySQL API" 
+'interface interface_email_systen as "Email System API"
+
+port_frontend_to_user -- interface_frontendpage
+User --( interface_frontendpage
+
+port_backend_from_frontend -- interface_backend
+port_frontend_to_backend --( interface_backend
+
+
+port_backend_to_ai_api --( interface_ai_api
+port_backend_to_google_api --( interface_google_api
+
+port_db_from_backend -- interface_mysql_db
+port_backend_from_db --( interface_mysql_db
+
+'port_email_system_from_backend -- interface_email_systen
+'port_backend_to_email_system --( interface_email_systen
+@enduml
