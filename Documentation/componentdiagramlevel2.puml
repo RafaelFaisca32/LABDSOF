@@ -12,7 +12,7 @@ component system_backend as "Java System Backend" {
     portout " " as port_backend_from_frontend
     portin " " as port_backend_to_ai_api
     portin " " as port_backend_to_google_api
-    portin " " as port_backend_to_email_system
+    'portin " " as port_backend_to_email_system
     portin " " as port_backend_from_db
 }
 
