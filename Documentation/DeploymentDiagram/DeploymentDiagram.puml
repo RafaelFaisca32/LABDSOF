@@ -1,0 +1,28 @@
+@startuml
+skinparam componentStyle rectangle
+
+node "Application Server" {
+    [Backend (Java Spring Boot)]
+    [Frontend (React)]
+}
+
+node "Database Server" {
+    [MySQL] 
+}
+
+node "External GPS API" {
+}
+
+node "External AI API" {
+}
+
+node "Email System" {
+}
+
+[Frontend (React)] --> [Backend (Java Spring Boot)] : HTTP/REST
+[Backend (Java Spring Boot)] --> [MySQL] : JDBC/ORM
+[Backend (Java Spring Boot)] -(0 [External GPS API] : HTTP/REST
+[Backend (Java Spring Boot)] -(0 [External AI API] : HTTP/REST
+[Backend (Java Spring Boot)] -(0 [Email System] : SMTP
+
+@enduml
