@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0n64zlz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="17.11.1">
+  <bpmn:process id="Process_1yl8ncf" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1qj7ga5">
+      <bpmn:outgoing>Flow_05hyiy2</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_05hyiy2" sourceRef="StartEvent_1qj7ga5" targetRef="Activity_0nh2hv4" />
+    <bpmn:sequenceFlow id="Flow_1e5zxgl" sourceRef="Activity_0nh2hv4" targetRef="Activity_1v5tvvh" />
+    <bpmn:sequenceFlow id="Flow_0gkpp0b" sourceRef="Activity_1v5tvvh" targetRef="Activity_09ytf5o" />
+    <bpmn:sequenceFlow id="Flow_1yfen3q" sourceRef="Activity_09ytf5o" targetRef="Activity_0560adf" />
+    <bpmn:sequenceFlow id="Flow_0ly0jjt" sourceRef="Activity_0560adf" targetRef="Activity_0doyd3c" />
+    <bpmn:endEvent id="Event_05galy4">
+      <bpmn:incoming>Flow_1lbqy3o</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1lbqy3o" sourceRef="Activity_0doyd3c" targetRef="Event_05galy4" />
+    <bpmn:userTask id="Activity_0nh2hv4" name="Opens App and logs in">
+      <bpmn:incoming>Flow_05hyiy2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e5zxgl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1v5tvvh" name="Navigates to the Wi-Fi location">
+      <bpmn:incoming>Flow_1e5zxgl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gkpp0b</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_09ytf5o" name="Selects Wi-Fi spot from the list">
+      <bpmn:incoming>Flow_0gkpp0b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yfen3q</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0560adf" name="Moves to the selected location">
+      <bpmn:incoming>Flow_1yfen3q</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ly0jjt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0doyd3c" name="Marks that they are currently visiting the location">
+      <bpmn:incoming>Flow_0ly0jjt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lbqy3o</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1yl8ncf">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1qj7ga5">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05galy4_di" bpmnElement="Event_05galy4">
+        <dc:Bounds x="1042" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cbq90t_di" bpmnElement="Activity_0nh2hv4">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0o690fz_di" bpmnElement="Activity_1v5tvvh">
+        <dc:Bounds x="400" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vttzmb_di" bpmnElement="Activity_09ytf5o">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wsxzif_di" bpmnElement="Activity_0560adf">
+        <dc:Bounds x="720" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jz3oh4_di" bpmnElement="Activity_0doyd3c">
+        <dc:Bounds x="880" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_05hyiy2_di" bpmnElement="Flow_05hyiy2">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e5zxgl_di" bpmnElement="Flow_1e5zxgl">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="400" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gkpp0b_di" bpmnElement="Flow_0gkpp0b">
+        <di:waypoint x="500" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yfen3q_di" bpmnElement="Flow_1yfen3q">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="720" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ly0jjt_di" bpmnElement="Flow_0ly0jjt">
+        <di:waypoint x="820" y="120" />
+        <di:waypoint x="880" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lbqy3o_di" bpmnElement="Flow_1lbqy3o">
+        <di:waypoint x="980" y="120" />
+        <di:waypoint x="1042" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
