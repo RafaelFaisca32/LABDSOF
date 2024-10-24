@@ -1,6 +1,5 @@
 @startuml Domain Model
 
-
 ' Define colors and styles for elements
 skinparam Class {
     BackgroundColor #F0F0F0
@@ -16,9 +15,10 @@ skinparam Class {
 skinparam linetype ortho
 skinparam arrowThickness 2
 skinparam arrowColor #336699
+skinparam linetype ortho
 
 ' Header/footer with additional info
-header "Domain Model - [Your System Name]"
+header "Domain Model"
 footer "Generated with PlantUML on %date%"
 
 <style>
@@ -40,24 +40,6 @@ footer "Generated with PlantUML on %date%"
             BackgroundColor #F0F8FF       
             BorderColor #4682B4          
             FontColor #4682B4             
-        }
-
-        .offer {
-            BackgroundColor #FFE4E1
-            BorderColor #FF4500           
-            FontColor #FF4500
-        }
-
-        .invite {
-            BackgroundColor #FFFFE0
-            BorderColor #FFD700           
-            FontColor #FFD700             
-        }
-
-        .pointstransaction {
-            BackgroundColor #FFFACD
-            BorderColor #DAA520
-            FontColor #DAA520
         }
 
         .wifispotvisit {
@@ -145,8 +127,6 @@ frame "User Aggregate" <<user>> {
 
     Enum Role {
         ADMIN
-        PARTNER
-        OFFER_MANAGER
         USER
         USER_PREMIUM
     }
@@ -353,8 +333,12 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 frame "Review Aggregate" <<review>> {
 
     'Entity Review
-    Class Review <<Entity>>{
+    Class Review <<AggregateRoot>>{
 
+    }
+
+    Class ReviewId <<ValueObject>>{
+        value: UUIDv4
     }
 
     Class ReviewOverallClassification <<ValueObject>> {
@@ -380,8 +364,9 @@ frame "Review Aggregate" <<review>> {
 
 
     'Review Entity Relationships w/ VOs
+    Review -- ReviewId
     Review -- ReviewOverallClassification
-    Review -- ReviewAttributeClassification
+    Review "1" --> "*" ReviewAttributeClassification
     Review -- ReviewComment
     Review -- ReviewVerified
 
@@ -390,91 +375,6 @@ frame "Review Aggregate" <<review>> {
     Review "1" --> "1" User : is created by
 
 
-}
-
-
-frame "Offer Aggregate" <<offer>>{
-
-    Class Offer <<AggregateRoot>>{
-
-    }
-
-    Class OfferId <<ValueObject>> {
-        value: UUIDv4
-    }
-
-    class OfferCost <<ValueObject>> {
-        value: int
-    }
-
-    Class OfferDescription <<ValueObject>> {
-        value: string
-    }
-
-    Class OfferImage <<ValueObject>> {
-        value: blob
-    }
-
-    Class OfferExpirationDate <<ValueObject>> {
-        value: datetime
-    }
-
-    Class OfferAvailableAmount <<ValueObject>> {
-        value: int 
-    }
-
-    Class OfferActive <<ValueObject>> {
-        value: bool
-    }
-
-    'Offer Entity Relationships w/ VOs
-    Offer -- OfferId
-    Offer -- OfferCost
-    Offer -- OfferDescription
-    Offer -- OfferImage
-    Offer -- OfferExpirationDate
-    Offer -- OfferAvailableAmount
-    Offer -- OfferActive
-
-    'Offer Entity Relationships w/ Entities
-    Offer "1" --> "1" User : added by [ADMIN, PARTNER, OFFER_MANAGER] user
-    Offer "1" --> "0..1" WifiSpot : available on
-
-}
-
-frame "Invite Aggregate Root" <<invite>>{
-
-    Class Invite <<AggregateRoot>> {
-
-    }
-
-    Class InviteId <<ValueObject>> {
-        value: UUIDv4
-    } 
-
-    Class InviteDate <<ValueObject>> {
-        value: datetime
-    }
-
-    Class InviteState <<ValueObject>> {
-        value: InvitationState
-    }
-
-    Enum InvitationState {
-        PENDING
-        ACCEPTED
-        DECLINED
-    }
-
-    'Invite Entity Relationships w/ VOs
-    Invite -- InviteId
-    Invite -- InviteDate
-    Invite -- InviteState
-
-    'Invite Entity Relationships w/ Entities
-    Invite "1" --> "1" User : creates invite
-    Invite "1" --> "1" User : receives invite
-    Invite "1" --> "1" WifiSpot : is allocated to a
 }
 
 frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
@@ -507,71 +407,5 @@ frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
     
 
 }
-
-
-frame "Points Transaction Aggregate" <<pointstransaction>> {
-
-
-    
-
-    Class PointsTransaction <<AggregateRoot>> {
-
-    }
-
-    Class PointsTransactionDate <<ValueObject>> {
-        value: datetime
-    }
-
-    Class PointsTransactionId <<ValueObject>> {
-        value: UUIDv4
-    }
-
-    Class PointsEarnTransaction <<Entity>> {
-
-    }
-
-    Class PointsEarnTransactionAmount <<ValueObject>> {
-        value: int
-    }
-
-    Class PointsWasteTransaction <<Entity>>{
-
-    }
-
-    Class PointsWasteTransactionAmount <<ValueObject>> {
-        value: int
-    }
-
-    
-
-    'PointsTransaction Relationships w/ VOs
-    PointsTransaction -- PointsTransactionDate
-    PointsTransaction -- PointsTransactionId
-
-    'PointsTransaction Relationships w/ Entities
-    PointsTransaction "*" <-- "1" User : a user makes
-
-    'PointsEarnTransaction Relationships w/ VOs
-    PointsEarnTransaction -- PointsEarnTransactionAmount
-
-    'PointsEarnTransaction Relationships w/ Entities
-    PointsEarnTransaction --o PointsTransaction
-    PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
-    PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
-    PointsEarnTransaction "1" --> "0..1" Invite : points are earned by inviting users
-    PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
-
-    'PointsWasteTransaction Relationships w/ VOs
-    PointsWasteTransaction -- PointsWasteTransactionAmount
-
-
-    'PointsWasteTransaction Relationships w/ Entities
-    PointsWasteTransaction --o PointsTransaction
-    PointsWasteTransaction "1" --> "1" Offer : points are wasted by buying offers
-    
-}
-
-'By quering the PointsEarnTransaction we can make a leaderboard based on the two aspects 
-'There is no need to create de business concept for Leaderboard, yet.
 
 @enduml
