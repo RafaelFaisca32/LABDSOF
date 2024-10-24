@@ -48,6 +48,19 @@ footer "Generated with PlantUML on %date%"
             FontColor #4682B4               
         }
 
+        .offer {
+            BackgroundColor #FFE4E1
+            BorderColor #FF4500           
+            FontColor #FF4500
+        }
+
+        .pointstransaction {
+            BackgroundColor #FFFACD
+            BorderColor #DAA520
+            FontColor #DAA520
+        }
+
+
     }
 
 </style>
@@ -127,6 +140,7 @@ frame "User Aggregate" <<user>> {
 
     Enum Role {
         ADMIN
+        OFFER_MANAGER
         USER
         USER_PREMIUM
     }
@@ -377,6 +391,58 @@ frame "Review Aggregate" <<review>> {
 
 }
 
+
+frame "Offer Aggregate" <<offer>>{
+
+    Class Offer <<AggregateRoot>>{
+
+    }
+
+    Class OfferId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    class OfferCost <<ValueObject>> {
+        value: int
+    }
+
+    Class OfferDescription <<ValueObject>> {
+        value: string
+    }
+
+    Class OfferImage <<ValueObject>> {
+        value: blob
+    }
+
+    Class OfferExpirationDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class OfferAvailableAmount <<ValueObject>> {
+        value: int 
+    }
+
+    Class OfferActive <<ValueObject>> {
+        value: bool
+    }
+
+    'Offer Entity Relationships w/ VOs
+    Offer -- OfferId
+    Offer -- OfferCost
+    Offer -- OfferDescription
+    Offer -- OfferImage
+    Offer -- OfferExpirationDate
+    Offer -- OfferAvailableAmount
+    Offer -- OfferActive
+
+    'Offer Entity Relationships w/ Entities
+    Offer "1" --> "1" User : added by [ADMIN, PARTNER, OFFER_MANAGER] user
+    Offer "1" --> "0..1" WifiSpot : available on
+
+}
+
+
+
 frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
     Class WifiSpotVisit <<AggregateRoot>> {
 
@@ -407,5 +473,64 @@ frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
     
 
 }
+
+frame "Points Transaction Aggregate" <<pointstransaction>> {
+
+    Class PointsTransaction <<AggregateRoot>> {
+
+    }
+
+    Class PointsTransactionDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class PointsTransactionId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    Class PointsEarnTransaction <<Entity>> {
+
+    }
+
+    Class PointsEarnTransactionAmount <<ValueObject>> {
+        value: int
+    }
+
+    Class PointsWasteTransaction <<Entity>>{
+
+    }
+
+    Class PointsWasteTransactionAmount <<ValueObject>> {
+        value: int
+    }
+
+    
+
+    'PointsTransaction Relationships w/ VOs
+    PointsTransaction -- PointsTransactionDate
+    PointsTransaction -- PointsTransactionId
+
+    'PointsTransaction Relationships w/ Entities
+    PointsTransaction "*" <-- "1" User : a user makes
+
+    'PointsEarnTransaction Relationships w/ VOs
+    PointsEarnTransaction -- PointsEarnTransactionAmount
+
+    'PointsEarnTransaction Relationships w/ Entities
+    PointsEarnTransaction --o PointsTransaction
+    PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
+    PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
+    PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
+
+    'PointsWasteTransaction Relationships w/ VOs
+    PointsWasteTransaction -- PointsWasteTransactionAmount
+
+
+    'PointsWasteTransaction Relationships w/ Entities
+    PointsWasteTransaction --o PointsTransaction
+    PointsWasteTransaction "1" --> "1" Offer : points are wasted by buying offers
+    
+}
+
 
 @enduml
