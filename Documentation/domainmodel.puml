@@ -60,6 +60,12 @@ footer "Generated with PlantUML on %date%"
             FontColor #DAA520
         }
 
+        .offerRedeemed {
+            BackgroundColor: #E6E6FA
+            BorderColor: #8A2BE2
+            FontColor: #8A2BE2
+        }
+
 
     }
 
@@ -372,17 +378,12 @@ frame "Review Aggregate" <<review>> {
         value: string
     }
 
-    Class ReviewVerified <<ValueObject>> {
-        value: bool
-    }
-
 
     'Review Entity Relationships w/ VOs
     Review -- ReviewId
     Review -- ReviewOverallClassification
     Review "1" --> "*" ReviewAttributeClassification
     Review -- ReviewComment
-    Review -- ReviewVerified
 
     'Review Entity Relationships w/ Entities
     Review "1" --> "1" WifiSpot
@@ -418,10 +419,6 @@ frame "Offer Aggregate" <<offer>>{
         value: datetime
     }
 
-    Class OfferAvailableAmount <<ValueObject>> {
-        value: int 
-    }
-
     Class OfferActive <<ValueObject>> {
         value: bool
     }
@@ -432,13 +429,44 @@ frame "Offer Aggregate" <<offer>>{
     Offer -- OfferDescription
     Offer -- OfferImage
     Offer -- OfferExpirationDate
-    Offer -- OfferAvailableAmount
     Offer -- OfferActive
 
     'Offer Entity Relationships w/ Entities
     Offer "1" --> "1" User : added by [ADMIN, PARTNER, OFFER_MANAGER] user
     Offer "1" --> "0..1" WifiSpot : available on
 
+}
+
+frame "Offer Redeem Aggregate" <<offerRedeemed>> {
+    Class OfferRedeem <<AggregateRoot>>{
+
+    }
+
+    Class OfferRedeemId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    Class OfferRedeemCode <<ValueObject>>{
+        value: string
+    }
+
+    Class OfferRedeemDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class OfferRedeemUsedDate <<ValueObject>> {
+        value: datetime
+    }
+
+    'OfferRedeem Entity Relationships w/ VOs
+    OfferRedeem -- OfferRedeemId
+    OfferRedeem -- OfferRedeemCode
+    OfferRedeem -- OfferRedeemDate
+    OfferRedeem -- OfferRedeemUsedDate
+
+    'Offer Redeem Entity Relationship w/ Entities
+    OfferRedeem "1" -> "1" Offer
+    OfferRedeem "1" -> "1" User
 }
 
 
