@@ -1,6 +1,5 @@
 @startuml Domain Model
 
-
 ' Define colors and styles for elements
 skinparam Class {
     BackgroundColor #F0F0F0
@@ -16,9 +15,10 @@ skinparam Class {
 skinparam linetype ortho
 skinparam arrowThickness 2
 skinparam arrowColor #336699
+skinparam linetype ortho
 
 ' Header/footer with additional info
-header "Domain Model - [Your System Name]"
+header "Domain Model"
 footer "Generated with PlantUML on %date%"
 
 <style>
@@ -42,16 +42,16 @@ footer "Generated with PlantUML on %date%"
             FontColor #4682B4             
         }
 
+        .wifispotvisit {
+            BackgroundColor #E0FFFF
+            BorderColor #4682B4
+            FontColor #4682B4               
+        }
+
         .offer {
             BackgroundColor #FFE4E1
             BorderColor #FF4500           
             FontColor #FF4500
-        }
-
-        .invite {
-            BackgroundColor #FFFFE0
-            BorderColor #FFD700           
-            FontColor #FFD700             
         }
 
         .pointstransaction {
@@ -60,15 +60,63 @@ footer "Generated with PlantUML on %date%"
             FontColor #DAA520
         }
 
-        .wifispotvisit {
-            BackgroundColor #E0FFFF
-            BorderColor #4682B4
-            FontColor #4682B4               
+        .offerRedeemed {
+            BackgroundColor: #E6E6FA
+            BorderColor: #8A2BE2
+            FontColor: #8A2BE2
         }
+        .searchhistory {
+            BackgroundColor: #F5FFFA;
+            BorderColor: #2E8B57;    
+            FontColor: #2E8B57;      
+        }
+
+
 
     }
 
 </style>
+
+'ENUMS 
+Enum LocationType {
+    PUBLIC
+    CAFE
+    LIBRARY
+    PARK
+    SCHOOL
+    RESTAURANT
+    OTHERS
+}
+
+Enum QualityType {
+    HIGH
+    MEDIUM
+    LOW
+}
+
+Enum BandwithType {
+    LIMITED
+    UNLIMITED
+}
+
+Enum StrengthType {
+    STRONG
+    MEDIUM
+    LOW
+}
+
+Enum NoiseType {
+    NONE
+    QUIET
+    MODERATE
+    LOUD
+}
+
+Enum WifiSpotManagementType {
+    SPONSOR
+    VERIFIED
+    UNVERIFIED
+}
 
 
 frame "User Aggregate" <<user>> {
@@ -114,9 +162,13 @@ frame "User Aggregate" <<user>> {
         value: Role
     }
 
+    Class UserVATNumber <<ValueObject>> {
+        value: string
+    }
+
     'Entity UserAddress
     Class UserAddress <<Entity>>{
-
+        
     }
 
     Class UserAddressLine1 <<ValueObject>>{
@@ -145,7 +197,6 @@ frame "User Aggregate" <<user>> {
 
     Enum Role {
         ADMIN
-        PARTNER
         OFFER_MANAGER
         USER
         USER_PREMIUM
@@ -167,6 +218,7 @@ frame "User Aggregate" <<user>> {
     User -- UserEmail
     User -- UserPassword
     User -- UserBirthDate
+    User -- UserVATNumber
     User "1"-->"1..*" UserRole 
 
     'User Address Entity Relationships w/ VOs
@@ -195,6 +247,14 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         value: UUIDv4
     }
 
+    Class WifiSpotName <<ValueObject>> {
+        value: string
+    }
+
+    Class WifiSpotDescription <<ValueObject>> {
+        value: string
+    }
+
     Class WifiSpotCoordinates <<ValueObject>> {
         latitude: double
         longitude: double
@@ -206,9 +266,9 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     Class WifiSpotQualityIndicators <<ValueObject>> {
         wifiQuality: QualityType
-        sinalStrength: StrengthType
+        signalStrength: StrengthType
         bandwithLimitations: BandwithType
-        peakUsageHourInterval: time[2]
+        peakUsageHourInterval: Pair<time>
     }
 
     Class WifiSpotEnvironmentalFeatures <<ValueObject>> {
@@ -234,7 +294,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     Class WifiSpotWeatherFeatures <<ValueObject>>{
         openDuringRain: bool
-        openDuringHear: bool
+        openDuringHeat: bool
         heatedInWinter: bool
         shadedAreas: bool
         outdoorFans: bool
@@ -277,6 +337,8 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     'WifiSpot Entity Relationships w/ VOs
     WifiSpot -- WifiSpotId
+    WifiSpot -- WIfiSpotName
+    WifiSpot -- WifiSpotDescription
     WifiSpot -- WifiSpotCoordinates
     WifiSpot -- WifiSpotVerified
     WifiSpot -- WifiSpotLocationType
@@ -302,59 +364,18 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot "1" --> "1" WifiSpotAddress : is located
     WifiSpot "1" --> "1" User : is submitted by
     WifiSpot "1" --> "0..*" User : is owned/managed by (when verified)
-
-
-    
-    
-    'ENUMS 
-    Enum LocationType {
-        PUBLIC
-        CAFE
-        LIBRARY
-        PARK
-        SCHOOL
-        RESTAURANT
-        OTHERS
-    }
-
-    Enum QualityType {
-        HIGH
-        MEDIUM
-        LOW
-    }
-
-    Enum BandwithType {
-        LIMITED
-        UNLIMITED
-    }
-
-    Enum StrengthType {
-        STRONG
-        MEDIUM
-        LOW
-    }
-
-    Enum NoiseType {
-        NONE
-        QUIET
-        MODERATE
-        LOUD
-    }
-
-    Enum WifiSpotManagementType {
-        SPONSOR
-        VERIFIED
-        UNVERIFIED
-    }
-
 }
 
 
 frame "Review Aggregate" <<review>> {
 
     'Entity Review
-    Class Review <<Entity>>{
+    Class Review <<AggregateRoot>>{
 
+    }
+
+    Class ReviewId <<ValueObject>>{
+        value: UUIDv4
     }
 
     Class ReviewOverallClassification <<ValueObject>> {
@@ -374,16 +395,12 @@ frame "Review Aggregate" <<review>> {
         value: string
     }
 
-    Class ReviewVerified <<ValueObject>> {
-        value: bool
-    }
-
 
     'Review Entity Relationships w/ VOs
+    Review -- ReviewId
     Review -- ReviewOverallClassification
-    Review -- ReviewAttributeClassification
+    Review "1" --> "*" ReviewAttributeClassification
     Review -- ReviewComment
-    Review -- ReviewVerified
 
     'Review Entity Relationships w/ Entities
     Review "1" --> "1" WifiSpot
@@ -419,10 +436,6 @@ frame "Offer Aggregate" <<offer>>{
         value: datetime
     }
 
-    Class OfferAvailableAmount <<ValueObject>> {
-        value: int 
-    }
-
     Class OfferActive <<ValueObject>> {
         value: bool
     }
@@ -433,7 +446,6 @@ frame "Offer Aggregate" <<offer>>{
     Offer -- OfferDescription
     Offer -- OfferImage
     Offer -- OfferExpirationDate
-    Offer -- OfferAvailableAmount
     Offer -- OfferActive
 
     'Offer Entity Relationships w/ Entities
@@ -442,39 +454,36 @@ frame "Offer Aggregate" <<offer>>{
 
 }
 
-frame "Invite Aggregate Root" <<invite>>{
-
-    Class Invite <<AggregateRoot>> {
+frame "Offer Redeem Aggregate" <<offerRedeemed>> {
+    Class OfferRedeem <<AggregateRoot>>{
 
     }
 
-    Class InviteId <<ValueObject>> {
+    Class OfferRedeemId <<ValueObject>> {
         value: UUIDv4
-    } 
+    }
 
-    Class InviteDate <<ValueObject>> {
+    Class OfferRedeemCode <<ValueObject>>{
+        value: string
+    }
+
+    Class OfferRedeemDate <<ValueObject>> {
         value: datetime
     }
 
-    Class InviteState <<ValueObject>> {
-        value: InvitationState
+    Class OfferRedeemUsedDate <<ValueObject>> {
+        value: datetime
     }
 
-    Enum InvitationState {
-        PENDING
-        ACCEPTED
-        DECLINED
-    }
+    'OfferRedeem Entity Relationships w/ VOs
+    OfferRedeem -- OfferRedeemId
+    OfferRedeem -- OfferRedeemCode
+    OfferRedeem -- OfferRedeemDate
+    OfferRedeem -- OfferRedeemUsedDate
 
-    'Invite Entity Relationships w/ VOs
-    Invite -- InviteId
-    Invite -- InviteDate
-    Invite -- InviteState
-
-    'Invite Entity Relationships w/ Entities
-    Invite "1" --> "1" User : creates invite
-    Invite "1" --> "1" User : receives invite
-    Invite "1" --> "1" WifiSpot : is allocated to a
+    'Offer Redeem Entity Relationship w/ Entities
+    OfferRedeem "1" -> "1" Offer
+    OfferRedeem "1" -> "1" User
 }
 
 frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
@@ -508,11 +517,7 @@ frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
 
 }
 
-
 frame "Points Transaction Aggregate" <<pointstransaction>> {
-
-
-    
 
     Class PointsTransaction <<AggregateRoot>> {
 
@@ -558,7 +563,6 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
     PointsEarnTransaction --o PointsTransaction
     PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
     PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
-    PointsEarnTransaction "1" --> "0..1" Invite : points are earned by inviting users
     PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
 
     'PointsWasteTransaction Relationships w/ VOs
@@ -571,7 +575,65 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
     
 }
 
-'By quering the PointsEarnTransaction we can make a leaderboard based on the two aspects 
-'There is no need to create de business concept for Leaderboard, yet.
+frame "Search History Aggregate" <<searchhistory>> {
+    Class SearchHistory <<AggregateRoot>> {
+
+    }
+
+    Class SearchHistoryId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    Class SearchHistoryQuery <<ValueObject>> {
+        value: string
+    }
+
+    Class SearchHistoryDateTime <<ValueObject>> {
+        value: datetime
+    }
+
+    Class SearchHistoryFilter <<ValueObject>> {
+        radius: double
+        locationType: List<LocationType>
+        wifiQuality: List<QualityType>
+        signalStrength: List<StrengthType>
+        bandwithLimitations: List<BandwithType>
+        offPeakUsageHourInterval: List<Pair<time>>
+        crowded: bool
+        coveredArea: bool
+        airConditioning: bool
+        outdoorSeating: bool
+        goodView: bool
+        noiseLevel: List<NoiseType>
+        petFriendly: bool
+        childFriendly: bool
+        disabledAccess: bool
+        availablePowerOutlets: bool
+        chargingStations: bool
+        restroomsAvailable: bool
+        parkingAvailability: bool
+        foodOptions: bool
+        drinkOptions: bool
+        openDuringRain: bool
+        openDuringHear: bool
+        heatedInWinter: bool
+        shadedAreas: bool
+        outdoorFans: bool
+
+    }
+
+    'SearchHistory Relationships w/ VOs
+    SearchHistory -- SearchHistoryId
+    SearchHistory -- SearchHistoryQuery
+    SearchHistory -- SearchHistoryDateTime
+    SearchHistory -- SearchHistoryFilter
+
+
+    'SearchHistory Relationships w/ Entities
+    SearchHistory "1" --> "1" User
+
+
+}
+
 
 @enduml

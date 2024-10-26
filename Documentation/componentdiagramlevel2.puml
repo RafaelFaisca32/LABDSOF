@@ -1,0 +1,39 @@
+@startuml Component Diagram Level 2
+left to right direction
+
+actor User
+
+component reactive_frontend as "React Responsive Frontend" {
+    portout " " as port_frontend_to_user
+    portin " " as port_frontend_to_backend
+}
+component system_backend as "Java System Backend" {
+    portout " " as port_backend_from_frontend
+    portin " " as port_backend_to_ai_api
+    portin " " as port_backend_to_google_api
+    portin " " as port_backend_from_db
+}
+
+database database_mysql_db as "MySQL Relational Database" {
+    portout " " as port_db_from_backend
+}
+
+interface interface_frontendpage as " "
+
+interface interface_ai_api as "AI API"  
+interface interface_google_api as "Google API"
+interface interface_backend as "Backend API" 
+interface interface_mysql_db as "MySQL API" 
+
+port_frontend_to_user -down- interface_frontendpage
+User -right-( interface_frontendpage
+
+port_backend_from_frontend -down- interface_backend
+port_frontend_to_backend -left-( interface_backend
+
+port_backend_to_ai_api -up-( interface_ai_api
+port_backend_to_google_api -up-( interface_google_api
+
+port_db_from_backend -- interface_mysql_db
+port_backend_from_db -up-( interface_mysql_db
+@enduml
