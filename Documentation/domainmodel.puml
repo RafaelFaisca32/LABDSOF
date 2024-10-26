@@ -65,11 +65,58 @@ footer "Generated with PlantUML on %date%"
             BorderColor: #8A2BE2
             FontColor: #8A2BE2
         }
+        .searchhistory {
+            BackgroundColor: #F5FFFA;
+            BorderColor: #2E8B57;    
+            FontColor: #2E8B57;      
+        }
+
 
 
     }
 
 </style>
+
+'ENUMS 
+Enum LocationType {
+    PUBLIC
+    CAFE
+    LIBRARY
+    PARK
+    SCHOOL
+    RESTAURANT
+    OTHERS
+}
+
+Enum QualityType {
+    HIGH
+    MEDIUM
+    LOW
+}
+
+Enum BandwithType {
+    LIMITED
+    UNLIMITED
+}
+
+Enum StrengthType {
+    STRONG
+    MEDIUM
+    LOW
+}
+
+Enum NoiseType {
+    NONE
+    QUIET
+    MODERATE
+    LOUD
+}
+
+Enum WifiSpotManagementType {
+    SPONSOR
+    VERIFIED
+    UNVERIFIED
+}
 
 
 frame "User Aggregate" <<user>> {
@@ -115,9 +162,13 @@ frame "User Aggregate" <<user>> {
         value: Role
     }
 
+    Class UserVATNumber <<ValueObject>> {
+        value: string
+    }
+
     'Entity UserAddress
     Class UserAddress <<Entity>>{
-
+        
     }
 
     Class UserAddressLine1 <<ValueObject>>{
@@ -167,6 +218,7 @@ frame "User Aggregate" <<user>> {
     User -- UserEmail
     User -- UserPassword
     User -- UserBirthDate
+    User -- UserVATNumber
     User "1"-->"1..*" UserRole 
 
     'User Address Entity Relationships w/ VOs
@@ -195,6 +247,14 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         value: UUIDv4
     }
 
+    Class WifiSpotName <<ValueObject>> {
+        value: string
+    }
+
+    Class WifiSpotDescription <<ValueObject>> {
+        value: string
+    }
+
     Class WifiSpotCoordinates <<ValueObject>> {
         latitude: double
         longitude: double
@@ -206,9 +266,9 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     Class WifiSpotQualityIndicators <<ValueObject>> {
         wifiQuality: QualityType
-        sinalStrength: StrengthType
+        signalStrength: StrengthType
         bandwithLimitations: BandwithType
-        peakUsageHourInterval: time[2]
+        peakUsageHourInterval: Pair<time>
     }
 
     Class WifiSpotEnvironmentalFeatures <<ValueObject>> {
@@ -234,7 +294,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     Class WifiSpotWeatherFeatures <<ValueObject>>{
         openDuringRain: bool
-        openDuringHear: bool
+        openDuringHeat: bool
         heatedInWinter: bool
         shadedAreas: bool
         outdoorFans: bool
@@ -277,6 +337,8 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     'WifiSpot Entity Relationships w/ VOs
     WifiSpot -- WifiSpotId
+    WifiSpot -- WIfiSpotName
+    WifiSpot -- WifiSpotDescription
     WifiSpot -- WifiSpotCoordinates
     WifiSpot -- WifiSpotVerified
     WifiSpot -- WifiSpotLocationType
@@ -302,51 +364,6 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot "1" --> "1" WifiSpotAddress : is located
     WifiSpot "1" --> "1" User : is submitted by
     WifiSpot "1" --> "0..*" User : is owned/managed by (when verified)
-
-
-    
-    
-    'ENUMS 
-    Enum LocationType {
-        PUBLIC
-        CAFE
-        LIBRARY
-        PARK
-        SCHOOL
-        RESTAURANT
-        OTHERS
-    }
-
-    Enum QualityType {
-        HIGH
-        MEDIUM
-        LOW
-    }
-
-    Enum BandwithType {
-        LIMITED
-        UNLIMITED
-    }
-
-    Enum StrengthType {
-        STRONG
-        MEDIUM
-        LOW
-    }
-
-    Enum NoiseType {
-        NONE
-        QUIET
-        MODERATE
-        LOUD
-    }
-
-    Enum WifiSpotManagementType {
-        SPONSOR
-        VERIFIED
-        UNVERIFIED
-    }
-
 }
 
 
@@ -469,8 +486,6 @@ frame "Offer Redeem Aggregate" <<offerRedeemed>> {
     OfferRedeem "1" -> "1" User
 }
 
-
-
 frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
     Class WifiSpotVisit <<AggregateRoot>> {
 
@@ -558,6 +573,66 @@ frame "Points Transaction Aggregate" <<pointstransaction>> {
     PointsWasteTransaction --o PointsTransaction
     PointsWasteTransaction "1" --> "1" Offer : points are wasted by buying offers
     
+}
+
+frame "Search History Aggregate" <<searchhistory>> {
+    Class SearchHistory <<AggregateRoot>> {
+
+    }
+
+    Class SearchHistoryId <<ValueObject>> {
+        value: UUIDv4
+    }
+
+    Class SearchHistoryQuery <<ValueObject>> {
+        value: string
+    }
+
+    Class SearchHistoryDateTime <<ValueObject>> {
+        value: datetime
+    }
+
+    Class SearchHistoryFilter <<ValueObject>> {
+        radius: double
+        locationType: List<LocationType>
+        wifiQuality: List<QualityType>
+        signalStrength: List<StrengthType>
+        bandwithLimitations: List<BandwithType>
+        offPeakUsageHourInterval: List<Pair<time>>
+        crowded: bool
+        coveredArea: bool
+        airConditioning: bool
+        outdoorSeating: bool
+        goodView: bool
+        noiseLevel: List<NoiseType>
+        petFriendly: bool
+        childFriendly: bool
+        disabledAccess: bool
+        availablePowerOutlets: bool
+        chargingStations: bool
+        restroomsAvailable: bool
+        parkingAvailability: bool
+        foodOptions: bool
+        drinkOptions: bool
+        openDuringRain: bool
+        openDuringHear: bool
+        heatedInWinter: bool
+        shadedAreas: bool
+        outdoorFans: bool
+
+    }
+
+    'SearchHistory Relationships w/ VOs
+    SearchHistory -- SearchHistoryId
+    SearchHistory -- SearchHistoryQuery
+    SearchHistory -- SearchHistoryDateTime
+    SearchHistory -- SearchHistoryFilter
+
+
+    'SearchHistory Relationships w/ Entities
+    SearchHistory "1" --> "1" User
+
+
 }
 
 
