@@ -3,7 +3,7 @@ left to right direction
 
 actor User
 
-component reactive_frontend as "React Reactive Frontend" {
+component reactive_frontend as "React Responsive Frontend" {
     portout " " as port_frontend_to_user
     portin " " as port_frontend_to_backend
 }
