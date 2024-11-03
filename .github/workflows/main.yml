@@ -24,7 +24,7 @@ jobs:
         working-directory: ./netquest-frontend
         run: npm install
       - name: Run Docker Compose
-        run: docker compose up
+        run: docker compose up -d
       # - name: Run backend test
       #   working-directory: ./Deliverables/Sprint2/Sprint2_TruckMotion
       #   run: |
