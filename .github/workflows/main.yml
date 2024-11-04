@@ -71,12 +71,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # - name: Build Docker Image
-      #   working-directory: ./Deliverables/Sprint2/Sprint2_TruckMotion
-      #   run: npm run java:docker
-      # - name: Push Docker Image
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_HUB_REPO }}
+      - name: Build Docker Image
+        run: docker build -t netquest-app .
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_REPO }}:dev
       # - name: Webhook for render deployment
       #   uses: distributhor/workflow-webhook@v3
       #   with:
