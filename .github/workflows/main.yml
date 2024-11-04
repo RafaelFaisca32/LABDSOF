@@ -70,7 +70,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Docker Image
-        run: docker build -t netquest-app .
+        run: docker build -t netquest-app:dev .
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_HUB_REPO }}:dev
