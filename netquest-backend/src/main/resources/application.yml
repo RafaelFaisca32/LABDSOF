@@ -4,11 +4,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+      dialect: org.hibernate.dialect.MySQL8Dialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/bookdb
-    username: postgres
-    password: postgres
-
+    url: jdbc:mysql://vsgate-s1.dei.isep.ipp.pt:10406/netquest
+    username: root
+    password: htLD7J9wkLaS
 app:
   cors:
     allowed-origins: http://localhost:3000
