@@ -74,7 +74,7 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_HUB_REPO }}:dev
-      # - name: Webhook for render deployment
-      #   uses: distributhor/workflow-webhook@v3
-      #   with:
-      #     webhook_url: ${{ secrets.RENDER_WEBHOOK }}
+      - name: Webhook for render deployment
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.RENDER_WEBHOOK }}
