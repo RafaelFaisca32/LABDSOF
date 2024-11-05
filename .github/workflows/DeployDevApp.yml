@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 jobs:
   pipeline:
-    name: NetQuest general pipeline
+    name: Deploy Development App pipeline
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.pull_request.title, '[skip ci]') && !contains(github.event.pull_request.title, '[ci skip]')"
     timeout-minutes: 40
