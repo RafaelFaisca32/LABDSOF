@@ -1,5 +1,6 @@
 name: Deploy Productio App
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 jobs:
   pipeline:
     name: NetQuest general pipeline
