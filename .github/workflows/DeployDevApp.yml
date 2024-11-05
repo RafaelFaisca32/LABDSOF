@@ -1,4 +1,4 @@
-name: Application CI
+name: Deploy Development App
 on: [workflow_dispatch]
 jobs:
   pipeline:
