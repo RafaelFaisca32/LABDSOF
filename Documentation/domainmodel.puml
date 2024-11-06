@@ -337,16 +337,14 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
 
     'WifiSpot Entity Relationships w/ VOs
     WifiSpot -- WifiSpotId
-    WifiSpot -- WIfiSpotName
+    WifiSpot -- WifiSpotName
     WifiSpot -- WifiSpotDescription
     WifiSpot -- WifiSpotCoordinates
-    WifiSpot -- WifiSpotVerified
     WifiSpot -- WifiSpotLocationType
     WifiSpot -- WifiSpotQualityIndicators
     WifiSpot -- WifiSpotEnvironmentalFeatures
     WifiSpot -- WifiSpotFacilities
     WifiSpot -- WifiSpotWeatherFeatures
-    WifiSpot -- WifiSpotPartner
     WifiSpot "1" --> "1..*" WifiSpotManagement
 
     
