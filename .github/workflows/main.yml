@@ -23,14 +23,14 @@ jobs:
       - name: Install Node.js packages
         working-directory: ./netquest-frontend
         run: npm install
-      # - name: Run backend test
-      #   working-directory: ./Deliverables/Sprint2/Sprint2_TruckMotion
-      #   run: |
-      #     chmod +x mvnw
-      #     npm run ci:backend:test
-      # - name: Run frontend test
-      #   working-directory: ./Deliverables/Sprint2/Sprint2_TruckMotion
-      #   run: npm run ci:frontend:test
+      - name: Run backend test
+        working-directory: ./netquest-backend
+        run: |
+          chmod +x mvnw
+          ./mvnw test
+      - name: Run frontend test
+        working-directory: ./netquest-frontend
+        run: npm run test -- --watchAll=false
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:
