@@ -50,7 +50,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipITs -Dsonar.projectKey=RafaelFaisca32_LABDSOF
       - name: Debug ref name
-        run: echo "github.ref: ${{ github.ref }} - github.ref_name: ${{ github.ref_name }}"
+        run: |
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.ref_name: ${{ github.ref_name }}"
       # Run only when code is merged to master
       - name: Login to Docker Hub
         if: "contains(github.ref_name, 'master')"
