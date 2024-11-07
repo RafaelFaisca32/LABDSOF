@@ -11,7 +11,7 @@ spring:
     password: htLD7J9wkLaS
 app:
   cors:
-    allowed-origins: http://localhost:8080
+    allowed-origins: http://localhost:3000
 
 logging:
   level:
