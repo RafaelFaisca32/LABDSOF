@@ -84,4 +84,9 @@ public class WifiSpotVisit {
         return end.getValue().isBefore(start.getValue());
     }
 
+    public WifiSpotVisit updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
+        this.wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(endDateTime.getValue());
+        return this;
+    }
+
 }
