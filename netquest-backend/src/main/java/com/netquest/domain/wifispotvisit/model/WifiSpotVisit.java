@@ -1,5 +1,6 @@
 package com.netquest.domain.wifispotvisit.model;
 
+import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException;
@@ -51,34 +52,31 @@ public class WifiSpotVisit {
     })
     private UserId userId;
 
-    public WifiSpotVisit(WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime
-            ,WifiSpotId wifiSpotId
-            ,UserId userId
-    ) {
-        this.wifiSpotVisitId = new WifiSpotVisitId();
-        this.wifiSpotVisitStartDateTime = wifiSpotVisitStartDateTime;
-        this.wifiSpotId = wifiSpotId;
-        this.userId = userId;
-    }
 
-    public WifiSpotVisit(WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime
+    public WifiSpotVisit(
+            @NonNull WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime
             ,WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime
-            ,WifiSpotId wifiSpotId
-            ,UserId userId
+            ,@NonNull WifiSpotId wifiSpotId
+            ,@NonNull UserId userId
     ) {
-        if(isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)) {
+        if(wifiSpotVisitEndDateTime != null && isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)) {
             throw new WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException("End date time cannot be before start date");
         }
         this.wifiSpotVisitId = new WifiSpotVisitId();
-        this.wifiSpotVisitStartDateTime = wifiSpotVisitStartDateTime;
-        this.wifiSpotVisitEndDateTime = wifiSpotVisitEndDateTime;
-        this.wifiSpotId = wifiSpotId;
-        this.userId = userId;
+        this.wifiSpotVisitStartDateTime = new WifiSpotVisitStartDateTime(wifiSpotVisitStartDateTime.getValue());
+        this.wifiSpotVisitEndDateTime = wifiSpotVisitEndDateTime != null ? new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTime.getValue()) : null;
+        this.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());
+        this.userId = new UserId(userId.getValue());
     }
 
 
     private boolean isEndDateBeforeStartDate(WifiSpotVisitStartDateTime start, WifiSpotVisitEndDateTime end){
         return end.getValue().isBefore(start.getValue());
+    }
+
+    public WifiSpotVisit updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
+        this.wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(endDateTime.getValue());
+        return this;
     }
 
 }
