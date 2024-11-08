@@ -59,9 +59,8 @@ public class WifiSpotVisit {
             ,@NonNull WifiSpotId wifiSpotId
             ,@NonNull UserId userId
     ) {
-        if(wifiSpotVisitEndDateTime != null && isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)) {
-            throw new WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException("End date time cannot be before start date");
-        }
+       validateEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime);
+
         this.wifiSpotVisitId = new WifiSpotVisitId();
         this.wifiSpotVisitStartDateTime = new WifiSpotVisitStartDateTime(wifiSpotVisitStartDateTime.getValue());
         this.wifiSpotVisitEndDateTime = wifiSpotVisitEndDateTime != null ? new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTime.getValue()) : null;
@@ -69,14 +68,20 @@ public class WifiSpotVisit {
         this.userId = new UserId(userId.getValue());
     }
 
+    public WifiSpotVisit updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
+        validateEndDateBeforeStartDate(this.wifiSpotVisitStartDateTime, endDateTime);
+        this.wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(endDateTime.getValue());
+        return this;
+    }
+
+    private void validateEndDateBeforeStartDate(WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime, WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime){
+        if(wifiSpotVisitEndDateTime != null && isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)) {
+            throw new WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException("End date time cannot be before start date");
+        }
+    }
 
     private boolean isEndDateBeforeStartDate(WifiSpotVisitStartDateTime start, WifiSpotVisitEndDateTime end){
         return end.getValue().isBefore(start.getValue());
-    }
-
-    public WifiSpotVisit updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
-        this.wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(endDateTime.getValue());
-        return this;
     }
 
 }

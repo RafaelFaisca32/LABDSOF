@@ -15,6 +15,8 @@ import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Service
 public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
@@ -43,9 +45,8 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     }
 
     @Override
-    public WifiSpotVisitDto updateWifiSpotVisitEndDateTime(WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto) {
-        WifiSpotVisitId wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitEndDateTimeDto.getWifiSpotVisitId());
-
+    public WifiSpotVisitDto updateWifiSpotVisitEndDateTime(UUID wifiSpotVisitUUID, WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto) {
+        WifiSpotVisitId wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitUUID);
         WifiSpotVisit wifiSpotVisit = wifiSpotVisitRepository.findById(wifiSpotVisitId)
                 .orElseThrow(() -> new WifiSpotVisitNotFoundException("Wifi spot visit not found"));
 

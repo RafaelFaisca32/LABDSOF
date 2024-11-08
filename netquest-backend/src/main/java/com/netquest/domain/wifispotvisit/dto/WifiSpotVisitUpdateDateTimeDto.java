@@ -9,7 +9,5 @@ import java.util.UUID;
 @Data
 public class WifiSpotVisitUpdateDateTimeDto {
     @NotNull
-    private UUID wifiSpotVisitId;
-    @NotNull
     private LocalDateTime wifiSpotVisitDateTime;
 }

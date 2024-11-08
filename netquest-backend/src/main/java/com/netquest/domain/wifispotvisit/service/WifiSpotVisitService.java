@@ -5,9 +5,10 @@ import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface WifiSpotVisitService {
 
     WifiSpotVisitDto saveWifiSpotVisit(WifiSpotVisitCreateDto wifiSpotVisitCreateDto);
-    WifiSpotVisitDto updateWifiSpotVisitEndDateTime(WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto);
+    WifiSpotVisitDto updateWifiSpotVisitEndDateTime(UUID wifiSpotVisitUUID, WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto);
 }
