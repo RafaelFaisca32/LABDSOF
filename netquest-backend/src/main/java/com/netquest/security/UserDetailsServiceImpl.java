@@ -1,7 +1,7 @@
 package com.netquest.security;
 
-import com.netquest.service.UserService;
-import com.netquest.model.User;
+import com.netquest.domain.user.service.UserService;
+import com.netquest.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
