@@ -75,7 +75,11 @@ public class WifiSpotVisit {
     }
 
     private void validateEndDateBeforeStartDate(WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime, WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime){
-        if(wifiSpotVisitEndDateTime != null && isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)) {
+        if(
+                wifiSpotVisitEndDateTime != null &&
+                wifiSpotVisitEndDateTime.getValue() != null &&
+                isEndDateBeforeStartDate(wifiSpotVisitStartDateTime, wifiSpotVisitEndDateTime)
+        ) {
             throw new WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException("End date time cannot be before start date");
         }
     }

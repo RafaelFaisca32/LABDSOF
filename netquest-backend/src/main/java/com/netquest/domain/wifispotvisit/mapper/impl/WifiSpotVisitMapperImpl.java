@@ -32,7 +32,7 @@ public class WifiSpotVisitMapperImpl implements WifiSpotVisitMapper {
     @Override
     public WifiSpotVisit toNewEntity(WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
         return new WifiSpotVisit(
-                new WifiSpotVisitStartDateTime(wifiSpotVisitCreateDto.getEndDateTime()),
+                new WifiSpotVisitStartDateTime(wifiSpotVisitCreateDto.getStartDateTime()),
                 new WifiSpotVisitEndDateTime(wifiSpotVisitCreateDto.getEndDateTime()),
                 new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId()),
                 new UserId(wifiSpotVisitCreateDto.getUserId()));
