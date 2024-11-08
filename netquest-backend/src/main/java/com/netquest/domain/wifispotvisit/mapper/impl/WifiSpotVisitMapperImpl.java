@@ -32,8 +32,8 @@ public class WifiSpotVisitMapperImpl implements WifiSpotVisitMapper {
     @Override
     public WifiSpotVisit toNewEntity(WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
         return new WifiSpotVisit(
-                new WifiSpotVisitStartDateTime(wifiSpotVisitCreateDto.getWifiSpotVisitEndDateTime()),
-                new WifiSpotVisitEndDateTime(wifiSpotVisitCreateDto.getWifiSpotVisitEndDateTime()),
+                new WifiSpotVisitStartDateTime(wifiSpotVisitCreateDto.getEndDateTime()),
+                new WifiSpotVisitEndDateTime(wifiSpotVisitCreateDto.getEndDateTime()),
                 new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId()),
                 new UserId(wifiSpotVisitCreateDto.getUserId()));
     }
@@ -43,6 +43,6 @@ public class WifiSpotVisitMapperImpl implements WifiSpotVisitMapper {
         if (wifiSpotVisitUpdateDateTimeDto == null) {
             return null;
         }
-        return new WifiSpotVisitEndDateTime(wifiSpotVisitUpdateDateTimeDto.getWifiSpotVisitDateTime());
+        return new WifiSpotVisitEndDateTime(wifiSpotVisitUpdateDateTimeDto.getDateTime());
     }
 }

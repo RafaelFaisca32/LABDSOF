@@ -10,9 +10,9 @@ import java.util.UUID;
 public class WifiSpotVisitCreateDto {
 
     @NotNull
-    private LocalDateTime wifiSpotVisitStartDateTime;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime wifiSpotVisitEndDateTime;
+    private LocalDateTime endDateTime;
 
     @NotNull
     private UUID userId;

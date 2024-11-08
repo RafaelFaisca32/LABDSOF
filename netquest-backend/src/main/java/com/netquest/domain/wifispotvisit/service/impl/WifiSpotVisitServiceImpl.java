@@ -5,6 +5,7 @@ import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
+import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitEndDateTimeAlreadyFilled;
 import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitNotFoundException;
 import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
@@ -50,7 +51,11 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         WifiSpotVisit wifiSpotVisit = wifiSpotVisitRepository.findById(wifiSpotVisitId)
                 .orElseThrow(() -> new WifiSpotVisitNotFoundException("Wifi spot visit not found"));
 
-        WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTimeDto.getWifiSpotVisitDateTime());
+        if(wifiSpotVisit.getWifiSpotVisitEndDateTime() != null){
+            throw new WifiSpotVisitEndDateTimeAlreadyFilled("Wifi spot visit end date time already filled");
+        }
+
+        WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTimeDto.getDateTime());
         wifiSpotVisit.updateEndDateTime(wifiSpotVisitEndDateTime);
         return wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
     }

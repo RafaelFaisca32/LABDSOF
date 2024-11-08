@@ -5,8 +5,8 @@ import java.util.UUID;
 
 
 public record WifiSpotVisitDto (
-        UUID wifiSpotVisitId,
-        LocalDateTime wifiSpotVisitStartDateTime,
-        LocalDateTime wifiSpotVisitEndDateTime,
+        UUID id,
+        LocalDateTime startDateTime,
+        LocalDateTime endDateTime,
         UUID userId,
         UUID wifiSpotId) {}
