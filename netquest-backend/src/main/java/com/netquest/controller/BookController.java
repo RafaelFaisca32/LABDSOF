@@ -1,10 +1,10 @@
 package com.netquest.controller;
 
-import com.netquest.mapper.BookMapper;
-import com.netquest.model.Book;
-import com.netquest.controller.dto.BookDto;
-import com.netquest.controller.dto.CreateBookRequest;
-import com.netquest.service.BookService;
+import com.netquest.domain.BookMapper;
+import com.netquest.domain.Book;
+import com.netquest.domain.BookDto;
+import com.netquest.domain.CreateBookRequest;
+import com.netquest.domain.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

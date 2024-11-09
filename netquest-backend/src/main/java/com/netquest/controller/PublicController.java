@@ -1,7 +1,7 @@
 package com.netquest.controller;
 
-import com.netquest.service.BookService;
-import com.netquest.service.UserService;
+import com.netquest.domain.BookService;
+import com.netquest.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

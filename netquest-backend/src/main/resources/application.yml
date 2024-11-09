@@ -1,6 +1,6 @@
 spring:
   application:
-    name: book-api
+    name: netquest-backend
   jpa:
     hibernate:
       ddl-auto: create
