@@ -54,8 +54,7 @@ jobs:
         with:
           projectBaseDir: ./netquest-frontend
           args: >
-            -Dsonar.projectKey={project key}
-            -Dsonar.organization={organization}
+            -Dsonar.projectKey=RafaelFaisca32_LABDSOF
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
