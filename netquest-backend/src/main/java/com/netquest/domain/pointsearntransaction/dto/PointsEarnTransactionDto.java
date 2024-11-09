@@ -6,6 +6,6 @@ import java.util.UUID;
 public record PointsEarnTransactionDto(
         UUID id,
         LocalDateTime datetime,
-        int amount
+        long amount
 ) {
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @ToString
 @NoArgsConstructor(force = true)
-public class WifiSpotVisitEndDateTime {
+public class WifiSpotVisitEndDateTime implements Comparable<WifiSpotVisitEndDateTime> {
     private final LocalDateTime value;
 
     public WifiSpotVisitEndDateTime(LocalDateTime value) {
@@ -22,5 +22,20 @@ public class WifiSpotVisitEndDateTime {
             throw new EmptyWifiSpotVisitEndDateTimeException("Wifi Spot Visit End DateTime cannot be in the future");
         }
         this.value = value;
+    }
+
+
+    @Override
+    public int compareTo(WifiSpotVisitEndDateTime other) {
+        if ((other == null || other.value == null) && this.value == null) {
+            return 0;
+        }
+        if (this.value == null) {
+            return -1;  // Null is considered "less than" any non-null value
+        }
+        if (other == null || other.value == null) {
+            return 1;  // Any non-null value is considered "greater than" null
+        }
+        return this.value.compareTo(other.value);
     }
 }

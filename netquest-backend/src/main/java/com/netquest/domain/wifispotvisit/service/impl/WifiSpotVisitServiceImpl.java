@@ -1,16 +1,22 @@
 package com.netquest.domain.wifispotvisit.service.impl;
 
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
-import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitEndDateTimeAlreadyFilled;
+import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitDatesConflictException;
+import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitEndDateTimeAlreadyFilledException;
 import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitNotFoundException;
+import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitOngoingException;
 import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitStartDateTime;
 import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
 import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +29,7 @@ import java.util.UUID;
 public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     private final WifiSpotVisitRepository wifiSpotVisitRepository;
     private final WifiSpotVisitMapper wifiSpotVisitMapper;
+    private final PointsEarnTransactionService pointsEarnTransactionService;
 
 
     @Override
@@ -41,7 +48,22 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
             throw new WifiSpotNotFoundException("Wifi Spot not found")
         }
          */
-        return wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
+
+        if(wifiSpotVisitRepository.existsOnGoingWifiSpotVisitByUserId(userId)){
+            throw new WifiSpotVisitOngoingException("Wifi spot visit ongoing for this user");
+        }
+
+        if(wifiSpotVisitRepository.existsWifiSpotVisitConflictingIntervalByUserId(
+                wifiSpotVisitCreateDto.getStartDateTime(),
+                wifiSpotVisitCreateDto.getEndDateTime(),
+                userId
+        )){
+            throw new WifiSpotVisitDatesConflictException("There is a conflict of dates to another visit for this user");
+        }
+
+        WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
+        createPointsEarnTransactionBasedOnVisit(wifiSpotVisitDto);
+        return wifiSpotVisitDto;
 
     }
 
@@ -52,11 +74,26 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
                 .orElseThrow(() -> new WifiSpotVisitNotFoundException("Wifi spot visit not found"));
 
         if(wifiSpotVisit.getWifiSpotVisitEndDateTime() != null){
-            throw new WifiSpotVisitEndDateTimeAlreadyFilled("Wifi spot visit end date time already filled");
+            throw new WifiSpotVisitEndDateTimeAlreadyFilledException("Wifi spot visit end date time already filled");
         }
 
         WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTimeDto.getDateTime());
         wifiSpotVisit.updateEndDateTime(wifiSpotVisitEndDateTime);
         return wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
     }
+
+
+    private PointsEarnTransactionDto createPointsEarnTransactionBasedOnVisit(WifiSpotVisitDto wifiSpotVisitDto) {
+        if(wifiSpotVisitDto.endDateTime() == null) {
+            return null;
+        }
+        return pointsEarnTransactionService.savePointsEarnTransaction(
+                new PointsEarnTransactionCreateByVisitDto(
+                    wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(),wifiSpotVisitDto.userId(),wifiSpotVisitDto.id()
+                )
+        );
+
+    }
+
+
 }

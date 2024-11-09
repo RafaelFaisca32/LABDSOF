@@ -1,16 +1,24 @@
 package com.netquest.domain.pointsearntransaction.model;
 
 
+import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Table(name = "points_earn_transaction")
 public class PointsEarnTransaction {
+
+    private final int MINUTE_POINTS_MULTIPLIER = 5;
 
     @EmbeddedId
     @AttributeOverrides({
@@ -20,6 +28,7 @@ public class PointsEarnTransaction {
 
     @Embedded
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_datetime"))
     })
@@ -32,10 +41,50 @@ public class PointsEarnTransaction {
     })
     private PointsEarnTransactionAmount pointsEarnTransactionAmount;
 
+
+
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_user_id"))
+    })
+    private UserId userId;
+
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_wifi_spot_visit_id"))
+    })
+    private WifiSpotVisitId wifiSpotVisitId;
+
+
+    /*
     public PointsEarnTransaction(PointsEarnTransactionAmount pointsEarnTransactionAmount) {
         this.pointsEarnTransactionId = new PointsEarnTransactionId();
         this.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
         this.pointsEarnTransactionAmount = new PointsEarnTransactionAmount(pointsEarnTransactionAmount.getValue());
+    }
+    */
+
+    public PointsEarnTransaction(
+            UserId userId,
+            WifiSpotVisitId wifiSpotVisitId,
+            @NonNull LocalDateTime start,
+            @NonNull LocalDateTime end
+    ) {
+        this.pointsEarnTransactionId = new PointsEarnTransactionId();
+        this.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
+        this.pointsEarnTransactionAmount = calculateAmountBasedOnDateTimes(start, end);
+        this.userId = new UserId(userId.getValue());
+        this.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
+    }
+
+    public PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
+        long minutes = ChronoUnit.MINUTES.between(start, end);
+        if(minutes < 0){
+            return new PointsEarnTransactionAmount(0);
+        }
+        return new PointsEarnTransactionAmount(minutes * MINUTE_POINTS_MULTIPLIER);
     }
 
 }

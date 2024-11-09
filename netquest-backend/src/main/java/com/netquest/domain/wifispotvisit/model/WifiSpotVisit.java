@@ -22,12 +22,14 @@ public class WifiSpotVisit {
 
     @Embedded
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_visit_start_datetime"))
     })
     private WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime;
 
     @Embedded
+    @Temporal(TemporalType.TIMESTAMP)
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_visit_end_datetime"))
     })

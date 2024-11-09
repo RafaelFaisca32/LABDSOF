@@ -1,6 +1,6 @@
 package com.netquest.domain.pointsearntransaction.model;
 
-import com.netquest.domain.pointsearntransaction.exception.PointsEarnAmountNegative;
+import com.netquest.domain.pointsearntransaction.exception.PointsEarnAmountNegativeException;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,11 +13,11 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor(force = true)
 public class PointsEarnTransactionAmount {
-    private final int value;
+    private final long value;
 
-    public PointsEarnTransactionAmount(int value) {
+    public PointsEarnTransactionAmount(long value) {
         if (value < 0) {
-            throw new PointsEarnAmountNegative("Points Earned Amount cannot be negative");
+            throw new PointsEarnAmountNegativeException("Points Earned Amount cannot be negative");
         }
         this.value = value;
     }
