@@ -23,6 +23,11 @@ jobs:
       - name: Install Node.js packages
         working-directory: ./netquest-frontend
         run: npm install
+      - name: Install Maven dependencies
+        working-directory: ./netquest-backend
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
       - name: Run backend test
         working-directory: ./netquest-backend
         run: |
