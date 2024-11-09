@@ -12,7 +12,6 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @ToString
-@NoArgsConstructor(force = true)
 public class PointsEarnTransactionId {
     private final UUID value;
 

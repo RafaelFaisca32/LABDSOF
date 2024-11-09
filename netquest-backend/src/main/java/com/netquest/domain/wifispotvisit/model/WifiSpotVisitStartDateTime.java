@@ -3,7 +3,6 @@ package com.netquest.domain.wifispotvisit.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDateTime;
 
