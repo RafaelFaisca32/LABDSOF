@@ -49,6 +49,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipITs -Dsonar.projectKey=RafaelFaisca32_LABDSOF
+      - name: SonarCloud Scan - Frontend
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: ./netquest-frontend
+          args: >
+            -Dsonar.projectKey={project key}
+            -Dsonar.organization={organization}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # Separate job for steps that should only run on the master branch
   docker_deployment:
