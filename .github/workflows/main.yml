@@ -48,12 +48,6 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      # - name: Build and analyze Sonar
-      #   working-directory: ./netquest-backend
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipITs -Dsonar.projectKey=RafaelFaisca32_LABDSOF
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
