@@ -89,11 +89,12 @@ public class PointsEarnTransaction {
         this.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
     }
 
-    public PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
+    public int getMinutePointsMultiplier(){
+        return MINUTE_POINTS_MULTIPLIER;
+    }
+
+    private PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
         long minutes = ChronoUnit.MINUTES.between(start, end);
-        if(minutes < 0){
-            return new PointsEarnTransactionAmount(0);
-        }
         return new PointsEarnTransactionAmount(minutes * MINUTE_POINTS_MULTIPLIER);
     }
 
