@@ -1,6 +1,6 @@
 package com.netquest.domain.wifispotvisit.model;
 
-import com.netquest.domain.wifispotvisit.exception.EmptyWifiSpotVisitEndDateTimeException;
+import com.netquest.domain.wifispotvisit.exception.FutureWifiSpotVisitEndDateTimeException;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class WifiSpotVisitEndDateTime implements Comparable<WifiSpotVisitEndDate
 
     public WifiSpotVisitEndDateTime(LocalDateTime value) {
         if(value != null && value.isAfter(LocalDateTime.now())){
-            throw new EmptyWifiSpotVisitEndDateTimeException("Wifi Spot Visit End DateTime cannot be in the future");
+            throw new FutureWifiSpotVisitEndDateTimeException("Wifi Spot Visit End DateTime cannot be in the future");
         }
         this.value = value;
     }
