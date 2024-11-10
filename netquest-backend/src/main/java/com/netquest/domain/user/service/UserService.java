@@ -19,7 +19,11 @@ public interface UserService {
 
     User saveUser(User user);
 
+    User getUserById(Long id);
+
     void deleteUser(User user);
+
+    void deleteUserById(Long id);
 
     Optional<User> validUsernameAndPassword(String username, String password);
 }

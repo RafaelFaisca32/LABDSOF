@@ -55,4 +55,12 @@ public class UserController {
         userService.deleteUser(user);
         return userMapper.toUserDto(user);
     }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @DeleteMapping("/{id}")
+    public UserDto deleteUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        userService.deleteUserById(id);
+        return userMapper.toUserDto(user);
+    }
 }
