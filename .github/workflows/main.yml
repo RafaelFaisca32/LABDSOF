@@ -23,6 +23,11 @@ jobs:
       - name: Install Node.js packages
         working-directory: ./netquest-frontend
         run: npm install
+      - name: Install Maven dependencies
+        working-directory: ./netquest-backend
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
       - name: Run backend test
         working-directory: ./netquest-backend
         run: |
@@ -43,12 +48,15 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze Sonar
-        working-directory: ./netquest-backend
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=RafaelFaisca32_LABDSOF
+            -Dsonar.organization=rafaelfaisca32
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipITs -Dsonar.projectKey=RafaelFaisca32_LABDSOF
 
   # Separate job for steps that should only run on the master branch
   docker_deployment:
