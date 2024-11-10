@@ -1,5 +1,6 @@
 package com.netquest.domain.user.service.impl;
 
+import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.User;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -59,5 +61,11 @@ public class UserServiceImpl implements UserService {
     public Optional<User> validUsernameAndPassword(String username, String password) {
         return getUserByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()));
+    }
+
+    @Override
+    public boolean existsById(UUID userUUID) {
+        UserId userId = new UserId(userUUID);
+        return userRepository.existsById(userId);
     }
 }

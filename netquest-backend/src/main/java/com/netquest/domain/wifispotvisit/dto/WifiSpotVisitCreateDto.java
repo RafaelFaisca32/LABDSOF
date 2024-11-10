@@ -14,8 +14,10 @@ public class WifiSpotVisitCreateDto {
 
     private LocalDateTime endDateTime;
 
+    /*
     @NotNull
     private UUID userId;
+    */
 
     @NotNull
     private UUID wifiSpotId;

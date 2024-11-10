@@ -21,8 +21,4 @@ public class UserId {
         this.value = UUID.randomUUID();
     }
 
-    public static UserId generate() {
-        return new UserId(UUID.randomUUID());
-    }
-
 }

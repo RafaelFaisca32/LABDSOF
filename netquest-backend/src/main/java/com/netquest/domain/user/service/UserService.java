@@ -4,6 +4,7 @@ import com.netquest.domain.user.model.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserService {
 
@@ -22,4 +23,6 @@ public interface UserService {
     void deleteUser(User user);
 
     Optional<User> validUsernameAndPassword(String username, String password);
+
+    boolean existsById(UUID userUUID);
 }

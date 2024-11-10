@@ -6,8 +6,10 @@ import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
 
+import java.util.UUID;
+
 public interface WifiSpotVisitMapper {
     WifiSpotVisitDto toDto(WifiSpotVisit wifiSpotVisit);
-    WifiSpotVisit toNewEntity(WifiSpotVisitCreateDto wifiSpotVisitCreateDto);
+    WifiSpotVisit toNewEntity(UUID userUUID, WifiSpotVisitCreateDto wifiSpotVisitCreateDto);
     WifiSpotVisitEndDateTime toEndDateTime(WifiSpotVisitUpdateDateTimeDto wifiSpotVisitUpdateDateTimeDto);
 }

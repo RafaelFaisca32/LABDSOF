@@ -22,7 +22,7 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
     List<WifiSpotVisit> findByWifiSpotId(WifiSpotId wifiSpotId);
     List<WifiSpotVisit> findByUserId(UserId userId);
     List<WifiSpotVisit> findByWifiSpotIdAndUserId(WifiSpotId wifiSpotId, UserId userId);
-
+    Optional<WifiSpotVisit> findByWifiSpotVisitIdAndUserId(WifiSpotVisitId wifiSpotVisitId, UserId userId);
 
     @Query("SELECT CASE WHEN COUNT(wsv) > 0 THEN TRUE ELSE FALSE END FROM WifiSpotVisit wsv " +
             "WHERE wsv.userId = :userId AND (" +
@@ -33,7 +33,7 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
             "   (wsv.wifiSpotVisitEndDateTime IS NULL OR :endDateTime < wsv.wifiSpotVisitEndDateTime.value)) " +
             "   OR " +
             "   (:startDateTime < wsv.wifiSpotVisitStartDateTime.value AND " +
-            "   (wsv.wifiSpotVisitEndDateTime IS NULL OR wsv.wifiSpotVisitEndDateTime.value > :endDateTime))" +
+            "   (wsv.wifiSpotVisitEndDateTime IS NULL OR wsv.wifiSpotVisitEndDateTime.value < :endDateTime))" +
             ")")
     boolean existsWifiSpotVisitConflictingIntervalByUserId(
             @Param("startDateTime") LocalDateTime startDateTime,

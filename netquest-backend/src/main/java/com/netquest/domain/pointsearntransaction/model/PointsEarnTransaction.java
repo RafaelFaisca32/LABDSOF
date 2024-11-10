@@ -1,7 +1,9 @@
 package com.netquest.domain.pointsearntransaction.model;
 
 
+import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +20,7 @@ import java.time.temporal.ChronoUnit;
 @Table(name = "points_earn_transaction")
 public class PointsEarnTransaction {
 
-    private final int MINUTE_POINTS_MULTIPLIER = 5;
+    private static final int MINUTE_POINTS_MULTIPLIER = 5;
 
     @EmbeddedId
     @AttributeOverrides({
@@ -50,6 +52,10 @@ public class PointsEarnTransaction {
     })
     private UserId userId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "points_earn_transaction_user_id", insertable = false, updatable = false)
+    private User user;
+
 
     @Embedded
     @AttributeOverrides({
@@ -57,6 +63,10 @@ public class PointsEarnTransaction {
     })
     private WifiSpotVisitId wifiSpotVisitId;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_id", insertable = false, updatable = false)
+    private WifiSpotVisit wifiSpotVisit;
 
     /*
     public PointsEarnTransaction(PointsEarnTransactionAmount pointsEarnTransactionAmount) {

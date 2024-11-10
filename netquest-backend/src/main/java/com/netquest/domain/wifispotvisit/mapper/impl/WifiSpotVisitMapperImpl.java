@@ -11,6 +11,8 @@ import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitStartDateTime;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 
 @Service
 public class WifiSpotVisitMapperImpl implements WifiSpotVisitMapper {
@@ -30,12 +32,12 @@ public class WifiSpotVisitMapperImpl implements WifiSpotVisitMapper {
     }
 
     @Override
-    public WifiSpotVisit toNewEntity(WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
+    public WifiSpotVisit toNewEntity(UUID userUUID, WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
         return new WifiSpotVisit(
                 new WifiSpotVisitStartDateTime(wifiSpotVisitCreateDto.getStartDateTime()),
                 new WifiSpotVisitEndDateTime(wifiSpotVisitCreateDto.getEndDateTime()),
                 new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId()),
-                new UserId(wifiSpotVisitCreateDto.getUserId()));
+                new UserId(userUUID));
     }
 
     @Override
