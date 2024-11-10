@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteUser } from '../misc/BookApi';
+import { deleteUserById} from '../misc/BookApi';
 import { useAuth } from '../context/AuthContext';
 
 function DeleteAccount() {
@@ -12,7 +12,7 @@ function DeleteAccount() {
 
   const handleConfirmDelete = async () => {
     try {
-      await deleteUser(user,user.name);
+      await deleteUserById(user,user.id);
       userLogout(); // Log out the user after deletion
       navigate('/'); // Redirect to home page
     } catch (error) {

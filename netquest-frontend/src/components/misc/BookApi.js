@@ -47,6 +47,13 @@ export function deleteUser(user, username) {
   })
 }
 
+export function deleteUserById(user,userId) {
+  console.log(userId)
+  return instance.delete(`/api/users/deleteUserByid/${userId}`, {
+    headers: { 'Authorization': basicAuth(user) }
+  })
+}
+
 function getBooks(user, text) {
   const url = text ? `/api/books?text=${text}` : '/api/books'
   return instance.get(url, {
