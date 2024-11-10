@@ -15,7 +15,6 @@ import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
-import com.netquest.domain.wifispotvisit.model.WifiSpotVisitStartDateTime;
 import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
 import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +55,10 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
                 userId
         )){
             throw new WifiSpotVisitDatesConflictException("There is a conflict of dates to another visit for this user");
+        }
+        WifiSpotId wifiSpotId = new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId());
+        if(wifiSpotVisitRepository.existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(userId,wifiSpotId,wifiSpotVisitCreateDto.getStartDateTime())){
+            throw new WifiSpotVisitInSameWifiSpotInLast10Minutes("There is already a visit in the same wifi spot in last 10 minutes");
         }
 
         WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));

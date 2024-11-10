@@ -3,19 +3,15 @@ package com.netquest.infrastructure.wifispotvisit;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
-import com.netquest.domain.wifispotvisit.model.WifiSpotVisitEndDateTime;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
-import com.netquest.domain.wifispotvisit.model.WifiSpotVisitStartDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, WifiSpotVisitId> {
@@ -48,4 +44,11 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
     @Query("SELECT wsv from WifiSpotVisit wsv where wsv.wifiSpotVisitEndDateTime IS NULL and wsv.userId = :userId")
     Optional<WifiSpotVisit> findOngoingWifiSpotVisitByUserId(@Param("userId") UserId userId);
 
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM wifi_spot_visit wsv " +
+            "WHERE wsv.user_id = :userId AND " +
+            "wsv.wifi_spot_id = :wifiSpotId AND " +
+            "(wsv.wifi_spot_visit_end_date_time IS NULL OR " +
+            "DATE_ADD(wsv.wifi_spot_visit_end_date_time, INTERVAL 10 MINUTE) >= :start)",
+            nativeQuery = true)
+    boolean existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(UserId userId, WifiSpotId wifiSpotId, LocalDateTime start);
 }
