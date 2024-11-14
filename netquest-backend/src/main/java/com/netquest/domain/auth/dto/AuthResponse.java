@@ -1,4 +1,6 @@
 package com.netquest.domain.auth.dto;
 
-public record AuthResponse(Long id, String name, String role) {
+import java.util.UUID;
+
+public record AuthResponse(UUID id, String name, String role) {
 }

@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private CustomUserDetails mapUserToCustomUserDetails(User user, List<SimpleGrantedAuthority> authorities) {
         CustomUserDetails customUserDetails = new CustomUserDetails();
-        customUserDetails.setId(user.getId());
+        customUserDetails.setId(user.getUserId().getValue());
         customUserDetails.setUsername(user.getUsername());
         customUserDetails.setPassword(user.getPassword());
         customUserDetails.setName(user.getName());
