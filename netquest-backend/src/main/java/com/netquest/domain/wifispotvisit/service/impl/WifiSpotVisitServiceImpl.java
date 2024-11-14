@@ -20,6 +20,7 @@ import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -57,7 +58,8 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
             throw new WifiSpotVisitDatesConflictException("There is a conflict of dates to another visit for this user");
         }
         WifiSpotId wifiSpotId = new WifiSpotId(wifiSpotVisitCreateDto.getWifiSpotId());
-        if(wifiSpotVisitRepository.existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(userId,wifiSpotId,wifiSpotVisitCreateDto.getStartDateTime())){
+        LocalDateTime wifiSpotVisitStartDate10MinutesAgo = wifiSpotVisitCreateDto.getStartDateTime().minusMinutes(10);
+        if(wifiSpotVisitRepository.existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(userId,wifiSpotId,wifiSpotVisitStartDate10MinutesAgo)){
             throw new WifiSpotVisitInSameWifiSpotInLast10Minutes("There is already a visit in the same wifi spot in last 10 minutes");
         }
 

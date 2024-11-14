@@ -44,11 +44,10 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
     @Query("SELECT wsv from WifiSpotVisit wsv where wsv.wifiSpotVisitEndDateTime IS NULL and wsv.userId = :userId")
     Optional<WifiSpotVisit> findOngoingWifiSpotVisitByUserId(@Param("userId") UserId userId);
 
-    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM wifi_spot_visit wsv " +
-            "WHERE wsv.user_id = :userId AND " +
-            "wsv.wifi_spot_id = :wifiSpotId AND " +
-            "(wsv.wifi_spot_visit_end_date_time IS NULL OR " +
-            "DATE_ADD(wsv.wifi_spot_visit_end_date_time, INTERVAL 10 MINUTE) >= :start)",
-            nativeQuery = true)
-    boolean existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(UserId userId, WifiSpotId wifiSpotId, LocalDateTime start);
+    @Query(value = "SELECT CASE WHEN COUNT(wsv) > 0 THEN TRUE ELSE FALSE END FROM WifiSpotVisit wsv " +
+            "WHERE wsv.userId = :userId AND " +
+            " wsv.wifiSpotId = :wifiSpotId AND " +
+            " (wsv.wifiSpotVisitEndDateTime IS NULL OR " +
+            " wsv.wifiSpotVisitEndDateTime.value >= :date10Minutes )")
+    boolean existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(UserId userId, WifiSpotId wifiSpotId, LocalDateTime date10Minutes);
 }
