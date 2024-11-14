@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -89,6 +90,18 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
         createPointsEarnTransactionBasedOnVisit(wifiSpotVisitDto);
         return wifiSpotVisitDto;
+    }
+
+    @Override
+    public WifiSpotVisitDto getWifiSpotVisitOngoing(UUID userUUID) {
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+        UserId userId = new UserId(userUUID);
+        WifiSpotVisit wifiSpotVisit = wifiSpotVisitRepository.getOnGoingWifiSpotVisitByUserId(userId).orElseThrow(
+                () -> new WifiSpotVisitNotFoundException("There is not any wifi spot visit ongoing"));
+        return wifiSpotVisitMapper.toDto(wifiSpotVisit);
+
     }
 
 

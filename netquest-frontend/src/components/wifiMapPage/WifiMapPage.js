@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import SpotDetailsModal from './SpotDetailsModal';
 import AddSpotModal from './AddSpotModal';
 
+
 const userIcon = new L.Icon({
   iconUrl: '/icons/user.png', 
   iconSize: [32, 32],
@@ -122,6 +123,7 @@ function WifiMapPage() {
       {selectedSpot && (
         <SpotDetailsModal userLocation={userLocation} onClose={closeSpotModal} spot={selectedSpot}></SpotDetailsModal>
       )}
+
     </Container>
   );
 }

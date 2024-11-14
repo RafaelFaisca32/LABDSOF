@@ -50,4 +50,7 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
             " (wsv.wifiSpotVisitEndDateTime IS NULL OR " +
             " wsv.wifiSpotVisitEndDateTime.value >= :date10Minutes )")
     boolean existsWifiSpotVisitInSameWifiSpotInLast10MinutesByUserId(UserId userId, WifiSpotId wifiSpotId, LocalDateTime date10Minutes);
+
+    @Query("SELECT wsv from WifiSpotVisit wsv where wsv.wifiSpotVisitEndDateTime IS NULL and wsv.userId = :userId")
+    Optional<WifiSpotVisit> getOnGoingWifiSpotVisitByUserId(UserId userId);
 }

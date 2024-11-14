@@ -1,12 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Header, Button } from 'semantic-ui-react';
+import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
+import { useAuth } from '../context/AuthContext';
+import { errorNotification, successNotification } from "../misc/Helpers";
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
+  const Auth = useAuth();
+  const user = Auth.getUser();
+  const [existsVisit, setExistsVisit] = useState(null); // Track if visit exists
+
+  const checkVisit = async () => {
+    if(!spot) return false;
+    try {
+      const response = await wifiSpotVisitApi.getOngoingWifiSpotVisit();
+      if (response && response.status === 200) {
+        console.log(response);
+        return response.data.wifiSpotId === spot.id; // Check if ongoing visit matches current spot
+      }
+    } catch (err) {
+      errorNotification(err.response?.data?.message || "Error checking visit");
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    checkVisit().then(result => setExistsVisit(result));
+  }, [checkVisit]); // Run checkVisit on component mount
+
   if (!spot) return null;
 
+  spot.id = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Hardcoded spot ID for now
+
   const openDirections = () => {
-    const [userLat, userLng] = userLocation || [null, null]; 
-    const { lat: spotLat, lng: spotLng } = spot.coordinates; 
+    const [userLat, userLng] = userLocation || [null, null];
+    const { lat: spotLat, lng: spotLng } = spot.coordinates;
     if (userLat === null || userLng === null) {
       alert("User location is not available.");
       return;
@@ -14,7 +41,6 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${spotLat},${spotLng}&travelmode=driving`;
     const wazeUrl = `https://waze.com/ul?q=${spot.name}&lat=${spotLat}&lon=${spotLng}&z=10`;
-
 
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
@@ -26,21 +52,43 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     }
   };
 
-  console.log(userLocation);
+
+
+
+  const createVisit = async () => {
+    try {
+      const response = await wifiSpotVisitApi.createVisit(user, spot.id);
+      if (response && response.status === 201) {
+        onClose(); // Close the modal
+        successNotification("Wifi Spot Visit created successfully.");
+      }
+    } catch (err) {
+      errorNotification(err.response?.data?.message || "Error creating visit");
+    }
+  };
+
+  const finishVisit = async () => {
+    // Implement finishVisit functionality here if needed
+  };
 
   return (
-    <Modal open={!!spot} onClose={onClose} size="small">
-      <Modal.Header>Spot Details</Modal.Header>
-      <Modal.Content>
-        <Header>{spot.name}</Header>
-        <p>Size: {spot.size}</p>
-        <p>Coordinates: {spot.coordinates.lat}, {spot.coordinates.lng}</p>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button onClick={openDirections}>Get Directions</Button>
-        <Button onClick={onClose}>Close</Button>
-      </Modal.Actions>
-    </Modal>
+      <Modal open={!!spot} onClose={onClose} size="small">
+        <Modal.Header>Spot Details</Modal.Header>
+        <Modal.Content>
+          <Header>{spot.name}</Header>
+          <p>Size: {spot.size}</p>
+          <p>Coordinates: {spot.coordinates.lat}, {spot.coordinates.lng}</p>
+        </Modal.Content>
+        <Modal.Actions>
+          {existsVisit ? (
+              <Button onClick={finishVisit}>Finish Visit</Button>
+          ) : (
+              <Button onClick={createVisit}>Record Visit</Button>
+          )}
+          <Button onClick={openDirections}>Get Directions</Button>
+          <Button onClick={onClose}>Close</Button>
+        </Modal.Actions>
+      </Modal>
   );
 }
 
