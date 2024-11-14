@@ -3,22 +3,18 @@ package com.netquest.domain.wifispot.model;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.UUID;
 
 @Embeddable
 @Getter
 @EqualsAndHashCode
 @ToString
-public class WifiSpotId {
-    private final UUID value;
+@NoArgsConstructor(force = true)
+public class WifiSpotAddressCity {
+    private final String value;
 
-    public WifiSpotId(UUID value) {
+    public WifiSpotAddressCity(String value) {
         this.value = value;
-    }
-
-    public WifiSpotId() {
-        this.value = UUID.randomUUID();
     }
 }

@@ -11,14 +11,14 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @ToString
-public class WifiSpotId {
+public class WifiSpotAddressId {
     private final UUID value;
 
-    public WifiSpotId(UUID value) {
+    public WifiSpotAddressId(UUID value) {
         this.value = value;
     }
 
-    public WifiSpotId() {
+    public WifiSpotAddressId() {
         this.value = UUID.randomUUID();
     }
 }
