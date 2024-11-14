@@ -1,11 +1,6 @@
 package com.netquest.domain.user.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,9 +13,11 @@ import lombok.NoArgsConstructor;
 })
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride( name = "value", column = @Column(name = "user_id"))
+    })
+    private UserId userId;
 
     private String username;
     private String password;
@@ -29,6 +26,7 @@ public class User {
     private String role;
 
     public User(String username, String password, String name, String email, String role) {
+        this.userId = new UserId();
         this.username = username;
         this.password = password;
         this.name = name;

@@ -54,11 +54,18 @@ footer "Generated with PlantUML on %date%"
             FontColor #FF4500
         }
 
-        .pointstransaction {
+        .pointsearntransaction {
             BackgroundColor #FFFACD
             BorderColor #DAA520
             FontColor #DAA520
         }
+
+        .pointswastetransaction {
+            BackgroundColor: #FFFFE0
+            BorderColor: #FFD700
+            FontColor: #FFD700
+        }
+
 
         .offerRedeemed {
             BackgroundColor: #E6E6FA
@@ -515,60 +522,62 @@ frame "Wifi Spot Visit Aggregate" <<wifispotvisit>> {
 
 }
 
-frame "Points Transaction Aggregate" <<pointstransaction>> {
+frame "Points Earn Transaction Aggregate" <<pointsearntransaction>> {
 
-    Class PointsTransaction <<AggregateRoot>> {
+    Class PointsEarnTransaction <<AggregateRoot>> {
 
     }
 
-    Class PointsTransactionDate <<ValueObject>> {
+    Class PointsEarnTransactionDate <<ValueObject>> {
         value: datetime
     }
 
-    Class PointsTransactionId <<ValueObject>> {
+    Class PointsEarnTransactionId <<ValueObject>> {
         value: UUIDv4
-    }
-
-    Class PointsEarnTransaction <<Entity>> {
-
     }
 
     Class PointsEarnTransactionAmount <<ValueObject>> {
         value: int
     }
 
-    Class PointsWasteTransaction <<Entity>>{
+    'PointsEarnTransaction Relationships w/ VOs
+    PointsEarnTransaction -- PointsEarnTransactionDate
+    PointsEarnTransaction -- PointsEarnTransactionId
+    PointsEarnTransaction -- PointsEarnTransactionAmount
 
+    'PointsEarnTransaction Relationships w/ Entities
+    PointsEarnTransaction "1" --> "1" User : referenced by
+    PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
+    PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
+    PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
+       
+}
+
+frame "Points Waste Transaction Aggregate" <<pointswastetransaction>> {
+
+    Class PointsWasteTransaction <<AggregateRoot>> {
+
+    }
+
+    Class PointsWasteTransactionDate <<ValueObject>> {
+        value: datetime
+    }
+
+    Class PointsWasteTransactionId <<ValueObject>> {
+        value: UUIDv4
     }
 
     Class PointsWasteTransactionAmount <<ValueObject>> {
         value: int
     }
 
-    
-
     'PointsTransaction Relationships w/ VOs
-    PointsTransaction -- PointsTransactionDate
-    PointsTransaction -- PointsTransactionId
-
-    'PointsTransaction Relationships w/ Entities
-    PointsTransaction "*" <-- "1" User : a user makes
-
-    'PointsEarnTransaction Relationships w/ VOs
-    PointsEarnTransaction -- PointsEarnTransactionAmount
-
-    'PointsEarnTransaction Relationships w/ Entities
-    PointsEarnTransaction --o PointsTransaction
-    PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
-    PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
-    PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
-
-    'PointsWasteTransaction Relationships w/ VOs
+    PointsWasteTransaction -- PointsWasteTransactionDate
+    PointsWasteTransaction -- PointsWasteTransactionId
     PointsWasteTransaction -- PointsWasteTransactionAmount
 
-
-    'PointsWasteTransaction Relationships w/ Entities
-    PointsWasteTransaction --o PointsTransaction
+    'PointsTransaction Relationships w/ Entities
+    PointsWasteTransaction "1" --> "1" User : referenced by
     PointsWasteTransaction "1" --> "1" Offer : points are wasted by buying offers
     
 }

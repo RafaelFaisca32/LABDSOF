@@ -8,6 +8,7 @@ import Login from './components/home/Login'
 import Signup from './components/home/Signup'
 import AdminPage from './components/admin/AdminPage'
 import WifiMapPage from './components/wifiMapPage/WifiMapPage'
+import DeleteAccount from './components/delete/DeleteAccount'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path="/adminpage" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/wifispot" element={<PrivateRoute><WifiMapPage /></PrivateRoute>} />
+          <Route path="/delete-account" element={<PrivateRoute><DeleteAccount /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
