@@ -35,7 +35,7 @@ public class WifiSpotVisitController {
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/update-end-date-time/{id}")
     public WifiSpotVisitDto updateWifiSpotVisitEndDateTime(
             @PathVariable(name = "id") UUID wifiSpotVisitUUID,
