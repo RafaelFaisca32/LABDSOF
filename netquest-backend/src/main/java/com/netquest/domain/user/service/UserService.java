@@ -20,7 +20,11 @@ public interface UserService {
 
     User saveUser(User user);
 
+    User getUserById(UUID userUUID);
+
     void deleteUser(User user);
+
+    void deleteUserById(UUID userUUID);
 
     Optional<User> validUsernameAndPassword(String username, String password);
 

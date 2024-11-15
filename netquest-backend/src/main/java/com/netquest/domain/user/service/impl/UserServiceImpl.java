@@ -58,6 +58,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserById(UUID userUUID) {
+        UserId userId = new UserId(userUUID);
+        userRepository.deleteById(userId);
+    }
+
+    @Override
+    public User getUserById(UUID userUUID) {
+        UserId userId = new UserId(userUUID);
+        return userRepository.findById(userId).orElseThrow();
+    }
+
+    @Override
     public Optional<User> validUsernameAndPassword(String username, String password) {
         return getUserByUsername(username)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()));

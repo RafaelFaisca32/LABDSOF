@@ -40,8 +40,14 @@ function getUsers(user, username) {
   })
 }
 
-function deleteUser(user, username) {
+export function deleteUser(user, username) {
   return instance.delete(`/api/users/${username}`, {
+    headers: { 'Authorization': basicAuth(user) }
+  })
+}
+
+export function deleteUserById(user) {
+  return instance.delete(`/api/users/deleteMyAccount`, {
     headers: { 'Authorization': basicAuth(user) }
   })
 }
