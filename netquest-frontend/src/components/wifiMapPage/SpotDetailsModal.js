@@ -8,24 +8,34 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
   const Auth = useAuth();
   const user = Auth.getUser();
   const [existsVisit, setExistsVisit] = useState(null); // Track if visit exists
+  const [loading, setLoading] = useState(true);
+  const [wifiSpotVisitId,setWifiSpotVisitId] = useState(null);
 
-  const checkVisit = async () => {
-    if(!spot) return false;
-    try {
-      const response = await wifiSpotVisitApi.getOngoingWifiSpotVisit();
-      if (response && response.status === 200) {
-        console.log(response);
-        return response.data.wifiSpotId === spot.id; // Check if ongoing visit matches current spot
-      }
-    } catch (err) {
-      errorNotification(err.response?.data?.message || "Error checking visit");
-    }
-    return false;
-  };
 
   useEffect(() => {
-    checkVisit().then(result => setExistsVisit(result));
-  }, [checkVisit]); // Run checkVisit on component mount
+    const fetchVisitStatus = async () => {
+      if (!spot) return; // Ensure spot is defined
+      setLoading(true);
+      try {
+        const response = await wifiSpotVisitApi.getOngoingWifiSpotVisit(user);
+        if (response && response.status === 200) {
+          if(response.data.wifiSpotId === spot.id) {
+            setExistsVisit(true);
+            setWifiSpotVisitId(response.data.id);
+          }
+        }
+      } catch (err) {
+        if(err.response && err.response.status !== 404) {
+          errorNotification(err.response?.data?.message || "Error checking visit");
+        }
+        setExistsVisit(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisitStatus();
+  }, [spot]);
 
   if (!spot) return null;
 
@@ -68,7 +78,15 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
   };
 
   const finishVisit = async () => {
-    // Implement finishVisit functionality here if needed
+    try {
+      const response = await wifiSpotVisitApi.endVisit(user,wifiSpotVisitId);
+      if (response && response.status === 200) {
+        onClose(); // Close the modal
+        successNotification("Wifi Spot Visit finished successfully.");
+      }
+    } catch (err) {
+      errorNotification(err.response?.data?.message || "Error finishing visit");
+    }
   };
 
   return (
@@ -78,6 +96,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
           <Header>{spot.name}</Header>
           <p>Size: {spot.size}</p>
           <p>Coordinates: {spot.coordinates.lat}, {spot.coordinates.lng}</p>
+          {loading && <p>Loading visit status...</p>}
         </Modal.Content>
         <Modal.Actions>
           {existsVisit ? (
