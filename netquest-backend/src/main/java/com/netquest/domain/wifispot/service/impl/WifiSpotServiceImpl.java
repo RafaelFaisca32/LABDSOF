@@ -1,10 +1,18 @@
 package com.netquest.domain.wifispot.service.impl;
 
+import com.netquest.domain.shared.BandwithType;
+import com.netquest.domain.shared.QualityType;
+import com.netquest.domain.shared.StrengthType;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.User;
+import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
+import com.netquest.domain.wifispot.dto.WifiSpotDto;
+import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
+import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.infrastructure.user.UserRepository;
+import com.netquest.infrastructure.wifispot.WifiSpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,50 +23,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class WifiSpotServiceImpl implements WifiSpotService {
-
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final WifiSpotRepository wifiSpotRepository;
+    private final WifiSpotMapper wifiSpotMapper;
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<WifiSpotDto> getWifiSpots() {
+        List<WifiSpot> wifiSpotList = wifiSpotRepository.findAll();
+        return wifiSpotList.stream().map(wifiSpotMapper::wifiSpotDomainToDto).toList();
     }
 
     @Override
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public boolean hasUserWithUsername(String username) {
-        return userRepository.existsByUsername(username);
-    }
-
-    @Override
-    public boolean hasUserWithEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    @Override
-    public User validateAndGetUserByUsername(String username) {
-        return getUserByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with username %s not found", username)));
-    }
-
-    @Override
-    public User saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
-    @Override
-    public void deleteUser(User user) {
-        userRepository.delete(user);
-    }
-
-    @Override
-    public Optional<User> validUsernameAndPassword(String username, String password) {
-        return getUserByUsername(username)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()));
+    public WifiSpotDto createWifiSpot(WifiSpotCreateDto wifiSpotDto) {
+        WifiSpot wifiSpot = wifiSpotMapper.wifiSpotCreateDtoToDomain(wifiSpotDto);
+        return wifiSpotMapper.wifiSpotDomainToDto(wifiSpotRepository.save(wifiSpot));
     }
 }

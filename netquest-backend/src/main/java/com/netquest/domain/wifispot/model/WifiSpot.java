@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 @Entity
 @Table(name = "wifi_spot", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "wifi_spot_latitude"),
-        @UniqueConstraint(columnNames = "wifi_spot_longitude")
+        @UniqueConstraint(columnNames = {"wifi_spot_latitude", "wifi_spot_longitude"})
 })
 public class WifiSpot {
 
@@ -23,61 +22,62 @@ public class WifiSpot {
     @Embedded
     @NotNull
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_name"))
+            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_name", nullable = false))
     })
     private final WifiSpotName wifiSpotName;
 
     @Embedded
+    @NotNull
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_description"))
+            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_description", nullable = false))
     })
     private final WifiSpotDescription wifiSpotDescription;
 
     @Embedded
     @NotNull
     @AttributeOverrides({
-            @AttributeOverride(name = "longitude", column = @Column(name = "wifi_spot_longitude")),
-            @AttributeOverride(name = "latitude", column = @Column(name = "wifi_spot_latitude"))
+            @AttributeOverride(name = "longitude", column = @Column(name = "wifi_spot_longitude", nullable = false)),
+            @AttributeOverride(name = "latitude", column = @Column(name = "wifi_spot_latitude", nullable = false))
     })
     private final WifiSpotCoordinates wifiSpotCoordinates;
 
     @Embedded
     @NotNull
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_location_type"))
+            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_location_type", nullable = false))
     })
     private final WifiSpotLocationType wifiSpotLocationType;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "wifiQuality", column = @Column(name = "wifi_spot_wifi_quality")),
-            @AttributeOverride(name = "signalStrength", column = @Column(name = "wifi_spot_signal_strength")),
-            @AttributeOverride(name = "bandwithLimitations", column = @Column(name = "wifi_spot_bandwith_limitations"))
+            @AttributeOverride(name = "wifiQuality", column = @Column(name = "wifi_spot_wifi_quality", nullable = false)),
+            @AttributeOverride(name = "signalStrength", column = @Column(name = "wifi_spot_signal_strength", nullable = false)),
+            @AttributeOverride(name = "bandwithLimitations", column = @Column(name = "wifi_spot_bandwith_limitations", nullable = false))
     })
     private final WifiSpotQualityIndicators wifiSpotQualityIndicators;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "crowded", column = @Column(name = "wifi_spot_crowded")),
-            @AttributeOverride(name = "coveredArea", column = @Column(name = "wifi_spot_covered_area")),
-            @AttributeOverride(name = "airConditioning", column = @Column(name = "wifi_spot_air_conditioning")),
-            @AttributeOverride(name = "outdoorSeating", column = @Column(name = "wifi_spot_outdoor_seating")),
-            @AttributeOverride(name = "goodView", column = @Column(name = "wifi_spot_good_view")),
-            @AttributeOverride(name = "noiseLevel", column = @Column(name = "wifi_spot_noise_level")),
-            @AttributeOverride(name = "petFriendly", column = @Column(name = "wifi_spot_pet_fiendly")),
-            @AttributeOverride(name = "childFriendly", column = @Column(name = "wifi_spot_child_friendly")),
-            @AttributeOverride(name = "disabledAccess", column = @Column(name = "wifi_spot_disabled_access"))
+            @AttributeOverride(name = "crowded", column = @Column(name = "wifi_spot_crowded", nullable = false)),
+            @AttributeOverride(name = "coveredArea", column = @Column(name = "wifi_spot_covered_area", nullable = false)),
+            @AttributeOverride(name = "airConditioning", column = @Column(name = "wifi_spot_air_conditioning", nullable = false)),
+            @AttributeOverride(name = "outdoorSeating", column = @Column(name = "wifi_spot_outdoor_seating", nullable = false)),
+            @AttributeOverride(name = "goodView", column = @Column(name = "wifi_spot_good_view", nullable = false)),
+            @AttributeOverride(name = "noiseLevel", column = @Column(name = "wifi_spot_noise_level", nullable = false)),
+            @AttributeOverride(name = "petFriendly", column = @Column(name = "wifi_spot_pet_fiendly", nullable = false)),
+            @AttributeOverride(name = "childFriendly", column = @Column(name = "wifi_spot_child_friendly", nullable = false)),
+            @AttributeOverride(name = "disabledAccess", column = @Column(name = "wifi_spot_disabled_access", nullable = false))
     })
     private final WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "availablePowerOutlets", column = @Column(name = "wifi_spot_available_power_outlets")),
-            @AttributeOverride(name = "chargingStations", column = @Column(name = "wifi_spot_charging_stations")),
-            @AttributeOverride(name = "restroomsAvailable", column = @Column(name = "wifi_spot_restrooms_available")),
-            @AttributeOverride(name = "parkingAvailability", column = @Column(name = "wifi_spot_parking_availability")),
-            @AttributeOverride(name = "foodOptions", column = @Column(name = "wifi_spot_food_options")),
-            @AttributeOverride(name = "drinkOptions", column = @Column(name = "wifi_spot_drink_options"))
+            @AttributeOverride(name = "availablePowerOutlets", column = @Column(name = "wifi_spot_available_power_outlets", nullable = false)),
+            @AttributeOverride(name = "chargingStations", column = @Column(name = "wifi_spot_charging_stations", nullable = false)),
+            @AttributeOverride(name = "restroomsAvailable", column = @Column(name = "wifi_spot_restrooms_available", nullable = false)),
+            @AttributeOverride(name = "parkingAvailability", column = @Column(name = "wifi_spot_parking_availability", nullable = false)),
+            @AttributeOverride(name = "foodOptions", column = @Column(name = "wifi_spot_food_options", nullable = false)),
+            @AttributeOverride(name = "drinkOptions", column = @Column(name = "wifi_spot_drink_options", nullable = false))
     })
     private final WifiSpotFacilities wifiSpotFacilities;
 
@@ -91,17 +91,33 @@ public class WifiSpot {
     })
     private final WifiSpotWeatherFeatures wifiSpotWeatherFeatures;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "wifi_spot_address_id", referencedColumnName = "wifi_spot_address_id", nullable = false)
     private final WifiSpotAddress wifiSpotAddress;
 
     @Embedded
+    @NotNull
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_management"))
+            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_management", nullable = false))
     })
     private final WifiSpotManagement wifiSpotManagement;
 
     public WifiSpot(WifiSpotName wifiSpotName, WifiSpotDescription wifiSpotDescription, WifiSpotCoordinates wifiSpotCoordinates, WifiSpotLocationType wifiSpotLocationType, WifiSpotQualityIndicators wifiSpotQualityIndicators, WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures, WifiSpotFacilities wifiSpotFacilities, WifiSpotWeatherFeatures wifiSpotWeatherFeatures, WifiSpotAddress wifiSpotAddress, WifiSpotManagement wifiSpotManagement) {
         this.wifiSpotId = new WifiSpotId();
+        this.wifiSpotName = wifiSpotName;
+        this.wifiSpotDescription = wifiSpotDescription;
+        this.wifiSpotCoordinates = wifiSpotCoordinates;
+        this.wifiSpotLocationType = wifiSpotLocationType;
+        this.wifiSpotQualityIndicators = wifiSpotQualityIndicators;
+        this.wifiSpotEnvironmentalFeatures = wifiSpotEnvironmentalFeatures;
+        this.wifiSpotFacilities = wifiSpotFacilities;
+        this.wifiSpotWeatherFeatures = wifiSpotWeatherFeatures;
+        this.wifiSpotAddress = wifiSpotAddress;
+        this.wifiSpotManagement = wifiSpotManagement;
+    }
+
+    public WifiSpot(WifiSpotId wifiSpotId, WifiSpotName wifiSpotName, WifiSpotDescription wifiSpotDescription, WifiSpotCoordinates wifiSpotCoordinates, WifiSpotLocationType wifiSpotLocationType, WifiSpotQualityIndicators wifiSpotQualityIndicators, WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures, WifiSpotFacilities wifiSpotFacilities, WifiSpotWeatherFeatures wifiSpotWeatherFeatures, WifiSpotAddress wifiSpotAddress, WifiSpotManagement wifiSpotManagement) {
+        this.wifiSpotId = wifiSpotId;
         this.wifiSpotName = wifiSpotName;
         this.wifiSpotDescription = wifiSpotDescription;
         this.wifiSpotCoordinates = wifiSpotCoordinates;
