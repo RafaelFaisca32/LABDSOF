@@ -4,7 +4,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-      dialect: org.hibernate.dialect.MySQL8Dialect
   datasource:
     url: jdbc:mysql://vsgate-s1.dei.isep.ipp.pt:10406/netquest
     username: root

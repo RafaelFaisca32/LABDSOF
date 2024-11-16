@@ -27,7 +27,7 @@ COPY --from=frontend-build /app/frontend/build /app/backend/src/main/resources/s
 RUN ./mvnw clean package -DskipTests
 
 # Expose the necessary port
-EXPOSE 8080
+EXPOSE 3000
 
 # Start the backend server (adjust the JAR file name as needed)
 CMD ["java", "-jar", "target/netquest-api-0.0.1-SNAPSHOT.jar"]
