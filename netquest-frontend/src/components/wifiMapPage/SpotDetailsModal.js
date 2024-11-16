@@ -39,7 +39,12 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
   if (!spot) return null;
 
-  spot.id = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Hardcoded spot ID for now
+  if(spot.name === "TESTE1"){
+    spot.id = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+  } else {
+    spot.id = "640e326f-2bce-4851-93fc-d982050dd85a";
+  }
+   // Hardcoded spot ID for now
 
   const openDirections = () => {
     const [userLat, userLng] = userLocation || [null, null];
