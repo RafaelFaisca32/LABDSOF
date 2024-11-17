@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { Statistic, Icon, Grid, Container, Image, Segment, Dimmer, Loader } from 'semantic-ui-react'
 import { bookApi } from '../misc/BookApi'
+import { wifiSpotApi } from '../misc/WifiSpotApi'
 import { handleLogError } from '../misc/Helpers'
 
 function Home() {
   const [numberOfUsers, setNumberOfUsers] = useState(0)
+  const [wifiSpotNumbers, setNumberOfWifiSpots] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const responseUsers = await bookApi.numberOfUsers()
+  const fetchData = async () => {
+    setIsLoading(true)
+    try {
+      const responseUsers = await bookApi.numberOfUsers()
+      if (responseUsers.status === 200)
         setNumberOfUsers(responseUsers.data)
 
-      } catch (error) {
-        handleLogError(error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
+      const responseWifiSpots = await wifiSpotApi.getNumberWifiSpots()
+      if (responseWifiSpots.status === 200)
+        setNumberOfWifiSpots(responseWifiSpots.data)
 
+    } catch (error) {
+      handleLogError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
 
@@ -49,7 +56,7 @@ function Home() {
           <Grid.Column textAlign='center'>
             <Segment color='blue'>
               <Statistic>
-                <Statistic.Value><Icon name='wifi' color='grey' />{30}</Statistic.Value>
+                <Statistic.Value><Icon name='wifi' color='grey' />{wifiSpotNumbers}</Statistic.Value>
                 <Statistic.Label>Wi-fi spots</Statistic.Label>
               </Statistic>
             </Segment>

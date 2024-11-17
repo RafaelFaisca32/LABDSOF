@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Container } from 'semantic-ui-react';
+import {Container, Message} from 'semantic-ui-react';
 import { useAuth } from '../context/AuthContext';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import SpotDetailsModal from './SpotDetailsModal';
 import AddSpotModal from './AddSpotModal';
+import { wifiSpotApi } from "../misc/WifiSpotApi"
 
 
 const userIcon = new L.Icon({
@@ -43,16 +44,43 @@ function WifiMapPage() {
   const [spots, setSpots] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [newSpotDetails, setNewSpotDetails] = useState({ coordinates: null, name: '', size: '' });
-  const [selectedSpot, setSelectedSpot] = useState(null); 
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  useEffect(() => {
+  const loadExistingWifiSpots = async () => {
+    const responseGetWifiSpots = await wifiSpotApi.getWifiSpots(user);
+    if (responseGetWifiSpots.status === 200) {
+      const wifiSpotsList = responseGetWifiSpots.data;
+      const formattedSpots = wifiSpotsList.map((spot) => {
+        const coordinates = {
+          lat: spot.latitude,
+          lng: spot.longitude
+        };
+        return {
+          ...spot,
+          coordinates,
+          addressLine1: spot.address.addressLine1,
+          addressLine2: spot.address.addressLine2,
+          city: spot.address.city,
+          district: spot.address.district,
+          country: spot.address.country,
+          zipCode: spot.address.zipCode
+        };
+      });
+      setSpots(formattedSpots); // Set all spots at once to avoid stale state issues
+    }
+  }
+
+  useEffect( () => {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      },
-      (error) => console.error(error),
-      { enableHighAccuracy: true }
+        (position) => {
+          setUserLocation([position.coords.latitude, position.coords.longitude]);
+        },
+        (error) => console.error(error),
+        {enableHighAccuracy: true}
     );
+
+    loadExistingWifiSpots();
   }, []);
 
   const handleMapClick = (coordinates) => {
@@ -60,11 +88,57 @@ function WifiMapPage() {
     setModalOpen(true);
   };
 
-  const addSpot = () => {
-    if (newSpotDetails.coordinates && newSpotDetails.name) {
-      setSpots([...spots, newSpotDetails]);
+  const addSpot = async () => {
+    if (
+        newSpotDetails.coordinates &&
+        newSpotDetails.coordinates.lat &&
+        newSpotDetails.coordinates.lng &&
+        newSpotDetails.name &&
+        newSpotDetails.description &&
+        newSpotDetails.locationType &&
+        newSpotDetails.wifiQuality &&
+        newSpotDetails.signalStrength &&
+        newSpotDetails.bandwidth &&
+        newSpotDetails.crowded !== undefined &&
+        newSpotDetails.coveredArea !== undefined &&
+        newSpotDetails.airConditioning !== undefined &&
+        newSpotDetails.goodView !== undefined &&
+        newSpotDetails.noiseLevel &&
+        newSpotDetails.petFriendly !== undefined &&
+        newSpotDetails.childFriendly !== undefined &&
+        newSpotDetails.disableAccess !== undefined &&
+        newSpotDetails.availablePowerOutlets !== undefined &&
+        newSpotDetails.chargingStations !== undefined &&
+        newSpotDetails.restroomsAvailable !== undefined &&
+        newSpotDetails.parkingAvailability !== undefined &&
+        newSpotDetails.foodOptions !== undefined &&
+        newSpotDetails.drinkOptions !== undefined &&
+        newSpotDetails.addressLine1 &&
+        newSpotDetails.city &&
+        newSpotDetails.district &&
+        newSpotDetails.country &&
+        newSpotDetails.zipCode
+    ) {
+      newSpotDetails.latitude = newSpotDetails.coordinates.lat;
+      newSpotDetails.longitude = newSpotDetails.coordinates.lng;
+      newSpotDetails.address = {
+        addressLine1: newSpotDetails.addressLine1,
+        addressLine2: newSpotDetails.addressLine2,
+        city: newSpotDetails.city,
+        district: newSpotDetails.district,
+        country: newSpotDetails.country,
+        zipCode: newSpotDetails.zipCode
+      }
+      const responseCreateWifiSpot = await wifiSpotApi.createWifiSpot(user, newSpotDetails);
+      if (responseCreateWifiSpot && responseCreateWifiSpot.status === 201) {
+        setSpots([...spots, newSpotDetails]);
+        setShowSuccessMessage(true);
+        setModalOpen(false);
+      }
+    } else {
+      alert("Missing mandatory fields!");
     }
-    setModalOpen(false);
+
   };
 
   const openSpotModal = (spot) => {
@@ -123,7 +197,11 @@ function WifiMapPage() {
       {selectedSpot && (
         <SpotDetailsModal userLocation={userLocation} onClose={closeSpotModal} spot={selectedSpot}></SpotDetailsModal>
       )}
-
+      {showSuccessMessage && (
+          <Message positive>
+            <Message.Header>Wi-Fi spot registered successfully and shared with others!</Message.Header>
+          </Message>
+      )}
     </Container>
   );
 }

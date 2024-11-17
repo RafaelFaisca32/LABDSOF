@@ -12,7 +12,6 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class WifiSpotId {
-
     private final UUID value;
 
     public WifiSpotId(UUID value) {
@@ -22,5 +21,4 @@ public class WifiSpotId {
     public WifiSpotId() {
         this.value = UUID.randomUUID();
     }
-
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Header, Button } from 'semantic-ui-react';
 import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
 import { useAuth } from '../context/AuthContext';
 import { errorNotification, successNotification } from "../misc/Helpers";
+import {Modal, Header, Button, Segment} from 'semantic-ui-react';
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
   const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
