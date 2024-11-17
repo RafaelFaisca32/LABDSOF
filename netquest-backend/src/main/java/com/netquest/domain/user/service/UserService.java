@@ -1,6 +1,8 @@
 package com.netquest.domain.user.service;
 
 import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.UserMail;
+import com.netquest.domain.user.model.Username;
 
 import java.util.List;
 import java.util.Optional;
