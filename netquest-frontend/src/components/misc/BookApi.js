@@ -10,7 +10,8 @@ export const bookApi = {
   deleteUser,
   getBooks,
   deleteBook,
-  addBook
+  addBook,
+  getWifiSpots
 }
 
 function authenticate(username, password) {
@@ -27,6 +28,10 @@ function signup(user) {
 
 function numberOfUsers() {
   return instance.get('/public/numberOfUsers')
+}
+
+function getWifiSpots() {
+  return instance.get('/public/number-wifi-spots')
 }
 
 function numberOfBooks() {
@@ -48,7 +53,7 @@ export function deleteUser(user, username) {
 
 export function deleteUserById(user) {
   return instance.delete(`/api/users/deleteMyAccount`, {
-    headers: { 'Authorization': basicAuth(user) }
+    headers: {'Authorization': basicAuth(user)}
   })
 }
 
