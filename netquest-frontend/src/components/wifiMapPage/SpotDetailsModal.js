@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Header, Button } from 'semantic-ui-react';
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
-  const [isAppSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
+  const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
 
   if (!spot) return null;
 
@@ -51,8 +51,8 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
         <Button onClick={openDirections}>Get Directions</Button>
         <Button onClick={onClose}>Close</Button>
       </Modal.Actions>
-      {isAppSelectionModalOpen && (
-        <Modal open={isAppSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
+      {appSelectionModalOpen && (
+        <Modal open={appSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
           <Modal.Header>Select App to Open Directions</Modal.Header>
           <Modal.Content>
             <Button onClick={() => handleAppSelection('googleMaps')}>Open with Google Maps</Button>
