@@ -37,4 +37,9 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         WifiSpot wifiSpot = wifiSpotMapper.wifiSpotCreateDtoToDomain(wifiSpotDto);
         return wifiSpotMapper.wifiSpotDomainToDto(wifiSpotRepository.save(wifiSpot));
     }
+
+    @Override
+    public int getNumberOfWifiSpots() {
+        return wifiSpotRepository.getNumberOfWifiSpots();
+    }
 }

@@ -12,4 +12,6 @@ public interface WifiSpotService {
     List<WifiSpotDto> getWifiSpots();
 
     WifiSpotDto createWifiSpot(WifiSpotCreateDto wifiSpotDto);
+
+    int getNumberOfWifiSpots();
 }

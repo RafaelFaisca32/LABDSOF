@@ -5,6 +5,7 @@ import { handleLogError } from '../misc/Helpers'
 
 function Home() {
   const [numberOfUsers, setNumberOfUsers] = useState(0)
+  const [wifiSpotNumbers, setNumberOfWifiSpots] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -13,6 +14,9 @@ function Home() {
       try {
         const responseUsers = await bookApi.numberOfUsers()
         setNumberOfUsers(responseUsers.data)
+
+        const responseWifiSpots = await bookApi.getWifiSpots()
+        setNumberOfWifiSpots(responseWifiSpots.data)
 
       } catch (error) {
         handleLogError(error)
@@ -49,7 +53,7 @@ function Home() {
           <Grid.Column textAlign='center'>
             <Segment color='blue'>
               <Statistic>
-                <Statistic.Value><Icon name='wifi' color='grey' />{30}</Statistic.Value>
+                <Statistic.Value><Icon name='wifi' color='grey' />{wifiSpotNumbers}</Statistic.Value>
                 <Statistic.Label>Wi-fi spots</Statistic.Label>
               </Statistic>
             </Segment>
