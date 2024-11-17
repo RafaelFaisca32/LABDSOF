@@ -4,11 +4,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-      dialect: org.hibernate.dialect.MySQL8Dialect
   datasource:
     url: jdbc:mysql://localhost:10406/netquest
     username: root
     password: htLD7J9wkLaS
+
 app:
   cors:
     allowed-origins: http://localhost:3000, https://netquest-dev-environment.onrender.com, https://netquest-labdsof-prod.onrender.com

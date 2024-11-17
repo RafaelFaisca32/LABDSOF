@@ -15,22 +15,55 @@ public class User {
 
     @EmbeddedId
     @AttributeOverrides({
-            @AttributeOverride( name = "value", column = @Column(name = "user_id"))
+            @AttributeOverride(name = "value", column = @Column(name = "user_id"))
     })
     private UserId userId;
 
-    private String username;
-    private String password;
-    private String name;
-    private String email;
-    private String role;
+    @Embedded
+    private UserFirstName firstName;
 
-    public User(String username, String password, String name, String email, String role) {
+    @Embedded
+    private UserLastName lastName;
+
+    @Enumerated(EnumType.STRING)
+    private UserGender gender;
+
+    @Embedded
+    private Username username;
+
+    @Embedded
+    private UserMail email;
+
+    @Embedded
+    private UserPassword password;
+
+    @Embedded
+    private UserBirthDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Embedded
+    private UserAddress address;
+
+    @Embedded
+    private UserVATNumber vatNumber;
+
+    public User(UserFirstName firstName, UserLastName lastName, UserGender gender, Username username,
+                UserPassword password, UserMail email, UserBirthDate birthDate, UserRole role,
+                UserAddress address, UserVATNumber vatNumber) {
         this.userId = new UserId();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
         this.username = username;
         this.password = password;
-        this.name = name;
         this.email = email;
+        this.birthDate = birthDate;
         this.role = role;
+        this.address = address;
+        this.vatNumber = vatNumber;
     }
+
+
 }
