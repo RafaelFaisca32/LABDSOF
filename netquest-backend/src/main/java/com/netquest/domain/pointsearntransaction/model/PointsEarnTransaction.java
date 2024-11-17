@@ -43,8 +43,6 @@ public class PointsEarnTransaction {
     })
     private PointsEarnTransactionAmount pointsEarnTransactionAmount;
 
-
-
     @Embedded
     @NotNull
     @AttributeOverrides({
@@ -63,18 +61,10 @@ public class PointsEarnTransaction {
     })
     private WifiSpotVisitId wifiSpotVisitId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_id", insertable = false, updatable = false)
     private WifiSpotVisit wifiSpotVisit;
 
-    /*
-    public PointsEarnTransaction(PointsEarnTransactionAmount pointsEarnTransactionAmount) {
-        this.pointsEarnTransactionId = new PointsEarnTransactionId();
-        this.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
-        this.pointsEarnTransactionAmount = new PointsEarnTransactionAmount(pointsEarnTransactionAmount.getValue());
-    }
-    */
 
     public PointsEarnTransaction(
             UserId userId,

@@ -20,7 +20,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
       try {
         const response = await wifiSpotVisitApi.getOngoingWifiSpotVisit(user);
         if (response && response.status === 200) {
-          if(response.data.wifiSpotId === spot.id) {
+          if(response.data.wifiSpotId === spot.uuid) {
             setExistsVisit(true);
             setWifiSpotVisitId(response.data.id);
           }
@@ -92,7 +92,8 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
   const createVisit = async () => {
     try {
-      const response = await wifiSpotVisitApi.createVisit(user, spot.id);
+      console.log(spot)
+      const response = await wifiSpotVisitApi.createVisit(user, spot.uuid);
       if (response && response.status === 201) {
         onClose(); // Close the modal
         successNotification("Wifi Spot Visit created successfully.");
