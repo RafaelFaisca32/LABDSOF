@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { errorNotification, successNotification } from "../misc/Helpers";
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
+  const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
   const Auth = useAuth();
   const user = Auth.getUser();
   const [existsVisit, setExistsVisit] = useState(null); // Track if visit exists
@@ -49,24 +50,48 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
   const openDirections = () => {
     const [userLat, userLng] = userLocation || [null, null];
     const { lat: spotLat, lng: spotLng } = spot.coordinates;
+
     if (userLat === null || userLng === null) {
       alert("User location is not available.");
       return;
     }
 
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${spotLat},${spotLng}&travelmode=driving`;
-    const wazeUrl = `https://waze.com/ul?q=${spot.name}&lat=${spotLat}&lon=${spotLng}&z=10`;
 
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
-      const openWith = `Open with:\n1. Google Maps: ${googleMapsUrl}\n2. Waze: ${wazeUrl}`;
-      alert(openWith);
+      setAppSelectionModalOpen(true); 
     } else {
       window.open(googleMapsUrl, '_blank');
     }
   };
 
+  const handleAppSelection = (app) => {
+    const [userLat, userLng] = userLocation || [null, null];
+    const { lat: spotLat, lng: spotLng } = spot.coordinates;
+
+    const googleMapsUrl = `google.maps://?daddr=${spotLat},${spotLng}`;
+    const wazeUrl = `waze://?ll=${spotLat},${spotLng}&navigate=yes`;
+
+    const androidGoogleMapsUrl = `intent://maps/dir/${userLat},${userLng}@${spotLat},${spotLng}?zoom=14#Intent;scheme=geo;package=com.google.android.apps.maps;end`;
+
+    if (app === 'googleMaps') {
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        window.location.href = googleMapsUrl; 
+      } else if (navigator.userAgent.includes('Android')) {
+        window.location.href = androidGoogleMapsUrl;
+      }
+    } else if (app === 'waze') {
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        window.location.href = wazeUrl; 
+      } else if (navigator.userAgent.includes('Android')) {
+        window.location.href = wazeUrl; 
+      }
+    }
+
+    setAppSelectionModalOpen(false); 
+  };
 
 
 
@@ -112,7 +137,19 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
           <Button onClick={openDirections}>Get Directions</Button>
           <Button onClick={onClose}>Close</Button>
         </Modal.Actions>
-      </Modal>
+      {appSelectionModalOpen && (
+        <Modal open={appSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
+          <Modal.Header>Select App to Open Directions</Modal.Header>
+          <Modal.Content>
+            <Button onClick={() => handleAppSelection('googleMaps')}>Open with Google Maps</Button>
+            <Button onClick={() => handleAppSelection('waze')}>Open with Waze</Button>
+          </Modal.Content>
+          <Modal.Actions>
+          </Modal.Actions>
+            <Button onClick={() => setAppSelectionModalOpen(false)}>Cancel</Button>
+        </Modal>
+      )}
+    </Modal>
   );
 }
 

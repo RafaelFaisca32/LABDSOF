@@ -21,17 +21,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userService.getUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", username)));
-        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
         return mapUserToCustomUserDetails(user, authorities);
     }
 
     private CustomUserDetails mapUserToCustomUserDetails(User user, List<SimpleGrantedAuthority> authorities) {
         CustomUserDetails customUserDetails = new CustomUserDetails();
         customUserDetails.setId(user.getUserId().getValue());
-        customUserDetails.setUsername(user.getUsername());
-        customUserDetails.setPassword(user.getPassword());
-        customUserDetails.setName(user.getName());
-        customUserDetails.setEmail(user.getEmail());
+        customUserDetails.setUsername(user.getUsername().getUserName());
+        customUserDetails.setPassword(user.getPassword().getPassword());
+        customUserDetails.setName(user.getFirstName().getFirstName());
+        customUserDetails.setEmail(user.getEmail().getMail());
         customUserDetails.setAuthorities(authorities);
         return customUserDetails;
     }
