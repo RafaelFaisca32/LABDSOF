@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink, Navigate } from 'react-router-dom'
-import { Button, Form, Grid, Segment, Message, Modal, Checkbox } from 'semantic-ui-react'
+import { Button, Form, Grid, Segment, Message, Modal, Checkbox, Dropdown } from 'semantic-ui-react'
 import { useAuth } from '../context/AuthContext'
 import { bookApi } from '../misc/BookApi'
 import { handleLogError } from '../misc/Helpers'
@@ -9,25 +9,43 @@ function Signup() {
   const Auth = useAuth()
   const isLoggedIn = Auth.userIsAuthenticated()
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    gender: '',
+    email: '',
+    role: '',
+    birthDate: '',
+    vatNumber: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    district: '',
+    country: '',
+    zipCode: ''
+  })
+
   const [isError, setIsError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [gdprConsent, setGdprConsent] = useState(false)
   const [isGdprModalOpen, setIsGdprModalOpen] = useState(false)
 
+  const genderOptions = [
+    { key: 'male', text: 'Male', value: 'MALE' },
+    { key: 'female', text: 'Female', value: 'FEMALE' }
+  ]
+
+  const roleOptions = [
+    { key: 'user', text: 'User', value: 'USER' },
+    { key: 'user_premium', text: 'User Premium', value: 'USER_PREMIUM' },
+    { key: 'admin', text: 'Admin', value: 'ADMIN' },
+    { key: 'offer_manager', text: 'Offer Manager', value: 'OFFER_MANAGER' }
+  ]
+
   const handleInputChange = (e, { name, value }) => {
-    if (name === 'username') {
-      setUsername(value)
-    } else if (name === 'password') {
-      setPassword(value)
-    } else if (name === 'name') {
-      setName(value)
-    } else if (name === 'email') {
-      setEmail(value)
-    }
+    setFormData(prevData => ({ ...prevData, [name]: value }))
   }
 
   const handleGdprConsentChange = (e, { checked }) => {
@@ -37,9 +55,10 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!(username && password && name && email)) {
+    const { username, password, firstName, lastName, gender, email, role, birthDate } = formData
+    if (!(username && password && firstName && lastName && gender && email && role && birthDate)) {
       setIsError(true)
-      setErrorMessage('Please, inform all fields!')
+      setErrorMessage('Please, inform all required fields!')
       return
     }
 
@@ -49,20 +68,30 @@ function Signup() {
       return
     }
 
-    const user = { username, password, name, email }
-
     try {
-      const response = await bookApi.signup(user)
+      const response = await bookApi.signup(formData)
       const { id, name, role } = response.data
-      const authdata = window.btoa(username + ':' + password)
+      const authdata = window.btoa(name + ':' + password)
       const authenticatedUser = { id, name, role, authdata }
 
       Auth.userLogin(authenticatedUser)
-
-      setUsername('')
-      setPassword('')
-      setName('')
-      setEmail('')
+      setFormData({
+        username: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        gender: '',
+        email: '',
+        role: '',
+        birthDate: '',
+        vatNumber: '',
+        addressLine1: '',
+        addressLine2: '',
+        city: '',
+        district: '',
+        country: '',
+        zipCode: ''
+      })
       setIsError(false)
       setErrorMessage('')
     } catch (error) {
@@ -91,41 +120,135 @@ function Signup() {
         <Form size='large' onSubmit={handleSubmit}>
           <Segment>
             <Form.Input
+              required={true}
               fluid
-              autoFocus
               name='username'
               icon='user'
               iconPosition='left'
               placeholder='Username'
-              value={username}
+              value={formData.username}
               onChange={handleInputChange}
             />
             <Form.Input
+              required={true}
               fluid
               name='password'
               icon='lock'
               iconPosition='left'
               placeholder='Password'
               type='password'
-              value={password}
+              value={formData.password}
               onChange={handleInputChange}
             />
             <Form.Input
+              required={true}
               fluid
-              name='name'
+              name='firstName'
               icon='address card'
               iconPosition='left'
-              placeholder='Name'
-              value={name}
+              placeholder='First Name'
+              value={formData.firstName}
               onChange={handleInputChange}
             />
             <Form.Input
+              required={true}
+              fluid
+              name='lastName'
+              icon='address card'
+              iconPosition='left'
+              placeholder='Last Name'
+              value={formData.lastName}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              required={true}
               fluid
               name='email'
               icon='at'
               iconPosition='left'
               placeholder='Email'
-              value={email}
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <Dropdown
+              required={true}
+              fluid
+              selection
+              options={genderOptions}
+              placeholder='Select Gender'
+              name='gender'
+              value={formData.gender}
+              onChange={handleInputChange}
+            />
+            <Dropdown
+              required={true}
+              fluid
+              selection
+              options={roleOptions}
+              placeholder='Select Role'
+              name='role'
+              value={formData.role}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              required={true}
+              fluid
+              name='birthDate'
+              icon='calendar'
+              iconPosition='left'
+              placeholder='Birth Date (YYYY-MM-DD)'
+              type='date'
+              value={formData.birthDate}
+              onChange={handleInputChange}
+              max={new Date().toISOString().split('T')[0]} 
+            />
+            <Form.Input
+              fluid
+              name='vatNumber'
+              placeholder='VAT Number'
+              value={formData.vatNumber}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              fluid
+              name='addressLine1'
+              placeholder='Address Line 1'
+              value={formData.addressLine1}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              fluid
+              name='addressLine2'
+              placeholder='Address Line 2'
+              value={formData.addressLine2}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              fluid
+              name='city'
+              placeholder='City'
+              value={formData.city}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              fluid
+              name='district'
+              placeholder='District'
+              value={formData.district}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              fluid
+              name='country'
+              placeholder='Country'
+              value={formData.country}
+              onChange={handleInputChange}
+            />
+            <Form.Input
+              fluid
+              name='zipCode'
+              placeholder='Zip Code'
+              value={formData.zipCode}
               onChange={handleInputChange}
             />
             <Checkbox
@@ -141,8 +264,6 @@ function Signup() {
         </Message>
         {isError && <Message negative>{errorMessage}</Message>}
       </Grid.Column>
-
-      {/* GDPR Policy Modal */}
       <Modal open={isGdprModalOpen} onClose={() => setIsGdprModalOpen(false)} size='small'>
         <Modal.Header>GDPR Privacy Policy</Modal.Header>
         <Modal.Content scrolling>
@@ -152,7 +273,7 @@ function Signup() {
           <p><strong>Data Storage:</strong> We store your data securely and retain it only as long as necessary for the purposes outlined or as legally required.</p>
           <p><strong>Your Rights:</strong> Under GDPR, you have the right to access, rectify, or delete your data, as well as the right to restrict processing, data portability, and to object to data processing where applicable. You can exercise these rights by contacting our support team.</p>
           <p>By creating an account, you consent to the collection and use of your personal information as described. For more information on your data rights or if you wish to withdraw consent, please contact our data protection officer at [contact details].</p>
-          <p><em>Last Updated: [date]</em></p>
+          <p><em>Last Updated: 17/11/2024</em></p>
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={() => setIsGdprModalOpen(false)} color='blue'>Close</Button>

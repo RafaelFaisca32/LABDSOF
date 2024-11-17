@@ -1,7 +1,7 @@
 package com.netquest.controller.auth;
 
 import com.netquest.domain.DuplicatedUserInfoException;
-import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.*;
 import com.netquest.domain.auth.dto.AuthResponse;
 import com.netquest.domain.auth.dto.LoginRequest;
 import com.netquest.domain.auth.dto.SignUpRequest;
@@ -31,7 +31,7 @@ public class AuthController {
         Optional<User> userOptional = userService.validUsernameAndPassword(loginRequest.getUsername(), loginRequest.getPassword());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            return ResponseEntity.ok(new AuthResponse(user.getUserId().getValue(), user.getName(), user.getRole()));
+            return ResponseEntity.ok(new AuthResponse(user.getUserId().getValue(), user.getUsername().getUserName(), user.getRole().name()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -47,15 +47,28 @@ public class AuthController {
         }
 
         User user = userService.saveUser(createUser(signUpRequest));
-        return new AuthResponse(user.getUserId().getValue(), user.getName(), user.getRole());
+        return new AuthResponse(user.getUserId().getValue(), user.getUsername().getUserName(), user.getRole().name());
     }
 
     private User createUser(SignUpRequest signUpRequest) {
-        return new User(
-                signUpRequest.getUsername(),
-                signUpRequest.getPassword(),
-                signUpRequest.getName(),
-                signUpRequest.getEmail(),
-                WebSecurityConfig.USER);
+        return new User( // Automatically generated UUID
+                new UserFirstName(signUpRequest.getFirstName()),
+                new UserLastName(signUpRequest.getLastName()),
+                UserGender.valueOf(signUpRequest.getGender()),
+                new Username(signUpRequest.getUsername()),
+                new UserPassword(signUpRequest.getPassword()),
+                new UserMail(signUpRequest.getEmail()),
+                new UserBirthDate(signUpRequest.getBirthDate()),
+                UserRole.valueOf(signUpRequest.getRole()),
+                new UserAddress(
+                        signUpRequest.getAddressLine1(),
+                        signUpRequest.getAddressLine2(),
+                        signUpRequest.getCity(),
+                        signUpRequest.getDistrict(),
+                        signUpRequest.getCountry(),
+                        signUpRequest.getZipCode()
+                ),
+                new UserVATNumber(signUpRequest.getVatNumber())
+        );
     }
 }

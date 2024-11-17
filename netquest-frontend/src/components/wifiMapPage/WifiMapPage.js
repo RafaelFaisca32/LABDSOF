@@ -35,7 +35,7 @@ function MapClickHandler({ onMapClick }) {
 function WifiMapPage() {
   const Auth = useAuth();
   const user = Auth.getUser();
-  const isUser = user.role === 'USER';
+  const isUser = (user.role === 'USER' || user.role === 'USER_PREMIUM');
 
   const [userLocation, setUserLocation] = useState(null);
   // Existing wi-fi spots will be grabbed from the back-end
