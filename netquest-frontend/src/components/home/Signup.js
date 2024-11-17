@@ -268,7 +268,12 @@ function Signup() {
         <Modal.Header>GDPR Privacy Policy</Modal.Header>
         <Modal.Content scrolling>
           <p><strong>Privacy Notice for Personal Data Processing Under GDPR</strong></p>
-          <p>We are committed to protecting your personal data and respecting your privacy...</p>
+          <p>We are committed to protecting your personal data and respecting your privacy. Upon account creation, we collect and process personal information, including your name, email address, and other optional data you may choose to provide.</p>
+          <p><strong>Data Usage:</strong> Your data will be used to create and manage your account, deliver our services, improve your experience, and comply with any applicable legal obligations.</p>
+          <p><strong>Data Storage:</strong> We store your data securely and retain it only as long as necessary for the purposes outlined or as legally required.</p>
+          <p><strong>Your Rights:</strong> Under GDPR, you have the right to access, rectify, or delete your data, as well as the right to restrict processing, data portability, and to object to data processing where applicable. You can exercise these rights by contacting our support team.</p>
+          <p>By creating an account, you consent to the collection and use of your personal information as described. For more information on your data rights or if you wish to withdraw consent, please contact our data protection officer at [contact details].</p>
+          <p><em>Last Updated: 17/11/2024</em></p>
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={() => setIsGdprModalOpen(false)} color='blue'>Close</Button>
