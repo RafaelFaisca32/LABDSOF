@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Statistic, Icon, Grid, Container, Image, Segment, Dimmer, Loader } from 'semantic-ui-react'
 import { bookApi } from '../misc/BookApi'
+import { wifiSpotApi } from '../misc/WifiSpotApi'
 import { handleLogError } from '../misc/Helpers'
 
 function Home() {
@@ -8,23 +9,25 @@ function Home() {
   const [wifiSpotNumbers, setNumberOfWifiSpots] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const responseUsers = await bookApi.numberOfUsers()
+  const fetchData = async () => {
+    setIsLoading(true)
+    try {
+      const responseUsers = await bookApi.numberOfUsers()
+      if (responseUsers.status === 200)
         setNumberOfUsers(responseUsers.data)
 
-        const responseWifiSpots = await bookApi.getWifiSpots()
+      const responseWifiSpots = await wifiSpotApi.getNumberWifiSpots()
+      if (responseWifiSpots.status === 200)
         setNumberOfWifiSpots(responseWifiSpots.data)
 
-      } catch (error) {
-        handleLogError(error)
-      } finally {
-        setIsLoading(false)
-      }
+    } catch (error) {
+      handleLogError(error)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchData()
   }, [])
 

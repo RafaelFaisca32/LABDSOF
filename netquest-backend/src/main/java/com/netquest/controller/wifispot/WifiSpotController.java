@@ -35,25 +35,25 @@ public class WifiSpotController {
     @PostMapping
     public WifiSpotDto create(@Valid @RequestBody WifiSpotCreateDto wifiSpotCreateDto) {
         WifiSpotCreateDto updatedDto = new WifiSpotCreateDto(
-                wifiSpotCreateDto.wifiSpotName(),
-                wifiSpotCreateDto.wifiSpotDescription(),
+                wifiSpotCreateDto.name(),
+                wifiSpotCreateDto.description(),
                 wifiSpotCreateDto.latitude(),
                 wifiSpotCreateDto.longitude(),
                 wifiSpotCreateDto.locationType(),
-                wifiSpotCreateDto.qualityType(),
-                wifiSpotCreateDto.strengthType(),
-                wifiSpotCreateDto.bandwithType(),
-                wifiSpotCreateDto.startPeakUsageTime(),
-                wifiSpotCreateDto.endPeakUsageTime(),
+                wifiSpotCreateDto.wifiQuality(),
+                wifiSpotCreateDto.signalStrength(),
+                wifiSpotCreateDto.bandwidth(),
+                wifiSpotCreateDto.peakUsageStart(),
+                wifiSpotCreateDto.peakUsageEnd(),
                 wifiSpotCreateDto.crowded(),
                 wifiSpotCreateDto.coveredArea(),
                 wifiSpotCreateDto.airConditioning(),
                 wifiSpotCreateDto.outdoorSeating(),
                 wifiSpotCreateDto.goodView(),
-                wifiSpotCreateDto.noiseType(),
+                wifiSpotCreateDto.noiseLevel(),
                 wifiSpotCreateDto.petFriendly(),
                 wifiSpotCreateDto.childFriendly(),
-                wifiSpotCreateDto.disabledAccess(),
+                wifiSpotCreateDto.disableAccess(),
                 wifiSpotCreateDto.availablePowerOutlets(),
                 wifiSpotCreateDto.chargingStations(),
                 wifiSpotCreateDto.restroomsAvailable(),
@@ -65,7 +65,7 @@ public class WifiSpotController {
                 wifiSpotCreateDto.heatedInWinter(),
                 wifiSpotCreateDto.shadedAreas(),
                 wifiSpotCreateDto.outdoorFans(),
-                wifiSpotCreateDto.wifiSpotAddressDto(),
+                wifiSpotCreateDto.address(),
                 WifiSpotManagementType.UNVERIFIED
         );
         return wifiSpotService.createWifiSpot(updatedDto);

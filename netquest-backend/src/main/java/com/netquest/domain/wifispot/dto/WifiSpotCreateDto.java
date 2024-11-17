@@ -5,25 +5,25 @@ import com.netquest.domain.shared.*;
 import java.time.LocalTime;
 
 public record WifiSpotCreateDto(
-        String wifiSpotName,
-        String wifiSpotDescription,
+        String name,
+        String description,
         double latitude,
         double longitude,
         LocationType locationType,
-        QualityType qualityType,
-        StrengthType strengthType,
-        BandwithType bandwithType,
-        LocalTime startPeakUsageTime,
-        LocalTime endPeakUsageTime,
+        QualityType wifiQuality,
+        StrengthType signalStrength,
+        BandwithType bandwidth,
+        LocalTime peakUsageStart,
+        LocalTime peakUsageEnd,
         boolean crowded,
         boolean coveredArea,
         boolean airConditioning,
         boolean outdoorSeating,
         boolean goodView,
-        NoiseType noiseType,
+        NoiseType noiseLevel,
         boolean petFriendly,
         boolean childFriendly,
-        boolean disabledAccess,
+        boolean disableAccess,
         boolean availablePowerOutlets,
         boolean chargingStations,
         boolean restroomsAvailable,
@@ -35,7 +35,7 @@ public record WifiSpotCreateDto(
         boolean heatedInWinter,
         boolean shadedAreas,
         boolean outdoorFans,
-        WifiSpotAddressCreateDto wifiSpotAddressDto,
+        WifiSpotAddressCreateDto address,
         WifiSpotManagementType wifiSpotManagementType
 ) {
 }

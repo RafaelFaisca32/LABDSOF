@@ -16,14 +16,14 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpot.getWifiSpotId().getValue(),
                 wifiSpot.getWifiSpotName().getValue(),
                 wifiSpot.getWifiSpotDescription().getValue(),
-                wifiSpot.getWifiSpotCoordinates().getLongitude(),
                 wifiSpot.getWifiSpotCoordinates().getLatitude(),
+                wifiSpot.getWifiSpotCoordinates().getLongitude(),
                 wifiSpot.getWifiSpotLocationType().getValue(),
                 wifiSpot.getWifiSpotQualityIndicators().getWifiQuality(),
                 wifiSpot.getWifiSpotQualityIndicators().getSignalStrength(),
                 wifiSpot.getWifiSpotQualityIndicators().getBandwithLimitations(),
-                wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval().getStartTime(),
-                wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval().getEndTime(),
+                wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval() != null ? wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval().getStartTime() : null,
+                wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval() != null ? wifiSpot.getWifiSpotQualityIndicators().getPeakUsageHourInterval().getEndTime() : null,
                 wifiSpot.getWifiSpotEnvironmentalFeatures().isCrowded(),
                 wifiSpot.getWifiSpotEnvironmentalFeatures().isCoveredArea(),
                 wifiSpot.getWifiSpotEnvironmentalFeatures().isAirConditioning(),
@@ -52,15 +52,15 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
     @Override
     public WifiSpot wifiSpotCreateDtoToDomain(WifiSpotCreateDto wifiSpotDto) {
         return new WifiSpot(
-                new WifiSpotName(wifiSpotDto.wifiSpotName()),
-                new WifiSpotDescription(wifiSpotDto.wifiSpotDescription()),
+                new WifiSpotName(wifiSpotDto.name()),
+                new WifiSpotDescription(wifiSpotDto.description()),
                 new WifiSpotCoordinates(wifiSpotDto.longitude(), wifiSpotDto.latitude()),
                 new WifiSpotLocationType(wifiSpotDto.locationType()),
                 new WifiSpotQualityIndicators(
-                        wifiSpotDto.qualityType(),
-                        wifiSpotDto.strengthType(),
-                        wifiSpotDto.bandwithType(),
-                        new WifiSpotPeakUsageInterval(wifiSpotDto.startPeakUsageTime(), wifiSpotDto.endPeakUsageTime())
+                        wifiSpotDto.wifiQuality(),
+                        wifiSpotDto.signalStrength(),
+                        wifiSpotDto.bandwidth(),
+                        new WifiSpotPeakUsageInterval(wifiSpotDto.peakUsageStart(), wifiSpotDto.peakUsageEnd())
                 ),
                 new WifiSpotEnvironmentalFeatures(
                         wifiSpotDto.crowded(),
@@ -68,10 +68,10 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                         wifiSpotDto.airConditioning(),
                         wifiSpotDto.outdoorSeating(),
                         wifiSpotDto.goodView(),
-                        wifiSpotDto.noiseType(),
+                        wifiSpotDto.noiseLevel(),
                         wifiSpotDto.petFriendly(),
                         wifiSpotDto.childFriendly(),
-                        wifiSpotDto.disabledAccess()
+                        wifiSpotDto.disableAccess()
                 ),
                 new WifiSpotFacilities(
                         wifiSpotDto.availablePowerOutlets(),
@@ -88,7 +88,7 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                         wifiSpotDto.shadedAreas(),
                         wifiSpotDto.outdoorFans()
                 ),
-                wifiSpotAddressCreateDtoToDomain(wifiSpotDto.wifiSpotAddressDto()),
+                wifiSpotAddressCreateDtoToDomain(wifiSpotDto.address()),
                 new WifiSpotManagement(
                         wifiSpotDto.wifiSpotManagementType()
                 )
@@ -99,15 +99,15 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
     public WifiSpot wifiSpotDtoToDomain(WifiSpotDto wifiSpotDto) {
         return new WifiSpot(
                 new WifiSpotId(wifiSpotDto.uuid()),
-                new WifiSpotName(wifiSpotDto.wifiSpotName()),
-                new WifiSpotDescription(wifiSpotDto.wifiSpotDescription()),
+                new WifiSpotName(wifiSpotDto.name()),
+                new WifiSpotDescription(wifiSpotDto.description()),
                 new WifiSpotCoordinates(wifiSpotDto.longitude(), wifiSpotDto.latitude()),
                 new WifiSpotLocationType(wifiSpotDto.locationType()),
                 new WifiSpotQualityIndicators(
-                        wifiSpotDto.qualityType(),
-                        wifiSpotDto.strengthType(),
-                        wifiSpotDto.bandwithType(),
-                        new WifiSpotPeakUsageInterval(wifiSpotDto.startPeakUsageTime(), wifiSpotDto.endPeakUsageTime())
+                        wifiSpotDto.wifiQuality(),
+                        wifiSpotDto.signalStrength(),
+                        wifiSpotDto.bandwidth(),
+                        new WifiSpotPeakUsageInterval(wifiSpotDto.peakUsageStart(), wifiSpotDto.peakUsageEnd())
                 ),
                 new WifiSpotEnvironmentalFeatures(
                         wifiSpotDto.crowded(),
@@ -115,10 +115,10 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                         wifiSpotDto.airConditioning(),
                         wifiSpotDto.outdoorSeating(),
                         wifiSpotDto.goodView(),
-                        wifiSpotDto.noiseType(),
+                        wifiSpotDto.noiseLevel(),
                         wifiSpotDto.petFriendly(),
                         wifiSpotDto.childFriendly(),
-                        wifiSpotDto.disabledAccess()
+                        wifiSpotDto.disableAccess()
                 ),
                 new WifiSpotFacilities(
                         wifiSpotDto.availablePowerOutlets(),
@@ -135,7 +135,7 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                         wifiSpotDto.shadedAreas(),
                         wifiSpotDto.outdoorFans()
                 ),
-                wifiSpotAddressDtoToDomain(wifiSpotDto.wifiSpotAddressDto()),
+                wifiSpotAddressDtoToDomain(wifiSpotDto.address()),
                 new WifiSpotManagement(
                         wifiSpotDto.wifiSpotManagementType()
                 )
@@ -149,7 +149,7 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpotAddress.getWifiSpotAddressCountry().getValue(),
                 wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),
                 wifiSpotAddress.getWifiSpotAddressLine1().getValue(),
-                wifiSpotAddress.getWifiSpotAddressLine2().getValue(),
+                wifiSpotAddress.getWifiSpotAddressLine2() != null ? wifiSpotAddress.getWifiSpotAddressLine2().getValue() : null,
                 wifiSpotAddress.getWifiSpotAddressCity().getValue(),
                 wifiSpotAddress.getWifiSpotAddressDistrict().getValue()
         );
@@ -174,7 +174,7 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpotAddress.getWifiSpotAddressCountry().getValue(),
                 wifiSpotAddress.getWifiSpotAddressZipCode().getValue(),
                 wifiSpotAddress.getWifiSpotAddressLine1().getValue(),
-                wifiSpotAddress.getWifiSpotAddressLine2().getValue(),
+                wifiSpotAddress.getWifiSpotAddressLine2() != null ? wifiSpotAddress.getWifiSpotAddressLine2().getValue() : null,
                 wifiSpotAddress.getWifiSpotAddressCity().getValue(),
                 wifiSpotAddress.getWifiSpotAddressDistrict().getValue()
         );
