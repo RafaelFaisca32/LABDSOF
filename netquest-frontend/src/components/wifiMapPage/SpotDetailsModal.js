@@ -30,13 +30,26 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     const [userLat, userLng] = userLocation || [null, null];
     const { lat: spotLat, lng: spotLng } = spot.coordinates;
 
+    const googleMapsUrl = `google.maps://?daddr=${spotLat},${spotLng}`;
+    const wazeUrl = `waze://?ll=${spotLat},${spotLng}&navigate=yes`;
+
+    const androidGoogleMapsUrl = `intent://maps/dir/${userLat},${userLng}@${spotLat},${spotLng}?zoom=14#Intent;scheme=geo;package=com.google.android.apps.maps;end`;
+
     if (app === 'googleMaps') {
-      window.location.href = `intent://maps/dir/${userLat},${userLng}@${spotLat},${spotLng}?zoom=14#Intent;scheme=geo;package=com.google.android.apps.maps;end`;
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        window.location.href = googleMapsUrl; 
+      } else if (navigator.userAgent.includes('Android')) {
+        window.location.href = androidGoogleMapsUrl;
+      }
     } else if (app === 'waze') {
-      window.location.href = `waze://?ll=${spotLat},${spotLng}&navigate=yes`;
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        window.location.href = wazeUrl; 
+      } else if (navigator.userAgent.includes('Android')) {
+        window.location.href = wazeUrl; 
+      }
     }
 
-    setAppSelectionModalOpen(false);
+    setAppSelectionModalOpen(false); 
   };
 
   return (
