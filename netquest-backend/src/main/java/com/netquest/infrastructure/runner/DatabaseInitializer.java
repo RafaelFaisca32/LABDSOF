@@ -1,9 +1,6 @@
 package com.netquest.infrastructure.runner;
 
-import com.netquest.domain.Book;
 import com.netquest.domain.user.model.*;
-import com.netquest.security.WebSecurityConfig;
-import com.netquest.domain.BookService;
 import com.netquest.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
