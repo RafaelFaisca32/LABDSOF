@@ -41,4 +41,29 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         WifiSpotId wifiSpotId = new WifiSpotId(uuid);
         return wifiSpotRepository.existsById(wifiSpotId);
     }
+    public List<WifiSpotDto> getFilteredWifiSpots(
+        String name, Boolean exactName,
+        String description, Boolean exactDescription,
+        String locationType, String wifiQuality, String signalStrength,
+        String bandwidth, Boolean crowded, Boolean coveredArea,
+        Boolean airConditioning, Boolean goodView, String noiseLevel,
+        Boolean petFriendly, Boolean childFriendly, Boolean disableAccess,
+        Boolean availablePowerOutlets, Boolean chargingStations,
+        Boolean restroomsAvailable, Boolean parkingAvailability,
+        Boolean foodOptions, Boolean drinkOptions, Boolean openDuringRain,
+        Boolean openDuringHeat, Boolean heatedInWinter,
+        Boolean shadedAreas, Boolean outdoorFans
+    ) {
+        List<WifiSpot> l =  wifiSpotRepository.findWifiSpots(
+            name, exactName, description, exactDescription,
+            locationType, wifiQuality, signalStrength,
+            bandwidth, crowded, coveredArea, airConditioning,
+            goodView, noiseLevel, petFriendly, childFriendly,
+            disableAccess, availablePowerOutlets, chargingStations,
+            restroomsAvailable, parkingAvailability, foodOptions,
+            drinkOptions, openDuringRain, openDuringHeat,
+            heatedInWinter, shadedAreas, outdoorFans
+        );
+        return l.stream().map(wifiSpotMapper::wifiSpotDomainToDto).toList();
+    }
 }

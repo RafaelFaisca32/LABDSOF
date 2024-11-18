@@ -77,4 +77,46 @@ public class WifiSpotController {
     public List<WifiSpotDto> getAll() {
         return wifiSpotService.getWifiSpots();
     }
+
+    @GetMapping
+    public List<WifiSpotDto> getFilteredWifiSpots(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Boolean exactName,
+        @RequestParam(required = false) String description,
+        @RequestParam(required = false) Boolean exactDescription,
+        @RequestParam(required = false) String locationType,
+        @RequestParam(required = false) String wifiQuality,
+        @RequestParam(required = false) String signalStrength,
+        @RequestParam(required = false) String bandwidth,
+        @RequestParam(required = false) Boolean crowded,
+        @RequestParam(required = false) Boolean coveredArea,
+        @RequestParam(required = false) Boolean airConditioning,
+        @RequestParam(required = false) Boolean goodView,
+        @RequestParam(required = false) String noiseLevel,
+        @RequestParam(required = false) Boolean petFriendly,
+        @RequestParam(required = false) Boolean childFriendly,
+        @RequestParam(required = false) Boolean disableAccess,
+        @RequestParam(required = false) Boolean availablePowerOutlets,
+        @RequestParam(required = false) Boolean chargingStations,
+        @RequestParam(required = false) Boolean restroomsAvailable,
+        @RequestParam(required = false) Boolean parkingAvailability,
+        @RequestParam(required = false) Boolean foodOptions,
+        @RequestParam(required = false) Boolean drinkOptions,
+        @RequestParam(required = false) Boolean openDuringRain,
+        @RequestParam(required = false) Boolean openDuringHeat,
+        @RequestParam(required = false) Boolean heatedInWinter,
+        @RequestParam(required = false) Boolean shadedAreas,
+        @RequestParam(required = false) Boolean outdoorFans
+    ) {
+        return wifiSpotService.getFilteredWifiSpots(
+            name, exactName, description, exactDescription,
+            locationType, wifiQuality, signalStrength, bandwidth,
+            crowded, coveredArea, airConditioning, goodView,
+            noiseLevel, petFriendly, childFriendly, disableAccess,
+            availablePowerOutlets, chargingStations, restroomsAvailable,
+            parkingAvailability, foodOptions, drinkOptions,
+            openDuringRain, openDuringHeat, heatedInWinter,
+            shadedAreas, outdoorFans
+        );
+    }
 }
