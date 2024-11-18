@@ -15,4 +15,6 @@ import java.util.Optional;
 public interface WifiSpotRepository extends JpaRepository<WifiSpot, WifiSpotId> {
     @Query("SELECT COUNT(wfs) FROM WifiSpot wfs")
     int getNumberOfWifiSpots();
+
+    WifiSpot getWifiSpotByWifiSpotId(WifiSpotId wifiSpotId);
 }

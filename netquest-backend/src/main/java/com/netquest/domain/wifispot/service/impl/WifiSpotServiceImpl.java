@@ -1,24 +1,17 @@
 package com.netquest.domain.wifispot.service.impl;
 
-import com.netquest.domain.shared.BandwithType;
-import com.netquest.domain.shared.QualityType;
-import com.netquest.domain.shared.StrengthType;
-import com.netquest.domain.user.service.UserService;
-import com.netquest.domain.user.exception.UserNotFoundException;
-import com.netquest.domain.user.model.User;
+
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
-import com.netquest.infrastructure.user.UserRepository;
 import com.netquest.infrastructure.wifispot.WifiSpotRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -41,5 +34,11 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     @Override
     public int getNumberOfWifiSpots() {
         return wifiSpotRepository.getNumberOfWifiSpots();
+    }
+
+    @Override
+    public boolean existsById(UUID uuid) {
+        WifiSpotId wifiSpotId = new WifiSpotId(uuid);
+        return wifiSpotRepository.existsById(wifiSpotId);
     }
 }
