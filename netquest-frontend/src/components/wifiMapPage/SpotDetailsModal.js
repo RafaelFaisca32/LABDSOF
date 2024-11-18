@@ -93,7 +93,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
   const createVisit = async () => {
     try {
       console.log(spot)
-      const response = await wifiSpotVisitApi.createVisit(user, spot.uuid);
+      const response = await wifiSpotVisitApi.createVisitSimple(user, spot.uuid);
       if (response && response.status === 201) {
         onClose(); // Close the modal
         successNotification("Wifi Spot Visit created successfully.");
