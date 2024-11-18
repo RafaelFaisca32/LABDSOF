@@ -10,5 +10,8 @@ import java.util.UUID;
 public interface WifiSpotVisitService {
 
     WifiSpotVisitDto saveWifiSpotVisit(UUID userUUID, WifiSpotVisitCreateDto wifiSpotVisitCreateDto);
+
     WifiSpotVisitDto updateWifiSpotVisitEndDateTime(UUID userUUID, UUID wifiSpotVisitUUID, WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto);
+
+    WifiSpotVisitDto getWifiSpotVisitOngoing(UUID userUUID);
 }

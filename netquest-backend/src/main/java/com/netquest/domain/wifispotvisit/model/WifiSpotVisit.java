@@ -2,6 +2,7 @@ package com.netquest.domain.wifispotvisit.model;
 
 import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpot;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.exception.WifiSpotVisitEndDateTimeBeforeWifiSpotVisitStartDateTimeException;
 import jakarta.persistence.*;
@@ -37,19 +38,25 @@ public class WifiSpotVisit {
 
     @Embedded
     @NotNull
-    //@JoinColumn(name = "wifi_spot_id")
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_visit_wifi_spot_id"))
     })
     private WifiSpotId wifiSpotId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wifi_spot_visit_wifi_spot_id", insertable = false, updatable = false)
+    private WifiSpot wifiSpot;
+
     @Embedded
     @NotNull
-    //@JoinColumn(name = "user_id")
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_visit_user_id"))
     })
     private UserId userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wifi_spot_visit_user_id", insertable = false, updatable = false)
+    private User user;
 
 
     public WifiSpotVisit(

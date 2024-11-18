@@ -3,11 +3,12 @@ spring:
     name: netquest-backend
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     url: jdbc:mysql://vsgate-s1.dei.isep.ipp.pt:10406/netquest
     username: root
     password: htLD7J9wkLaS
+
 app:
   cors:
     allowed-origins: http://localhost:3000, https://netquest-dev-environment.onrender.com, https://netquest-labdsof-prod.onrender.com

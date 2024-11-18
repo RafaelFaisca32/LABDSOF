@@ -43,8 +43,6 @@ public class PointsEarnTransaction {
     })
     private PointsEarnTransactionAmount pointsEarnTransactionAmount;
 
-
-
     @Embedded
     @NotNull
     @AttributeOverrides({
@@ -63,18 +61,10 @@ public class PointsEarnTransaction {
     })
     private WifiSpotVisitId wifiSpotVisitId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_id", insertable = false, updatable = false)
     private WifiSpotVisit wifiSpotVisit;
 
-    /*
-    public PointsEarnTransaction(PointsEarnTransactionAmount pointsEarnTransactionAmount) {
-        this.pointsEarnTransactionId = new PointsEarnTransactionId();
-        this.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
-        this.pointsEarnTransactionAmount = new PointsEarnTransactionAmount(pointsEarnTransactionAmount.getValue());
-    }
-    */
 
     public PointsEarnTransaction(
             UserId userId,
@@ -89,11 +79,12 @@ public class PointsEarnTransaction {
         this.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
     }
 
-    public PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
+    public int getMinutePointsMultiplier(){
+        return MINUTE_POINTS_MULTIPLIER;
+    }
+
+    private PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
         long minutes = ChronoUnit.MINUTES.between(start, end);
-        if(minutes < 0){
-            return new PointsEarnTransactionAmount(0);
-        }
         return new PointsEarnTransactionAmount(minutes * MINUTE_POINTS_MULTIPLIER);
     }
 
