@@ -2,7 +2,7 @@ import axios from 'axios'
 import { config } from '../../Constants'
 
 export const wifiSpotVisitApi = {
-  createVisit,
+  createVisitSimple,
   endVisit,
   getOngoingWifiSpotVisit
 }
@@ -28,12 +28,8 @@ function endVisit(user,wifiSpotVisitId) {
   })
 }
 
-function createVisit(user,wifiSpotId) {
-  let params = {
-    wifiSpotId: wifiSpotId,
-    startDateTime: new Date().toISOString(),
-  };
-  return instance.post('/api/wifi-spot-visit', params, {
+function createVisitSimple(user,wifiSpotId) {
+  return instance.post('/api/wifi-spot-visit/simple/'+wifiSpotId, null, {
     headers: {
       'Content-type': 'application/json',
       'Authorization': basicAuth(user)
