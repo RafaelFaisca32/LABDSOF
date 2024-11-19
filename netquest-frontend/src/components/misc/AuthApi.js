@@ -7,7 +7,6 @@ export const authApi = {
   numberOfUsers,
   getUsers,
   deleteUser,
-  getWifiSpots,
 };
 
 function authenticate(username, password) {
@@ -28,10 +27,6 @@ function signup(user) {
 
 function numberOfUsers() {
   return instance.get("/public/numberOfUsers");
-}
-
-function getWifiSpots() {
-  return instance.get("/public/number-wifi-spots");
 }
 
 function getUsers(user, username) {
