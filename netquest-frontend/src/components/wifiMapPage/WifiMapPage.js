@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import {Container, Message} from 'semantic-ui-react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Container, Button } from 'semantic-ui-react';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import SpotDetailsModal from './SpotDetailsModal';
 import AddSpotModal from './AddSpotModal';
-import { wifiSpotApi } from "../misc/WifiSpotApi"
-import {errorNotification, successNotification} from "../misc/Helpers";
-
+import { wifiSpotApi } from "../misc/WifiSpotApi";
+import { errorNotification, successNotification } from "../misc/Helpers";
 
 const userIcon = new L.Icon({
-  iconUrl: '/icons/user.png', 
+  iconUrl: '/icons/user.png',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
 
 const wifiSpotIcon = new L.Icon({
-  iconUrl: '/icons/wifi.png', 
+  iconUrl: '/icons/wifi.png',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
@@ -34,18 +33,17 @@ function MapClickHandler({ onMapClick }) {
   return null;
 }
 
-
 function WifiMapPage() {
   const Auth = useAuth();
   const user = Auth.getUser();
   const isUser = (user.role === 'USER' || user.role === 'USER_PREMIUM');
 
   const [userLocation, setUserLocation] = useState(null);
-  // Existing wi-fi spots will be grabbed from the back-end
   const [spots, setSpots] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [newSpotDetails, setNewSpotDetails] = useState({ coordinates: null, name: '', size: '' });
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const navigate = useNavigate();
 
   const loadExistingWifiSpots = async () => {
     const responseGetWifiSpots = await wifiSpotApi.getWifiSpots(user);
@@ -54,30 +52,30 @@ function WifiMapPage() {
       const formattedSpots = wifiSpotsList.map((spot) => {
         const coordinates = {
           lat: spot.latitude,
-          lng: spot.longitude
+          lng: spot.longitude,
         };
         return {
           ...spot,
           coordinates,
-          addressLine1: spot.address.addressLine1,
-          addressLine2: spot.address.addressLine2,
-          city: spot.address.city,
-          district: spot.address.district,
-          country: spot.address.country,
-          zipCode: spot.address.zipCode
+          addressLine1: spot.address?.addressLine1 || '',
+          addressLine2: spot.address?.addressLine2 || '',
+          city: spot.address?.city || '',
+          district: spot.address?.district || '',
+          country: spot.address?.country || '',
+          zipCode: spot.address?.zipCode || '',
         };
       });
-      setSpots(formattedSpots); // Set all spots at once to avoid stale state issues
+      setSpots(formattedSpots);
     }
-  }
+  };
 
-  useEffect( () => {
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation([position.coords.latitude, position.coords.longitude]);
-        },
-        (error) => console.error(error),
-        {enableHighAccuracy: true}
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+      },
+      (error) => console.error(error),
+      { enableHighAccuracy: true }
     );
 
     loadExistingWifiSpots();
@@ -90,34 +88,34 @@ function WifiMapPage() {
 
   const addSpot = async () => {
     if (
-        newSpotDetails.coordinates &&
-        newSpotDetails.coordinates.lat &&
-        newSpotDetails.coordinates.lng &&
-        newSpotDetails.name &&
-        newSpotDetails.description &&
-        newSpotDetails.locationType &&
-        newSpotDetails.wifiQuality &&
-        newSpotDetails.signalStrength &&
-        newSpotDetails.bandwidth &&
-        newSpotDetails.crowded !== undefined &&
-        newSpotDetails.coveredArea !== undefined &&
-        newSpotDetails.airConditioning !== undefined &&
-        newSpotDetails.goodView !== undefined &&
-        newSpotDetails.noiseLevel &&
-        newSpotDetails.petFriendly !== undefined &&
-        newSpotDetails.childFriendly !== undefined &&
-        newSpotDetails.disableAccess !== undefined &&
-        newSpotDetails.availablePowerOutlets !== undefined &&
-        newSpotDetails.chargingStations !== undefined &&
-        newSpotDetails.restroomsAvailable !== undefined &&
-        newSpotDetails.parkingAvailability !== undefined &&
-        newSpotDetails.foodOptions !== undefined &&
-        newSpotDetails.drinkOptions !== undefined &&
-        newSpotDetails.addressLine1 &&
-        newSpotDetails.city &&
-        newSpotDetails.district &&
-        newSpotDetails.country &&
-        newSpotDetails.zipCode
+      newSpotDetails.coordinates &&
+      newSpotDetails.coordinates.lat &&
+      newSpotDetails.coordinates.lng &&
+      newSpotDetails.name &&
+      newSpotDetails.description &&
+      newSpotDetails.locationType &&
+      newSpotDetails.wifiQuality &&
+      newSpotDetails.signalStrength &&
+      newSpotDetails.bandwidth &&
+      newSpotDetails.crowded !== undefined &&
+      newSpotDetails.coveredArea !== undefined &&
+      newSpotDetails.airConditioning !== undefined &&
+      newSpotDetails.goodView !== undefined &&
+      newSpotDetails.noiseLevel &&
+      newSpotDetails.petFriendly !== undefined &&
+      newSpotDetails.childFriendly !== undefined &&
+      newSpotDetails.disableAccess !== undefined &&
+      newSpotDetails.availablePowerOutlets !== undefined &&
+      newSpotDetails.chargingStations !== undefined &&
+      newSpotDetails.restroomsAvailable !== undefined &&
+      newSpotDetails.parkingAvailability !== undefined &&
+      newSpotDetails.foodOptions !== undefined &&
+      newSpotDetails.drinkOptions !== undefined &&
+      newSpotDetails.addressLine1 &&
+      newSpotDetails.city &&
+      newSpotDetails.district &&
+      newSpotDetails.country &&
+      newSpotDetails.zipCode
     ) {
       newSpotDetails.latitude = newSpotDetails.coordinates.lat;
       newSpotDetails.longitude = newSpotDetails.coordinates.lng;
@@ -127,8 +125,8 @@ function WifiMapPage() {
         city: newSpotDetails.city,
         district: newSpotDetails.district,
         country: newSpotDetails.country,
-        zipCode: newSpotDetails.zipCode
-      }
+        zipCode: newSpotDetails.zipCode,
+      };
       try {
         const responseCreateWifiSpot = await wifiSpotApi.createWifiSpot(user, newSpotDetails);
         if (responseCreateWifiSpot && responseCreateWifiSpot.status === 201) {
@@ -137,15 +135,12 @@ function WifiMapPage() {
           successNotification("Wifi Spot created successfully.");
           setModalOpen(false);
         }
-      }
-      catch(err){
+      } catch (err) {
         errorNotification(err.response?.data?.message || "Error creating wifi spot");
       }
     } else {
-      //alert("Missing mandatory fields!");
-
+      errorNotification("Missing mandatory fields!");
     }
-
   };
 
   const openSpotModal = (spot) => {
@@ -156,6 +151,10 @@ function WifiMapPage() {
     setSelectedSpot(null);
   };
 
+  const redirectToFilterPage = () => {
+    navigate('/wifispotfilterpage'); // Redireciona para a página de listagem com filtros
+  };
+
   if (!isUser) {
     return <Navigate to="/" />;
   }
@@ -163,6 +162,10 @@ function WifiMapPage() {
   return (
     <Container>
       <h3>WiFi Map</h3>
+      {/* Botão para redirecionar para a página de filtros */}
+      <Button primary onClick={redirectToFilterPage} style={{ marginBottom: '15px' }}>
+        Filtrar
+      </Button>
       {userLocation ? (
         <MapContainer center={userLocation} zoom={13} style={{ height: '60vh', width: '100%' }}>
           <TileLayer
