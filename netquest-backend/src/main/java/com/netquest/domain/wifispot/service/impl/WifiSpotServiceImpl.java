@@ -54,7 +54,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         Boolean openDuringHeat, Boolean heatedInWinter,
         Boolean shadedAreas, Boolean outdoorFans
     ) {
-        List<WifiSpot> l =  wifiSpotRepository.findWifiSpots(
+        List<WifiSpot> l =  wifiSpotRepository.findFilteredWifiSpots(
             name, exactName, description, exactDescription,
             locationType, wifiQuality, signalStrength,
             bandwidth, crowded, coveredArea, airConditioning,
