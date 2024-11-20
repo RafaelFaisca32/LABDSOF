@@ -79,7 +79,7 @@ public class WifiSpotController {
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
-    @GetMapping
+    @GetMapping(path = "/getFilteredWifiSpots")
     @ResponseStatus(HttpStatus.OK)
     public List<WifiSpotDto> getFilteredWifiSpots(
         @RequestParam(required = false) String name,
