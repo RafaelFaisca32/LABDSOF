@@ -56,8 +56,24 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         Boolean openDuringHeat, Boolean heatedInWinter,
         Boolean shadedAreas, Boolean outdoorFans
     ) {
+
+
+
+        String nameFilter = null;
+        if (name != null) {
+            nameFilter = (exactName != null && exactName) ? name : ("%" + name + "%");
+        }
+        String descFilter = null;
+        if (description != null) {
+            descFilter = (exactDescription != null && exactDescription) ? description : ("%" + description + "%");
+        }
+
+
+
+
+
         List<WifiSpot> l =  wifiSpotRepository.findFilteredWifiSpots(
-            name, exactName, description, exactDescription,
+            nameFilter, descFilter,
             locationType, wifiQuality, signalStrength,
             bandwidth, crowded, coveredArea, airConditioning,
             goodView, noiseLevel, petFriendly, childFriendly,
