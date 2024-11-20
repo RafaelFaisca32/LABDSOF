@@ -11,7 +11,11 @@ function WifiSpotFilter() {
   const [wifiSpots, setWifiSpots] = useState([]);
 
   const handleFilterChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    if(!value){
+      setFilters((prev) => ({...prev, [key]: null}));
+    }else {
+      setFilters((prev) => ({...prev, [key]: value}));
+    }
   };
 
   const applyFilters = async () => {
@@ -60,6 +64,14 @@ function WifiSpotFilter() {
             onChange={(e, { checked }) => handleFilterChange('exactDescription', checked)}
           />
         </Form.Group>
+        <Form.Group widths="equal">
+          <Form.Input
+            label="Radius (KM)"
+            type="number"
+            placeholder="Enter radius in KM"
+            onChange={(e) => handleFilterChange('radius', parseFloat(e.target.value))}
+          />
+        </Form.Group>
 
         {/* Advanced Filters */}
         <Divider horizontal>Advanced</Divider>
@@ -67,6 +79,16 @@ function WifiSpotFilter() {
         {/* Basic Information */}
         <Divider horizontal>Basic Information</Divider>
         <Form.Group widths="equal">
+          <Form.Input
+            label="Name"
+            placeholder="Enter name"
+            onChange={(e) => handleFilterChange('advancedName', e.target.value)}
+          />
+          <Form.Input
+            label="Description"
+            placeholder="Enter description"
+            onChange={(e) => handleFilterChange('advancedDescription', e.target.value)}
+          />
           <Form.Select
             label="Location Type"
             options={[
@@ -82,7 +104,7 @@ function WifiSpotFilter() {
           />
         </Form.Group>
 
-        {/* Quality Filters */}
+        {/* Quality */}
         <Divider horizontal>Quality</Divider>
         <Form.Group widths="equal">
           <Form.Select
@@ -103,16 +125,16 @@ function WifiSpotFilter() {
             ]}
             onChange={(e, { value }) => handleFilterChange('signalStrength', value)}
           />
-        </Form.Group>
-        <Form.Group widths="equal">
           <Form.Select
-            label="Bandwidth"
+            label="Bandwidth Limitations"
             options={[
               { key: 'limited', text: 'Limited', value: 'Limited' },
               { key: 'unlimited', text: 'Unlimited', value: 'Unlimited' },
             ]}
             onChange={(e, { value }) => handleFilterChange('bandwidth', value)}
           />
+        </Form.Group>
+        <Form.Group widths="equal">
           <Form.Input
             label="Peak Usage Start"
             type="time"
@@ -130,40 +152,116 @@ function WifiSpotFilter() {
         <Form.Group widths="equal">
           <Form.Checkbox
             label="Crowded"
-            checked={filters.crowded || false}
+            checked={filters.crowded || null}
             onChange={(e, { checked }) => handleFilterChange('crowded', checked)}
           />
-        </Form.Group>
-        <Form.Group widths="equal">
           <Form.Checkbox
             label="Covered Area"
-            checked={filters.coveredArea || false}
+            checked={filters.coveredArea || null}
             onChange={(e, { checked }) => handleFilterChange('coveredArea', checked)}
           />
+          <Form.Checkbox
+            label="Air Conditioning"
+            checked={filters.airConditioning || null}
+            onChange={(e, { checked }) => handleFilterChange('airConditioning', checked)}
+          />
+          <Form.Checkbox
+            label="Good View"
+            checked={filters.goodView || null}
+            onChange={(e, { checked }) => handleFilterChange('goodView', checked)}
+          />
+          <Form.Select
+            label="Noise Level"
+            options={[
+              { key: 'none', text: 'None', value: 'None' },
+              { key: 'quiet', text: 'Quiet', value: 'Quiet' },
+              { key: 'moderate', text: 'Moderate', value: 'Moderate' },
+              { key: 'loud', text: 'Loud', value: 'Loud' },
+            ]}
+            onChange={(e, { value }) => handleFilterChange('noiseLevel', value)}
+          />
+          <Form.Checkbox
+            label="Pet Friendly"
+            checked={filters.petFriendly || null}
+            onChange={(e, { checked }) => handleFilterChange('petFriendly', checked)}
+          />
+          <Form.Checkbox
+            label="Child Friendly"
+            checked={filters.childFriendly || null}
+            onChange={(e, { checked }) => handleFilterChange('childFriendly', checked)}
+          />
+          <Form.Checkbox
+            label="Disable Access"
+            checked={filters.disableAccess || null}
+            onChange={(e, { checked }) => handleFilterChange('disableAccess', checked)}
+          />
         </Form.Group>
+
         {/* Facilities */}
         <Divider horizontal>Facilities</Divider>
         <Form.Group widths="equal">
           <Form.Checkbox
             label="Available Power Outlets"
-            checked={filters.availablePowerOutlets || false}
+            checked={filters.availablePowerOutlets || null}
             onChange={(e, { checked }) => handleFilterChange('availablePowerOutlets', checked)}
+          />
+          <Form.Checkbox
+            label="Charging Stations"
+            checked={filters.chargingStations || null}
+            onChange={(e, { checked }) => handleFilterChange('chargingStations', checked)}
+          />
+          <Form.Checkbox
+            label="Restrooms Available"
+            checked={filters.restroomsAvailable || null}
+            onChange={(e, { checked }) => handleFilterChange('restroomsAvailable', checked)}
+          />
+          <Form.Checkbox
+            label="Parking Availability"
+            checked={filters.parkingAvailability || null}
+            onChange={(e, { checked }) => handleFilterChange('parkingAvailability', checked)}
+          />
+          <Form.Checkbox
+            label="Food Options"
+            checked={filters.foodOptions || null}
+            onChange={(e, { checked }) => handleFilterChange('foodOptions', checked)}
+          />
+          <Form.Checkbox
+            label="Drink Options"
+            checked={filters.drinkOptions || null}
+            onChange={(e, { checked }) => handleFilterChange('drinkOptions', checked)}
           />
         </Form.Group>
 
         {/* Weather Features */}
         <Divider horizontal>Weather Features</Divider>
         <Form.Group widths="equal">
-          <Form.Group widths="equal">
-            <Form.Checkbox
-              label="Open During Rain"
-              checked={filters.openDuringRain || false}
-              onChange={(e, { checked }) => handleFilterChange('openDuringRain', checked)}
-            />
-          </Form.Group>
+          <Form.Checkbox
+            label="Open during Rain"
+            checked={filters.openDuringRain || null}
+            onChange={(e, { checked }) => handleFilterChange('openDuringRain', checked)}
+          />
+          <Form.Checkbox
+            label="Open during Heat"
+            checked={filters.openDuringHeat || null}
+            onChange={(e, { checked }) => handleFilterChange('openDuringHeat', checked)}
+          />
+          <Form.Checkbox
+            label="Heated in Winter"
+            checked={filters.heatedInWinter || null}
+            onChange={(e, { checked }) => handleFilterChange('heatedInWinter', checked)}
+          />
+          <Form.Checkbox
+            label="Shaded Areas"
+            checked={filters.shadedAreas || null}
+            onChange={(e, { checked }) => handleFilterChange('shadedAreas', checked)}
+          />
+          <Form.Checkbox
+            label="Outdoor Fans"
+            checked={filters.outdoorFans || null}
+            onChange={(e, { checked }) => handleFilterChange('outdoorFans', checked)}
+          />
         </Form.Group>
 
-        {/* Apply Filters Button */}
         <Button primary onClick={applyFilters}>
           Apply Filters
         </Button>
