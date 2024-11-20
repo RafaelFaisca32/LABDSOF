@@ -41,6 +41,8 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         WifiSpotId wifiSpotId = new WifiSpotId(uuid);
         return wifiSpotRepository.existsById(wifiSpotId);
     }
+
+    @Override
     public List<WifiSpotDto> getFilteredWifiSpots(
         String name, Boolean exactName,
         String description, Boolean exactDescription,

@@ -128,50 +128,39 @@ function WifiSpotFilter() {
         {/* Environmental Features */}
         <Divider horizontal>Environmental Features</Divider>
         <Form.Group widths="equal">
-          <Form.Radio
+          <Form.Checkbox
             label="Crowded"
-            onChange={() => handleFilterChange('crowded', true)}
-          />
-          <Form.Radio
-            label="Not Crowded"
-            onChange={() => handleFilterChange('crowded', false)}
+            checked={filters.crowded || false}
+            onChange={(e, { checked }) => handleFilterChange('crowded', checked)}
           />
         </Form.Group>
         <Form.Group widths="equal">
-          <Form.Radio
+          <Form.Checkbox
             label="Covered Area"
-            onChange={() => handleFilterChange('coveredArea', true)}
-          />
-          <Form.Radio
-            label="No Covered Area"
-            onChange={() => handleFilterChange('coveredArea', false)}
+            checked={filters.coveredArea || false}
+            onChange={(e, { checked }) => handleFilterChange('coveredArea', checked)}
           />
         </Form.Group>
-
         {/* Facilities */}
         <Divider horizontal>Facilities</Divider>
         <Form.Group widths="equal">
-          <Form.Radio
+          <Form.Checkbox
             label="Available Power Outlets"
-            onChange={() => handleFilterChange('availablePowerOutlets', true)}
-          />
-          <Form.Radio
-            label="No Power Outlets"
-            onChange={() => handleFilterChange('availablePowerOutlets', false)}
+            checked={filters.availablePowerOutlets || false}
+            onChange={(e, { checked }) => handleFilterChange('availablePowerOutlets', checked)}
           />
         </Form.Group>
 
         {/* Weather Features */}
         <Divider horizontal>Weather Features</Divider>
         <Form.Group widths="equal">
-          <Form.Radio
-            label="Open During Rain"
-            onChange={() => handleFilterChange('openDuringRain', true)}
-          />
-          <Form.Radio
-            label="Not Open During Rain"
-            onChange={() => handleFilterChange('openDuringRain', false)}
-          />
+          <Form.Group widths="equal">
+            <Form.Checkbox
+              label="Open During Rain"
+              checked={filters.openDuringRain || false}
+              onChange={(e, { checked }) => handleFilterChange('openDuringRain', checked)}
+            />
+          </Form.Group>
         </Form.Group>
 
         {/* Apply Filters Button */}
