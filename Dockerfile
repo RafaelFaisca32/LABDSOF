@@ -14,8 +14,8 @@ ARG IMAGE_TAG
 ENV DOCKER_ENV=${IMAGE_TAG}
 
 # Install dependencies and build the frontend
-RUN DOCKER_ENV=${IMAGE_TAG} npm install
-RUN npm run build
+RUN npm install
+RUN DOCKER_ENV=prod npm run build
 
 # Use a Java JDK image for the backend
 FROM openjdk:21-jdk AS backend
