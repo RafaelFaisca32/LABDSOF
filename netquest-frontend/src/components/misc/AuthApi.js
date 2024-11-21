@@ -54,9 +54,6 @@ const instance = axios.create({
   baseURL: config.url.API_BASE_URL,
 });
 
-console.log(process.env.NODE_ENV);
-console.log(process.env.REACT_APP_DOCKER_ENV);
-
 // -- Helper functions
 
 function basicAuth(user) {
