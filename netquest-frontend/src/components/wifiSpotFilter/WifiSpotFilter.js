@@ -92,6 +92,7 @@ function WifiSpotFilter() {
           <Form.Select
             label="Location Type"
             options={[
+              { key: '', text: '', value: '' },
               { key: 'public', text: 'Public', value: 'Public' },
               { key: 'cafe', text: 'Cafe', value: 'Cafe' },
               { key: 'library', text: 'Library', value: 'Library' },
@@ -110,6 +111,7 @@ function WifiSpotFilter() {
           <Form.Select
             label="WiFi Quality"
             options={[
+              { key: '', text: '', value: '' },
               { key: 'high', text: 'High', value: 'High' },
               { key: 'medium', text: 'Medium', value: 'Medium' },
               { key: 'low', text: 'Low', value: 'Low' },
@@ -119,6 +121,7 @@ function WifiSpotFilter() {
           <Form.Select
             label="Signal Strength"
             options={[
+              { key: '', text: '', value: '' },
               { key: 'strong', text: 'Strong', value: 'Strong' },
               { key: 'medium', text: 'Medium', value: 'Medium' },
               { key: 'low', text: 'Low', value: 'Low' },
@@ -128,6 +131,7 @@ function WifiSpotFilter() {
           <Form.Select
             label="Bandwidth Limitations"
             options={[
+              { key: '', text: '', value: '' },
               { key: 'limited', text: 'Limited', value: 'Limited' },
               { key: 'unlimited', text: 'Unlimited', value: 'Unlimited' },
             ]}

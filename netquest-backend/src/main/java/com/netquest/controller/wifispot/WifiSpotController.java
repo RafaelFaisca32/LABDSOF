@@ -4,6 +4,7 @@ package com.netquest.controller.wifispot;
 import com.netquest.domain.shared.WifiSpotManagementType;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
+import com.netquest.domain.wifispot.dto.WifiSpotFilterDto;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
@@ -13,6 +14,7 @@ import com.netquest.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -120,5 +122,13 @@ public class WifiSpotController {
             openDuringRain, openDuringHeat, heatedInWinter,
             shadedAreas, outdoorFans
         );
+    }
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @PostMapping(path = "/search-wifi-spots")
+    @ResponseStatus(HttpStatus.OK)
+    public List<WifiSpotDto> searchWifiSpots(
+            @RequestBody(required = false) WifiSpotFilterDto wifiSpotFilterDto
+    ) {
+        return wifiSpotService.getWifiSpotsWithFilters(wifiSpotFilterDto);
     }
 }

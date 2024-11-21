@@ -1,5 +1,6 @@
 package com.netquest.infrastructure.wifispot;
 
+import com.netquest.domain.shared.*;
 import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.WifiSpot;
@@ -20,7 +21,7 @@ public interface WifiSpotRepository extends JpaRepository<WifiSpot, WifiSpotId> 
     WifiSpot getWifiSpotByWifiSpotId(WifiSpotId wifiSpotId);
 
     @Query("SELECT wfs FROM WifiSpot wfs " +
-            "WHERE (wfs.wifiSpotName.value like :name OR :name is null) " +
+            "WHERE ( wfs.wifiSpotName.value like :name  OR :name is null) " +
             "AND (wfs.wifiSpotDescription.value like :description OR :description is null) " +
             "AND (wfs.wifiSpotLocationType.value = :locationType OR :locationType is null) " +
             "AND (wfs.wifiSpotQualityIndicators.wifiQuality = :wifiQuality OR :wifiQuality is null) " +
@@ -48,15 +49,15 @@ public interface WifiSpotRepository extends JpaRepository<WifiSpot, WifiSpotId> 
     List<WifiSpot> findFilteredWifiSpots(
         @Param("name") String name,
         @Param("description") String description,
-        @Param("locationType") String locationType,
-        @Param("wifiQuality") String wifiQuality,
-        @Param("signalStrength") String signalStrength,
-        @Param("bandwidth") String bandwidth,
+        @Param("locationType") LocationType locationType,
+        @Param("wifiQuality") QualityType wifiQuality,
+        @Param("signalStrength") StrengthType signalStrength,
+        @Param("bandwidth") BandwithType bandwidth,
         @Param("crowded") Boolean crowded,
         @Param("coveredArea") Boolean coveredArea,
         @Param("airConditioning") Boolean airConditioning,
         @Param("goodView") Boolean goodView,
-        @Param("noiseLevel") String noiseLevel,
+        @Param("noiseLevel") NoiseType noiseLevel,
         @Param("petFriendly") Boolean petFriendly,
         @Param("childFriendly") Boolean childFriendly,
         @Param("disableAccess") Boolean disableAccess,
@@ -72,5 +73,7 @@ public interface WifiSpotRepository extends JpaRepository<WifiSpot, WifiSpotId> 
         @Param("shadedAreas") Boolean shadedAreas,
         @Param("outdoorFans") Boolean outdoorFans
     );
+
+
 
 }
