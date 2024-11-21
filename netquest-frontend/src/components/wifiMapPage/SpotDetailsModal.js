@@ -36,6 +36,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     };
 
     fetchVisitStatus();
+    // eslint-disable-next-line
   }, [spot]);
 
   if (!spot) return null;
@@ -194,7 +195,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
         <Modal open={appSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
           <Modal.Header>Select App to Open Directions</Modal.Header>
           <Modal.Content>
-            <Button onClick={() => handleAppSelection('googleMaps')}>Open with Google Maps</Button>
+            {/* add the google maps in the future */}
             <Button onClick={() => handleAppSelection('waze')}>Open with Waze</Button>
           </Modal.Content>
           <Modal.Actions>
