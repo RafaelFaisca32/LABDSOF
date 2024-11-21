@@ -55,6 +55,7 @@ const instance = axios.create({
 });
 
 console.log(process.env.NODE_ENV);
+console.log(process.env.DOCKER_ENV);
 
 // -- Helper functions
 

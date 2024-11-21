@@ -1,17 +1,20 @@
 # Use a Node.js image to build the frontend assets
 FROM node:16 AS frontend-build
 
-# Define a build argument to capture the tag
-ARG IMAGE_TAG
-
 # Set working directory for frontend
 WORKDIR /app/frontend
 
 # Copy frontend source files
 COPY netquest-frontend/ .
 
+# Define a build argument to capture the tag
+ARG IMAGE_TAG
+
+# Use the build argument to define an environment variable
+ENV DOCKER_ENV=${IMAGE_TAG}
+
 # Install dependencies and build the frontend
-RUN NODE_ENV=${IMAGE_TAG} npm install
+RUN DOCKER_ENV=${IMAGE_TAG} npm install
 RUN npm run build
 
 # Use a Java JDK image for the backend
