@@ -8,6 +8,8 @@ import 'leaflet/dist/leaflet.css';
 import SpotDetailsModal from './SpotDetailsModal';
 import AddSpotModal from './AddSpotModal';
 import { wifiSpotApi } from "../misc/WifiSpotApi"
+import {errorNotification, successNotification} from "../misc/Helpers";
+
 
 const userIcon = new L.Icon({
   iconUrl: '/icons/user.png', 
@@ -44,7 +46,6 @@ function WifiMapPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [newSpotDetails, setNewSpotDetails] = useState({ coordinates: null, name: '', size: '' });
   const [selectedSpot, setSelectedSpot] = useState(null);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const loadExistingWifiSpots = async () => {
     const responseGetWifiSpots = await wifiSpotApi.getWifiSpots(user);
@@ -128,14 +129,21 @@ function WifiMapPage() {
         country: newSpotDetails.country,
         zipCode: newSpotDetails.zipCode
       }
-      const responseCreateWifiSpot = await wifiSpotApi.createWifiSpot(user, newSpotDetails);
-      if (responseCreateWifiSpot && responseCreateWifiSpot.status === 201) {
-        setSpots([...spots, newSpotDetails]);
-        setShowSuccessMessage(true);
-        setModalOpen(false);
+      try {
+        const responseCreateWifiSpot = await wifiSpotApi.createWifiSpot(user, newSpotDetails);
+        if (responseCreateWifiSpot && responseCreateWifiSpot.status === 201) {
+          newSpotDetails.uuid = responseCreateWifiSpot.data.uuid;
+          setSpots([...spots, newSpotDetails]);
+          successNotification("Wifi Spot created successfully.");
+          setModalOpen(false);
+        }
+      }
+      catch(err){
+        errorNotification(err.response?.data?.message || "Error creating wifi spot");
       }
     } else {
-      alert("Missing mandatory fields!");
+      //alert("Missing mandatory fields!");
+
     }
 
   };
@@ -195,11 +203,6 @@ function WifiMapPage() {
       />
       {selectedSpot && (
         <SpotDetailsModal userLocation={userLocation} onClose={closeSpotModal} spot={selectedSpot}></SpotDetailsModal>
-      )}
-      {showSuccessMessage && (
-          <Message positive>
-            <Message.Header>Wi-Fi spot registered successfully and shared with others!</Message.Header>
-          </Message>
       )}
     </Container>
   );

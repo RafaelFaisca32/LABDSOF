@@ -1,11 +1,25 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import SpotDetailsModal from './SpotDetailsModal'; // Adjust the import path as needed
+import SpotDetailsModal from './SpotDetailsModal';
+import { useAuth } from '../context/AuthContext';
+
+// Mock the useAuth hook to return a mock user
+jest.mock('../context/AuthContext', () => ({
+  useAuth: jest.fn(),
+}));
 
 describe('SpotDetailsModal', () => {
   let userLocation, spot, onClose;
 
   beforeEach(() => {
+    // Mock user object that would be returned by useAuth
+    useAuth.mockReturnValue({
+      getUser: jest.fn().mockReturnValue({
+        id: 'user1',
+        name: 'John Doe',
+      }),
+    });
+
     userLocation = [40.7128, -74.0060]; // Example user location (latitude, longitude)
     spot = {
       name: 'Central Park',

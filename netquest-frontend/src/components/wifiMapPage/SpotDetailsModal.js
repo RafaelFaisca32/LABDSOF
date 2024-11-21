@@ -1,10 +1,46 @@
+import React, { useEffect, useState } from 'react';
+import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
+import { useAuth } from '../context/AuthContext';
+import { errorNotification, successNotification } from "../misc/Helpers";
 import {Modal, Header, Button, Segment} from 'semantic-ui-react';
-import React, { useState } from 'react';
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
   const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
+  const Auth = useAuth();
+  const user = Auth.getUser();
+  const [existsVisit, setExistsVisit] = useState(null); // Track if visit exists
+  const [loading, setLoading] = useState(true);
+  const [wifiSpotVisitId,setWifiSpotVisitId] = useState(null);
+
+
+  useEffect(() => {
+    const fetchVisitStatus = async () => {
+      if (!spot) return; // Ensure spot is defined
+      setLoading(true);
+      try {
+        const response = await wifiSpotVisitApi.getOngoingWifiSpotVisit(user);
+        if (response && response.status === 200) {
+          if(response.data.wifiSpotId === spot.uuid) {
+            setExistsVisit(true);
+            setWifiSpotVisitId(response.data.id);
+          }
+        }
+      } catch (err) {
+        if(err.response && err.response.status !== 404) {
+          errorNotification(err.response?.data?.message || "Error checking visit");
+        }
+        setExistsVisit(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisitStatus();
+  }, [spot]);
 
   if (!spot) return null;
+
+   // Hardcoded spot ID for now
 
   const openDirections = () => {
     const [userLat, userLng] = userLocation || [null, null];
@@ -52,73 +88,108 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     setAppSelectionModalOpen(false); 
   };
 
+
+
+  const createVisit = async () => {
+    try {
+      console.log(spot)
+      const response = await wifiSpotVisitApi.createVisitSimple(user, spot.uuid);
+      if (response && response.status === 201) {
+        onClose(); // Close the modal
+        successNotification("Wifi Spot Visit created successfully.");
+      }
+    } catch (err) {
+      errorNotification(err.response?.data?.message || "Error creating visit");
+    }
+  };
+
+  const finishVisit = async () => {
+    try {
+      const response = await wifiSpotVisitApi.endVisit(user,wifiSpotVisitId);
+      if (response && response.status === 200) {
+        onClose(); // Close the modal
+        successNotification("Wifi Spot Visit finished successfully.");
+      }
+    } catch (err) {
+      errorNotification(err.response?.data?.message || "Error finishing visit");
+    }
+  };
+
   return (
-    <Modal open={!!spot} onClose={onClose} size="small">
-      <Modal.Header>Spot Details</Modal.Header>
-      <Modal.Content scrolling style={{maxHeight: "70vh", overflowY: "auto"}}>
-        <Segment>
-          <Header as="h4">Basic Information</Header>
-          <p><strong>Name:</strong> {spot.name}</p>
-          <p><strong>Description:</strong> {spot.description}</p>
-          <p><strong>Location Type:</strong> {spot.locationType}</p>
-        </Segment>
+      <Modal open={!!spot} onClose={onClose} size="small">
+        <Modal.Header>Spot Details</Modal.Header>
+        <Modal.Content scrolling style={{maxHeight: "70vh", overflowY: "auto"}}>
+          <Segment>
+            <Header as="h4">Basic Information</Header>
+            <p><strong>Name:</strong> {spot.name}</p>
+            <p><strong>Description:</strong> {spot.description}</p>
+            <p><strong>Location Type:</strong> {spot.locationType}</p>
+          </Segment>
 
-        <Segment>
-          <Header as="h4">Quality</Header>
-          <p><strong>Wifi Quality:</strong> {spot.wifiQuality}</p>
-          <p><strong>Signal Strength:</strong> {spot.signalStrength}</p>
-          <p><strong>Bandwidth Limitations:</strong> {spot.bandwidth}</p>
-          <p><strong>Peak Usage Start:</strong> {spot.peakUsageStart}</p>
-          <p><strong>Peak Usage End:</strong> {spot.peakUsageEnd}</p>
-        </Segment>
+          <Segment>
+            <Header as="h4">Quality</Header>
+            <p><strong>Wifi Quality:</strong> {spot.wifiQuality}</p>
+            <p><strong>Signal Strength:</strong> {spot.signalStrength}</p>
+            <p><strong>Bandwidth Limitations:</strong> {spot.bandwidth}</p>
+            <p><strong>Peak Usage Start:</strong> {spot.peakUsageStart}</p>
+            <p><strong>Peak Usage End:</strong> {spot.peakUsageEnd}</p>
+          </Segment>
 
-        <Segment>
-          <Header as="h4">Environmental Features</Header>
-          <p><strong>Crowded:</strong> {spot.crowded ? "Yes" : "No"}</p>
-          <p><strong>Covered Area:</strong> {spot.coveredArea ? "Yes" : "No"}</p>
-          <p><strong>Air Conditioning:</strong> {spot.airConditioning ? "Yes" : "No"}</p>
-          <p><strong>Good View:</strong> {spot.goodView ? "Yes" : "No"}</p>
-          <p><strong>Noise Level:</strong> {spot.noiseLevel}</p>
-          <p><strong>Pet Friendly:</strong> {spot.petFriendly ? "Yes" : "No"}</p>
-          <p><strong>Child Friendly:</strong> {spot.childFriendly ? "Yes" : "No"}</p>
-          <p><strong>Disable Access:</strong> {spot.disableAccess ? "Yes" : "No"}</p>
-        </Segment>
+          <Segment>
+            <Header as="h4">Environmental Features</Header>
+            <p><strong>Crowded:</strong> {spot.crowded ? "Yes" : "No"}</p>
+            <p><strong>Covered Area:</strong> {spot.coveredArea ? "Yes" : "No"}</p>
+            <p><strong>Air Conditioning:</strong> {spot.airConditioning ? "Yes" : "No"}</p>
+            <p><strong>Good View:</strong> {spot.goodView ? "Yes" : "No"}</p>
+            <p><strong>Noise Level:</strong> {spot.noiseLevel}</p>
+            <p><strong>Pet Friendly:</strong> {spot.petFriendly ? "Yes" : "No"}</p>
+            <p><strong>Child Friendly:</strong> {spot.childFriendly ? "Yes" : "No"}</p>
+            <p><strong>Disable Access:</strong> {spot.disableAccess ? "Yes" : "No"}</p>
+          </Segment>
 
-        <Segment>
-          <Header as="h4">Facilities</Header>
-          <p><strong>Available Power Outlets:</strong> {spot.availablePowerOutlets ? "Yes" : "No"}</p>
-          <p><strong>Charging Stations:</strong> {spot.chargingStations ? "Yes" : "No"}</p>
-          <p><strong>Restrooms Available:</strong> {spot.restroomsAvailable ? "Yes" : "No"}</p>
-          <p><strong>Parking Availability:</strong> {spot.parkingAvailability ? "Yes" : "No"}</p>
-          <p><strong>Food Options:</strong> {spot.foodOptions ? "Yes" : "No"}</p>
-          <p><strong>Drink Options:</strong> {spot.drinkOptions ? "Yes" : "No"}</p>
-        </Segment>
+          <Segment>
+            <Header as="h4">Facilities</Header>
+            <p><strong>Available Power Outlets:</strong> {spot.availablePowerOutlets ? "Yes" : "No"}</p>
+            <p><strong>Charging Stations:</strong> {spot.chargingStations ? "Yes" : "No"}</p>
+            <p><strong>Restrooms Available:</strong> {spot.restroomsAvailable ? "Yes" : "No"}</p>
+            <p><strong>Parking Availability:</strong> {spot.parkingAvailability ? "Yes" : "No"}</p>
+            <p><strong>Food Options:</strong> {spot.foodOptions ? "Yes" : "No"}</p>
+            <p><strong>Drink Options:</strong> {spot.drinkOptions ? "Yes" : "No"}</p>
+          </Segment>
 
-        <Segment>
-          <Header as="h4">Weather Features</Header>
-          <p><strong>Open during Rain:</strong> {spot.openDuringRain ? "Yes" : "No"}</p>
-          <p><strong>Open during Heat:</strong> {spot.openDuringHeat ? "Yes" : "No"}</p>
-          <p><strong>Heated in Winter:</strong> {spot.heatedInWinter ? "Yes" : "No"}</p>
-          <p><strong>Shaded Areas:</strong> {spot.shadedAreas ? "Yes" : "No"}</p>
-          <p><strong>Outdoor Fans:</strong> {spot.outdoorFans ? "Yes" : "No"}</p>
-        </Segment>
+          <Segment>
+            <Header as="h4">Weather Features</Header>
+            <p><strong>Open during Rain:</strong> {spot.openDuringRain ? "Yes" : "No"}</p>
+            <p><strong>Open during Heat:</strong> {spot.openDuringHeat ? "Yes" : "No"}</p>
+            <p><strong>Heated in Winter:</strong> {spot.heatedInWinter ? "Yes" : "No"}</p>
+            <p><strong>Shaded Areas:</strong> {spot.shadedAreas ? "Yes" : "No"}</p>
+            <p><strong>Outdoor Fans:</strong> {spot.outdoorFans ? "Yes" : "No"}</p>
+          </Segment>
 
-        <Segment>
-          <Header as="h4">Address</Header>
-          <p><strong>Address Line 1:</strong> {spot.address.addressLine1}</p>
-          <p><strong>Address Line 2:</strong> {spot.address.addressLine2}</p>
-          <p><strong>City:</strong> {spot.address.city}</p>
-          <p><strong>District:</strong> {spot.address.district}</p>
-          <p><strong>Country:</strong> {spot.address.country}</p>
-          <p><strong>Zip Code:</strong> {spot.address.zipCode}</p>
-          <p><strong>Latitude:</strong> {spot.latitude}</p>
-          <p><strong>Longitude:</strong> {spot.longitude}</p>
-        </Segment>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button onClick={openDirections}>Get Directions</Button>
-        <Button onClick={onClose}>Close</Button>
-      </Modal.Actions>
+          <Segment>
+            <Header as="h4">Address</Header>
+            <p><strong>Address Line 1:</strong> {spot.address.addressLine1}</p>
+            <p><strong>Address Line 2:</strong> {spot.address.addressLine2}</p>
+            <p><strong>City:</strong> {spot.address.city}</p>
+            <p><strong>District:</strong> {spot.address.district}</p>
+            <p><strong>Country:</strong> {spot.address.country}</p>
+            <p><strong>Zip Code:</strong> {spot.address.zipCode}</p>
+            <p><strong>Latitude:</strong> {spot.latitude}</p>
+            <p><strong>Longitude:</strong> {spot.longitude}</p>
+          </Segment>
+        </Modal.Content>
+        <Modal.Actions>
+          {loading ? (
+              <p>Loading visit status...</p>
+          ) : existsVisit ? (
+              <Button onClick={finishVisit}>Finish Visit</Button>
+          ) : (
+              <Button onClick={createVisit}>Record Visit</Button>
+          )}
+
+          <Button onClick={openDirections}>Get Directions</Button>
+          <Button onClick={onClose}>Close</Button>
+        </Modal.Actions>
       {appSelectionModalOpen && (
         <Modal open={appSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
           <Modal.Header>Select App to Open Directions</Modal.Header>
@@ -127,8 +198,8 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
             <Button onClick={() => handleAppSelection('waze')}>Open with Waze</Button>
           </Modal.Content>
           <Modal.Actions>
-            <Button onClick={() => setAppSelectionModalOpen(false)}>Cancel</Button>
           </Modal.Actions>
+            <Button onClick={() => setAppSelectionModalOpen(false)}>Cancel</Button>
         </Modal>
       )}
     </Modal>

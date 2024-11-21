@@ -36,14 +36,33 @@ public class WifiSpotVisitController {
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/simple/{wifi-spot-id}")
+    public WifiSpotVisitDto createSimple(@PathVariable(name = "wifi-spot-id") UUID wifiSpotUUID) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        return wifiSpotVisitService.saveWifiSpotVisitSimple(userDetails.getId(),wifiSpotUUID);
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/update-end-date-time/{id}")
     public WifiSpotVisitDto updateWifiSpotVisitEndDateTime(
-            @PathVariable(name = "id") UUID wifiSpotUUID,
+            @PathVariable(name = "id") UUID wifiSpotVisitUUID,
             @Valid @RequestBody WifiSpotVisitUpdateDateTimeDto wifiSpotVisitUpdateDateTimeDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        return wifiSpotVisitService.updateWifiSpotVisitEndDateTime(userDetails.getId() ,wifiSpotUUID,wifiSpotVisitUpdateDateTimeDto);
+        return wifiSpotVisitService.updateWifiSpotVisitEndDateTime(userDetails.getId() ,wifiSpotVisitUUID,wifiSpotVisitUpdateDateTimeDto);
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/ongoing")
+    public WifiSpotVisitDto getWifiSpotVisitOngoing() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return wifiSpotVisitService.getWifiSpotVisitOngoing(userDetails.getId());
     }
 
 }

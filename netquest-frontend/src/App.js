@@ -9,6 +9,8 @@ import Signup from './components/home/Signup'
 import AdminPage from './components/admin/AdminPage'
 import WifiMapPage from './components/wifiMapPage/WifiMapPage'
 import DeleteAccount from './components/delete/DeleteAccount'
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
+      <ToastContainer/>
     </AuthProvider>
   )
 }
