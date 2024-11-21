@@ -16,6 +16,6 @@ const dev = {
 export const config =
   process.env.NODE_ENV === "development"
     ? local
-    : process.env.ENVIRONMENT === "prod"
+    : process.env.NODE_ENV === "prod"
       ? prod
       : dev;
