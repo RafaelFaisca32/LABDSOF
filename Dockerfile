@@ -1,6 +1,12 @@
 # Use a Node.js image to build the frontend assets
 FROM node:16 AS frontend-build
 
+# Define a build argument to capture the tag
+ARG IMAGE_TAG
+
+# Use the build argument to define an environment variable
+ENV NODE_ENV=${IMAGE_TAG}
+
 # Set working directory for frontend
 WORKDIR /app/frontend
 
