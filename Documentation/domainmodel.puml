@@ -275,7 +275,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         wifiQuality: QualityType
         signalStrength: StrengthType
         bandwithLimitations: BandwithType
-        peakUsageHourInterval: Pair<time>
+        peakUsageHourInterval: WifiSpotPeakUsageInterval
     }
 
     Class WifiSpotEnvironmentalFeatures <<ValueObject>> {
@@ -297,6 +297,11 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         parkingAvailability: bool
         foodOptions: bool
         drinkOptions: bool
+    }
+    
+    Class WifiSpotPeakUsageInterval <<ValueObject>> {
+        startTime: LocalTime
+        endTime: LocalTime
     }
 
     Class WifiSpotWeatherFeatures <<ValueObject>>{
@@ -340,6 +345,10 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         value: WifiSpotManagementType
     }
     
+    Class WifiSpotAddressId <<ValueObject>> {
+        value: UUIDv4
+    }
+    
     
 
     'WifiSpot Entity Relationships w/ VOs
@@ -352,11 +361,13 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot -- WifiSpotEnvironmentalFeatures
     WifiSpot -- WifiSpotFacilities
     WifiSpot -- WifiSpotWeatherFeatures
+    WifiSpotQualityIndicators -- WifiSpotPeakUsageInterval
     WifiSpot "1" --> "1..*" WifiSpotManagement
 
     
 
     'WifiSpotAddress Entity Relationships w/ VOs
+    WifiSpotAddress -- WifiSpotAddressId
     WifiSpotAddress -- WifiSpotAddressLine1
     WifiSpotAddress -- WifiSpotAddressLine2
     WifiSpotAddress -- WifiSpotAddressCity

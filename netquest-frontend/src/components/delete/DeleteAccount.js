@@ -1,7 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { deleteUserById } from '../misc/BookApi';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { deleteUserById } from "../misc/AuthApi";
+import { useAuth } from "../context/AuthContext";
 
 function DeleteAccount() {
   const navigate = useNavigate();

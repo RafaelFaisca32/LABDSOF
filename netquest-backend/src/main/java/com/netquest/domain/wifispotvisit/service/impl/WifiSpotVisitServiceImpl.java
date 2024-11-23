@@ -107,6 +107,14 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
 
     }
 
+    @Override
+    public WifiSpotVisitDto saveWifiSpotVisitSimple(UUID userUUID, UUID wifiSpotUUID) {
+        WifiSpotVisitCreateDto wifiSpotVisitCreateDto = new WifiSpotVisitCreateDto();
+        wifiSpotVisitCreateDto.setWifiSpotId(wifiSpotUUID);
+        wifiSpotVisitCreateDto.setStartDateTime(LocalDateTime.now());
+        return saveWifiSpotVisit(userUUID, wifiSpotVisitCreateDto) ;
+    }
+
 
     private PointsEarnTransactionDto createPointsEarnTransactionBasedOnVisit(WifiSpotVisitDto wifiSpotVisitDto) {
         if(wifiSpotVisitDto.endDateTime() == null) {

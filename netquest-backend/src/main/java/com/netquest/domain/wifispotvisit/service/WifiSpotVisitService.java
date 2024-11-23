@@ -14,4 +14,6 @@ public interface WifiSpotVisitService {
     WifiSpotVisitDto updateWifiSpotVisitEndDateTime(UUID userUUID, UUID wifiSpotVisitUUID, WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto);
 
     WifiSpotVisitDto getWifiSpotVisitOngoing(UUID userUUID);
+
+    WifiSpotVisitDto saveWifiSpotVisitSimple(UUID userUUID, UUID wifiSpotUUID);
 }
