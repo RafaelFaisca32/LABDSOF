@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
@@ -52,8 +53,9 @@ public class WifiSpotVisitController {
             @Valid @RequestBody WifiSpotVisitUpdateDateTimeDto wifiSpotVisitUpdateDateTimeDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        return wifiSpotVisitService.updateWifiSpotVisitEndDateTime(userDetails.getId() ,wifiSpotVisitUUID,wifiSpotVisitUpdateDateTimeDto);
+        WifiSpotVisitUpdateDateTimeDto endDateNow = new WifiSpotVisitUpdateDateTimeDto();
+        endDateNow.setDateTime(LocalDateTime.now());
+        return wifiSpotVisitService.updateWifiSpotVisitEndDateTime(userDetails.getId() ,wifiSpotVisitUUID,endDateNow);
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
