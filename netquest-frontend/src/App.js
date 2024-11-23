@@ -9,6 +9,7 @@ import Signup from './components/home/Signup'
 import AdminPage from './components/admin/AdminPage'
 import WifiMapPage from './components/wifiMapPage/WifiMapPage'
 import DeleteAccount from './components/delete/DeleteAccount'
+import WifiSpotFilter from './components/wifiSpotFilter/WifiSpotFilter';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -23,6 +24,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path="/adminpage" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/wifispot" element={<PrivateRoute><WifiMapPage /></PrivateRoute>} />
+          <Route path="/wifispotfilterpage" element={<PrivateRoute><WifiSpotFilter /></PrivateRoute>} />
           <Route path="/delete-account" element={<PrivateRoute><DeleteAccount /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

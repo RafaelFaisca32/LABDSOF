@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Modal, Form, Button, Dropdown, Segment, Header } from "semantic-ui-react";
+import { Modal, Form, Button, Segment, Header } from "semantic-ui-react";
 
 const locationTypes = [
     "Public",
@@ -18,7 +18,7 @@ const yesNoOptions = [
     { key: "yes", text: "Yes", value: true },
     { key: "no", text: "No", value: false },
 ];
-const countries = [
+export const countries = [
     { key: "al", text: "Albania", value: "al" },
     { key: "ad", text: "Andorra", value: "ad" },
     { key: "am", text: "Armenia", value: "am" },

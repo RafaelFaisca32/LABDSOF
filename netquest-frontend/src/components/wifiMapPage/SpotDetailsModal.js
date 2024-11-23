@@ -3,6 +3,7 @@ import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
 import { useAuth } from '../context/AuthContext';
 import { errorNotification, successNotification } from "../misc/Helpers";
 import {Modal, Header, Button, Segment} from 'semantic-ui-react';
+import { countries } from './AddSpotModal';
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
   const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
@@ -11,6 +12,11 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
   const [existsVisit, setExistsVisit] = useState(null); // Track if visit exists
   const [loading, setLoading] = useState(true);
   const [wifiSpotVisitId,setWifiSpotVisitId] = useState(null);
+
+  const getCountryByValue = (value) => {
+    const country = countries.find((c) => c.value === value);
+    return country ? country.text : value;
+  };
 
 
   useEffect(() => {
@@ -93,7 +99,6 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
   const createVisit = async () => {
     try {
-      console.log(spot)
       const response = await wifiSpotVisitApi.createVisitSimple(user, spot.uuid);
       if (response && response.status === 201) {
         onClose(); // Close the modal
@@ -173,7 +178,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
             <p><strong>Address Line 2:</strong> {spot.address.addressLine2}</p>
             <p><strong>City:</strong> {spot.address.city}</p>
             <p><strong>District:</strong> {spot.address.district}</p>
-            <p><strong>Country:</strong> {spot.address.country}</p>
+            <p><strong>Country:</strong> {getCountryByValue(spot.address.country)}</p>
             <p><strong>Zip Code:</strong> {spot.address.zipCode}</p>
             <p><strong>Latitude:</strong> {spot.latitude}</p>
             <p><strong>Longitude:</strong> {spot.longitude}</p>
