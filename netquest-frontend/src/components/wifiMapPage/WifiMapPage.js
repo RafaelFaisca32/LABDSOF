@@ -9,7 +9,7 @@ import SpotDetailsModal from './SpotDetailsModal';
 import AddSpotModal from './AddSpotModal';
 import WifiSpotFilter from '../wifiSpotFilter/WifiSpotFilter';
 import { wifiSpotApi } from "../misc/WifiSpotApi";
-import { errorNotification } from "../misc/Helpers";
+import { errorNotification, successNotification } from "../misc/Helpers";
 
 const userIcon = new L.Icon({
   iconUrl: '/icons/user.png',
@@ -93,6 +93,75 @@ function WifiMapPage() {
     }
   };
 
+  const handleMapClick = (coordinates) => {
+    setNewSpotDetails({ coordinates, name: '', size: '' });
+    setModalOpen(true);
+  }
+
+  const addSpot = async () => {
+    if (
+        newSpotDetails.coordinates &&
+        newSpotDetails.coordinates.lat &&
+        newSpotDetails.coordinates.lng &&
+        newSpotDetails.name &&
+        newSpotDetails.description &&
+        newSpotDetails.locationType &&
+        newSpotDetails.wifiQuality &&
+        newSpotDetails.signalStrength &&
+        newSpotDetails.bandwidth &&
+        newSpotDetails.crowded !== undefined &&
+        newSpotDetails.coveredArea !== undefined &&
+        newSpotDetails.airConditioning !== undefined &&
+        newSpotDetails.goodView !== undefined &&
+        newSpotDetails.noiseLevel &&
+        newSpotDetails.petFriendly !== undefined &&
+        newSpotDetails.childFriendly !== undefined &&
+        newSpotDetails.disableAccess !== undefined &&
+        newSpotDetails.availablePowerOutlets !== undefined &&
+        newSpotDetails.chargingStations !== undefined &&
+        newSpotDetails.restroomsAvailable !== undefined &&
+        newSpotDetails.parkingAvailability !== undefined &&
+        newSpotDetails.foodOptions !== undefined &&
+        newSpotDetails.drinkOptions !== undefined &&
+        newSpotDetails.addressLine1 &&
+        newSpotDetails.city &&
+        newSpotDetails.district &&
+        newSpotDetails.country &&
+        newSpotDetails.zipCode
+    ) {
+      newSpotDetails.latitude = newSpotDetails.coordinates.lat;
+      newSpotDetails.longitude = newSpotDetails.coordinates.lng;
+      newSpotDetails.address = {
+        addressLine1: newSpotDetails.addressLine1,
+        addressLine2: newSpotDetails.addressLine2,
+        city: newSpotDetails.city,
+        district: newSpotDetails.district,
+        country: newSpotDetails.country,
+        zipCode: newSpotDetails.zipCode
+      }
+      try {
+        const responseCreateWifiSpot = await wifiSpotApi.createWifiSpot(user, newSpotDetails);
+        if (responseCreateWifiSpot && responseCreateWifiSpot.status === 201) {
+          newSpotDetails.uuid = responseCreateWifiSpot.data.uuid;
+          setWifiSpots([...wifiSpots, newSpotDetails]);
+          successNotification("Wifi Spot created successfully.");
+          setModalOpen(false);
+        }
+      }
+      catch(err){
+        errorNotification(err.response?.data?.message || "Error creating wifi spot");
+      }
+    }
+  }
+
+  const openSpotModal = (spot) => {
+    setSelectedSpot(spot);
+  };
+
+  const closeSpotModal = () => {
+    setSelectedSpot(null);
+  };
+
   if (!isUser) {
     return <Navigate to="/" />;
   }
@@ -112,7 +181,7 @@ function WifiMapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          <MapClickHandler onMapClick={(coordinates) => setNewSpotDetails({ coordinates, name: '', size: '' })} />
+          <MapClickHandler onMapClick={handleMapClick} />
           <Marker position={userLocation} icon={userIcon}>
             <Tooltip direction="top" offset={[0, -20]} opacity={1}>
               You are here
@@ -125,7 +194,7 @@ function WifiMapPage() {
               position={spot.coordinates}
               icon={wifiSpotIcon}
               eventHandlers={{
-                click: () => setSelectedSpot(spot),
+                click: () => openSpotModal(spot),
               }}
             >
               <Tooltip direction="top" offset={[0, -20]} opacity={1}>
@@ -149,6 +218,7 @@ function WifiMapPage() {
 
       <AddSpotModal
         open={modalOpen}
+        onSave={addSpot}
         onClose={() => setModalOpen(false)}
         spotDetails={newSpotDetails}
         setSpotDetails={setNewSpotDetails}
@@ -156,7 +226,7 @@ function WifiMapPage() {
       {selectedSpot && (
         <SpotDetailsModal
           userLocation={userLocation}
-          onClose={() => setSelectedSpot(null)}
+          onClose={closeSpotModal}
           spot={selectedSpot}
         />
       )}

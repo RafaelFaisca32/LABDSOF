@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Modal, Form, Button, Dropdown, Segment, Header } from "semantic-ui-react";
+import { Modal, Form, Button, Segment, Header } from "semantic-ui-react";
 
 const locationTypes = [
     "Public",
