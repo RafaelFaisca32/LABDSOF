@@ -8,8 +8,6 @@ function DeleteAccount() {
   const { getUser, userLogout } = useAuth();
   const user = getUser();
 
-  console.log("Current user:", user); // Check if user is available
-
   const handleConfirmDelete = async () => {
     try {
       await deleteUserById(user, user.id);
