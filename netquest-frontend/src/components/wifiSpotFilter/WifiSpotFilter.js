@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Container, Form, Table, Button, Divider } from 'semantic-ui-react';
+import { Container, Form, Button, Divider } from 'semantic-ui-react';
 import { wifiSpotApi } from "../misc/WifiSpotApi";
 import { errorNotification } from "../misc/Helpers";
 import { useAuth } from "../context/AuthContext";
 
-function WifiSpotFilter() {
+function WifiSpotFilter({ onApplyFilters }) {
   const Auth = useAuth();
   const user = Auth.getUser();
   const [filters, setFilters] = useState({});
-  const [wifiSpots, setWifiSpots] = useState([]);
 
   const handleFilterChange = (key, value) => {
     if(!value){
@@ -29,12 +28,19 @@ function WifiSpotFilter() {
 
       const response = await wifiSpotApi.getFilteredWifiSpots(user, validFilters);
       if (response.status === 200) {
-        setWifiSpots(response.data);
+        const spotsList = response.data.map((spot) => ({
+          ...spot,
+          coordinates: { lat: spot.latitude, lng: spot.longitude },
+        }));
+        onApplyFilters(spotsList)
       }
+
     } catch (error) {
       errorNotification("Failed to fetch WiFi spots.");
     }
   };
+
+
 
   return (
     <Container>
@@ -93,13 +99,13 @@ function WifiSpotFilter() {
             label="Location Type"
             options={[
               { key: '', text: '', value: '' },
-              { key: 'public', text: 'Public', value: 'Public' },
-              { key: 'cafe', text: 'Cafe', value: 'Cafe' },
-              { key: 'library', text: 'Library', value: 'Library' },
-              { key: 'park', text: 'Park', value: 'Park' },
-              { key: 'school', text: 'School', value: 'School' },
-              { key: 'restaurant', text: 'Restaurant', value: 'Restaurant' },
-              { key: 'others', text: 'Others', value: 'Others' },
+              { key: 'public', text: 'Public', value: 'PUBLIC' },
+              { key: 'cafe', text: 'Cafe', value: 'CAFE' },
+              { key: 'library', text: 'Library', value: 'LIBRARY' },
+              { key: 'park', text: 'Park', value: 'PARK' },
+              { key: 'school', text: 'School', value: 'SCHOOL' },
+              { key: 'restaurant', text: 'Restaurant', value: 'RESTAURANT' },
+              { key: 'others', text: 'Others', value: 'OTHERS' },
             ]}
             onChange={(e, { value }) => handleFilterChange('locationType', value)}
           />
@@ -112,9 +118,9 @@ function WifiSpotFilter() {
             label="WiFi Quality"
             options={[
               { key: '', text: '', value: '' },
-              { key: 'high', text: 'High', value: 'High' },
-              { key: 'medium', text: 'Medium', value: 'Medium' },
-              { key: 'low', text: 'Low', value: 'Low' },
+              { key: 'high', text: 'High', value: 'HIGH' },
+              { key: 'medium', text: 'Medium', value: 'MEDIUM' },
+              { key: 'low', text: 'Low', value: 'LOW' },
             ]}
             onChange={(e, { value }) => handleFilterChange('wifiQuality', value)}
           />
@@ -122,9 +128,9 @@ function WifiSpotFilter() {
             label="Signal Strength"
             options={[
               { key: '', text: '', value: '' },
-              { key: 'strong', text: 'Strong', value: 'Strong' },
-              { key: 'medium', text: 'Medium', value: 'Medium' },
-              { key: 'low', text: 'Low', value: 'Low' },
+              { key: 'strong', text: 'Strong', value: 'STRONG' },
+              { key: 'medium', text: 'Medium', value: 'MEDIUM' },
+              { key: 'low', text: 'Low', value: 'LOW' },
             ]}
             onChange={(e, { value }) => handleFilterChange('signalStrength', value)}
           />
@@ -132,8 +138,8 @@ function WifiSpotFilter() {
             label="Bandwidth Limitations"
             options={[
               { key: '', text: '', value: '' },
-              { key: 'limited', text: 'Limited', value: 'Limited' },
-              { key: 'unlimited', text: 'Unlimited', value: 'Unlimited' },
+              { key: 'limited', text: 'Limited', value: 'LIMITED' },
+              { key: 'unlimited', text: 'Unlimited', value: 'UNLIMITED' },
             ]}
             onChange={(e, { value }) => handleFilterChange('bandwidth', value)}
           />
@@ -177,10 +183,10 @@ function WifiSpotFilter() {
           <Form.Select
             label="Noise Level"
             options={[
-              { key: 'none', text: 'None', value: 'None' },
-              { key: 'quiet', text: 'Quiet', value: 'Quiet' },
-              { key: 'moderate', text: 'Moderate', value: 'Moderate' },
-              { key: 'loud', text: 'Loud', value: 'Loud' },
+              { key: 'none', text: 'None', value: 'NONE' },
+              { key: 'quiet', text: 'Quiet', value: 'QUIET' },
+              { key: 'moderate', text: 'Moderate', value: 'MODERATE' },
+              { key: 'loud', text: 'Loud', value: 'LOUD' },
             ]}
             onChange={(e, { value }) => handleFilterChange('noiseLevel', value)}
           />
@@ -269,39 +275,8 @@ function WifiSpotFilter() {
         <Button primary onClick={applyFilters}>
           Apply Filters
         </Button>
-      </Form>
 
-      <h3>WiFi Spot List</h3>
-      {wifiSpots.length > 0 ? (
-        <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Description</Table.HeaderCell>
-              <Table.HeaderCell>Location Type</Table.HeaderCell>
-              <Table.HeaderCell>WiFi Quality</Table.HeaderCell>
-              <Table.HeaderCell>Actions</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {wifiSpots.map((spot, index) => (
-              <Table.Row key={index}>
-                <Table.Cell>{spot.name}</Table.Cell>
-                <Table.Cell>{spot.description}</Table.Cell>
-                <Table.Cell>{spot.locationType}</Table.Cell>
-                <Table.Cell>{spot.wifiQuality}</Table.Cell>
-                <Table.Cell>
-                  <Button size="small" onClick={() => console.log(`View details of ${spot.name}`)}>
-                    View
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      ) : (
-        <p>No WiFi spots found. Please apply different filters.</p>
-      )}
+      </Form>
     </Container>
   );
 }

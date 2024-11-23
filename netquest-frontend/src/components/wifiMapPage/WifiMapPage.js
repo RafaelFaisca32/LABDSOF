@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Container, Button } from 'semantic-ui-react';
+import { Container, Button, Modal } from 'semantic-ui-react';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import SpotDetailsModal from './SpotDetailsModal';
 import AddSpotModal from './AddSpotModal';
+import WifiSpotFilter from '../wifiSpotFilter/WifiSpotFilter';
 import { wifiSpotApi } from "../misc/WifiSpotApi";
-import { errorNotification, successNotification } from "../misc/Helpers";
+import { errorNotification } from "../misc/Helpers";
 
 const userIcon = new L.Icon({
   iconUrl: '/icons/user.png',
@@ -20,7 +21,6 @@ const userIcon = new L.Icon({
 const wifiSpotIcon = new L.Icon({
   iconUrl: '/icons/wifi.png',
   iconSize: [32, 32],
-  iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
 
@@ -39,35 +39,11 @@ function WifiMapPage() {
   const isUser = (user.role === 'USER' || user.role === 'USER_PREMIUM');
 
   const [userLocation, setUserLocation] = useState(null);
-  const [spots, setSpots] = useState([]);
+  const [wifiSpots, setWifiSpots] = useState([]); // Agora, o estado dos spots é compartilhado
   const [modalOpen, setModalOpen] = useState(false);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [newSpotDetails, setNewSpotDetails] = useState({ coordinates: null, name: '', size: '' });
   const [selectedSpot, setSelectedSpot] = useState(null);
-  const navigate = useNavigate();
-
-  const loadExistingWifiSpots = async () => {
-    const responseGetWifiSpots = await wifiSpotApi.getWifiSpots(user);
-    if (responseGetWifiSpots.status === 200) {
-      const wifiSpotsList = responseGetWifiSpots.data;
-      const formattedSpots = wifiSpotsList.map((spot) => {
-        const coordinates = {
-          lat: spot.latitude,
-          lng: spot.longitude,
-        };
-        return {
-          ...spot,
-          coordinates,
-          addressLine1: spot.address?.addressLine1 || '',
-          addressLine2: spot.address?.addressLine2 || '',
-          city: spot.address?.city || '',
-          district: spot.address?.district || '',
-          country: spot.address?.country || '',
-          zipCode: spot.address?.zipCode || '',
-        };
-      });
-      setSpots(formattedSpots);
-    }
-  };
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -78,81 +54,43 @@ function WifiMapPage() {
       { enableHighAccuracy: true }
     );
 
+    // Carregar todos os spots inicialmente
+    const loadExistingWifiSpots = async () => {
+      try {
+        const response = await wifiSpotApi.getWifiSpots(user);
+        if (response.status === 200) {
+          const spotsList = response.data.map((spot) => ({
+            ...spot,
+            coordinates: { lat: spot.latitude, lng: spot.longitude },
+          }));
+          setWifiSpots(spotsList);
+        }
+      } catch (error) {
+        errorNotification("Error fetching WiFi spots.");
+      }
+    };
     loadExistingWifiSpots();
   }, []);
 
-  const handleMapClick = (coordinates) => {
-    setNewSpotDetails({ coordinates, name: '', size: '' });
-    setModalOpen(true);
+  // Atualiza os WiFi spots
+  function handleApplyFilters(filteredSpots) {
+    setWifiSpots(filteredSpots); // Atualiza os spots no mapa
+    setFilterModalOpen(false); // Fecha o modal
   };
-
-  const addSpot = async () => {
-    if (
-      newSpotDetails.coordinates &&
-      newSpotDetails.coordinates.lat &&
-      newSpotDetails.coordinates.lng &&
-      newSpotDetails.name &&
-      newSpotDetails.description &&
-      newSpotDetails.locationType &&
-      newSpotDetails.wifiQuality &&
-      newSpotDetails.signalStrength &&
-      newSpotDetails.bandwidth &&
-      newSpotDetails.crowded !== undefined &&
-      newSpotDetails.coveredArea !== undefined &&
-      newSpotDetails.airConditioning !== undefined &&
-      newSpotDetails.goodView !== undefined &&
-      newSpotDetails.noiseLevel &&
-      newSpotDetails.petFriendly !== undefined &&
-      newSpotDetails.childFriendly !== undefined &&
-      newSpotDetails.disableAccess !== undefined &&
-      newSpotDetails.availablePowerOutlets !== undefined &&
-      newSpotDetails.chargingStations !== undefined &&
-      newSpotDetails.restroomsAvailable !== undefined &&
-      newSpotDetails.parkingAvailability !== undefined &&
-      newSpotDetails.foodOptions !== undefined &&
-      newSpotDetails.drinkOptions !== undefined &&
-      newSpotDetails.addressLine1 &&
-      newSpotDetails.city &&
-      newSpotDetails.district &&
-      newSpotDetails.country &&
-      newSpotDetails.zipCode
-    ) {
-      newSpotDetails.latitude = newSpotDetails.coordinates.lat;
-      newSpotDetails.longitude = newSpotDetails.coordinates.lng;
-      newSpotDetails.address = {
-        addressLine1: newSpotDetails.addressLine1,
-        addressLine2: newSpotDetails.addressLine2,
-        city: newSpotDetails.city,
-        district: newSpotDetails.district,
-        country: newSpotDetails.country,
-        zipCode: newSpotDetails.zipCode,
-      };
-      try {
-        const responseCreateWifiSpot = await wifiSpotApi.createWifiSpot(user, newSpotDetails);
-        if (responseCreateWifiSpot && responseCreateWifiSpot.status === 201) {
-          newSpotDetails.uuid = responseCreateWifiSpot.data.uuid;
-          setSpots([...spots, newSpotDetails]);
-          successNotification("Wifi Spot created successfully.");
-          setModalOpen(false);
-        }
-      } catch (err) {
-        errorNotification(err.response?.data?.message || "Error creating wifi spot");
+  // Função para limpar os filtros
+  const clearFilters = async () => {
+    try {
+      const response = await wifiSpotApi.getWifiSpots(user); // Busca todos os spots
+      if (response.status === 200) {
+        const spotsList = response.data.map((spot) => ({
+          ...spot,
+          coordinates: { lat: spot.latitude, lng: spot.longitude },
+        }));
+        setWifiSpots(spotsList); // Atualiza os spots no mapa
       }
-    } else {
-      errorNotification("Missing mandatory fields!");
+    } catch (error) {
+      errorNotification("Failed to fetch WiFi spots.");
     }
-  };
-
-  const openSpotModal = (spot) => {
-    setSelectedSpot(spot);
-  };
-
-  const closeSpotModal = () => {
-    setSelectedSpot(null);
-  };
-
-  const redirectToFilterPage = () => {
-    navigate('/wifispotfilterpage'); // Redireciona para a página de listagem com filtros
   };
 
   if (!isUser) {
@@ -162,9 +100,11 @@ function WifiMapPage() {
   return (
     <Container>
       <h3>WiFi Map</h3>
-      {/* Botão para redirecionar para a página de filtros */}
-      <Button primary onClick={redirectToFilterPage} style={{ marginBottom: '15px' }}>
+      <Button primary onClick={() => setFilterModalOpen(true)} style={{ marginBottom: '15px' }}>
         Filtrar
+      </Button>
+      <Button secondary onClick={clearFilters}>
+        Clear Filters
       </Button>
       {userLocation ? (
         <MapContainer center={userLocation} zoom={13} style={{ height: '60vh', width: '100%' }}>
@@ -172,20 +112,20 @@ function WifiMapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          <MapClickHandler onMapClick={handleMapClick} />
+          <MapClickHandler onMapClick={(coordinates) => setNewSpotDetails({ coordinates, name: '', size: '' })} />
           <Marker position={userLocation} icon={userIcon}>
             <Tooltip direction="top" offset={[0, -20]} opacity={1}>
               You are here
             </Tooltip>
             <Popup>Your current location</Popup>
           </Marker>
-          {spots.map((spot, index) => (
+          {wifiSpots.map((spot, index) => (
             <Marker
               key={index}
               position={spot.coordinates}
               icon={wifiSpotIcon}
               eventHandlers={{
-                click: () => openSpotModal(spot),
+                click: () => setSelectedSpot(spot),
               }}
             >
               <Tooltip direction="top" offset={[0, -20]} opacity={1}>
@@ -197,15 +137,28 @@ function WifiMapPage() {
       ) : (
         <p>Loading map... You should activate the location sharing for it to load.</p>
       )}
+
+      <Modal open={filterModalOpen} onClose={() => setFilterModalOpen(false)}>
+        <Modal.Content>
+          <WifiSpotFilter onApplyFilters={handleApplyFilters} />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button onClick={() => setFilterModalOpen(false)}>Close</Button>
+        </Modal.Actions>
+      </Modal>
+
       <AddSpotModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSave={addSpot}
         spotDetails={newSpotDetails}
         setSpotDetails={setNewSpotDetails}
       />
       {selectedSpot && (
-        <SpotDetailsModal userLocation={userLocation} onClose={closeSpotModal} spot={selectedSpot}></SpotDetailsModal>
+        <SpotDetailsModal
+          userLocation={userLocation}
+          onClose={() => setSelectedSpot(null)}
+          spot={selectedSpot}
+        />
       )}
     </Container>
   );

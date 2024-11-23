@@ -26,8 +26,8 @@ function getWifiSpots(user) {
 
 function getFilteredWifiSpots(user, filters) {
   const params = new URLSearchParams(filters).toString(); // Converte os filtros em uma query string
-  return instance.get(`/api/wifi-spot/getFilteredWifiSpots?${params}`, {
-    headers: { 'Authorization': basicAuth(user) }
+  return instance.post(`/api/wifi-spot/search-wifi-spots`,filters, {
+    headers: { 'Content-type': 'application/json', 'Authorization': basicAuth(user) }
   });
 }
 
