@@ -19,11 +19,59 @@ const yesNoOptions = [
     { key: "no", text: "No", value: false },
 ];
 const countries = [
-    { key: "us", text: "United States", value: "United States" },
-    { key: "uk", text: "United Kingdom", value: "United Kingdom" },
-    { key: "pt", text: "Portugal", value: "Portugal" },
-    // Add more countries
+    { key: "al", text: "Albania", value: "al" },
+    { key: "ad", text: "Andorra", value: "ad" },
+    { key: "am", text: "Armenia", value: "am" },
+    { key: "at", text: "Austria", value: "at" },
+    { key: "az", text: "Azerbaijan", value: "az" },
+    { key: "by", text: "Belarus", value: "by" },
+    { key: "be", text: "Belgium", value: "be" },
+    { key: "ba", text: "Bosnia and Herzegovina", value: "ba" },
+    { key: "bg", text: "Bulgaria", value: "bg" },
+    { key: "hr", text: "Croatia", value: "hr" },
+    { key: "cy", text: "Cyprus", value: "cy" },
+    { key: "cz", text: "Czech Republic", value: "cz" },
+    { key: "dk", text: "Denmark", value: "dk" },
+    { key: "ee", text: "Estonia", value: "ee" },
+    { key: "fi", text: "Finland", value: "fi" },
+    { key: "fr", text: "France", value: "fr" },
+    { key: "ge", text: "Georgia", value: "ge" },
+    { key: "de", text: "Germany", value: "de" },
+    { key: "gr", text: "Greece", value: "gr" },
+    { key: "hu", text: "Hungary", value: "hu" },
+    { key: "is", text: "Iceland", value: "is" },
+    { key: "ie", text: "Ireland", value: "ie" },
+    { key: "it", text: "Italy", value: "it" },
+    { key: "kz", text: "Kazakhstan", value: "kz" },
+    { key: "xk", text: "Kosovo", value: "xk" },
+    { key: "lv", text: "Latvia", value: "lv" },
+    { key: "li", text: "Liechtenstein", value: "li" },
+    { key: "lt", text: "Lithuania", value: "lt" },
+    { key: "lu", text: "Luxembourg", value: "lu" },
+    { key: "mt", text: "Malta", value: "mt" },
+    { key: "md", text: "Moldova", value: "md" },
+    { key: "mc", text: "Monaco", value: "mc" },
+    { key: "me", text: "Montenegro", value: "me" },
+    { key: "nl", text: "Netherlands", value: "nl" },
+    { key: "mk", text: "North Macedonia", value: "mk" },
+    { key: "no", text: "Norway", value: "no" },
+    { key: "pl", text: "Poland", value: "pl" },
+    { key: "pt", text: "Portugal", value: "pt" },
+    { key: "ro", text: "Romania", value: "ro" },
+    { key: "ru", text: "Russia", value: "ru" },
+    { key: "sm", text: "San Marino", value: "sm" },
+    { key: "rs", text: "Serbia", value: "rs" },
+    { key: "sk", text: "Slovakia", value: "sk" },
+    { key: "si", text: "Slovenia", value: "si" },
+    { key: "es", text: "Spain", value: "es" },
+    { key: "se", text: "Sweden", value: "se" },
+    { key: "ch", text: "Switzerland", value: "ch" },
+    { key: "tr", text: "Turkey", value: "tr" },
+    { key: "ua", text: "Ukraine", value: "ua" },
+    { key: "gb", text: "United Kingdom", value: "gb" },
+    { key: "va", text: "Vatican City", value: "va" }
 ];
+
 
 async function reverseGeocodeWithNominatim(lat, lng) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
@@ -37,9 +85,9 @@ async function reverseGeocodeWithNominatim(lat, lng) {
 
     return {
         addressLine1: address.road || '',
-        city: address.city,
+        city: address.city || address.state,
         district: address.county || '',
-        country: address.country || '',
+        country: address.country_code || '',
         zipCode: address.postcode || '',
     };
 }
@@ -470,7 +518,7 @@ function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails}) {
                                         options={countries.map((country) => ({
                                             key: country.key,
                                             text: country.text,
-                                            value: country.value.toUpperCase(),
+                                            value: country.value,
                                         }))}
                                         value={spotDetails.country || ""}
                                         onChange={handleInputChange}
