@@ -16,6 +16,6 @@ const dev = {
 export const config =
   process.env.NODE_ENV === "development"
     ? local
-    : process.env.NODE_ENV === "prod"
+    : process.env.REACT_APP_DOCKER_ENV === "prod"
       ? prod
       : dev;

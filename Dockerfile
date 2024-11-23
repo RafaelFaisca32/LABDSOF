@@ -1,6 +1,9 @@
 # Use a Node.js image to build the frontend assets
 FROM node:16 AS frontend-build
 
+# Define build-time argument for the environment variable
+ARG REACT_APP_DOCKER_ENV
+
 # Set working directory for frontend
 WORKDIR /app/frontend
 
@@ -9,7 +12,7 @@ COPY netquest-frontend/ .
 
 # Install dependencies and build the frontend
 RUN npm install
-RUN npm run build
+RUN REACT_APP_DOCKER_ENV=$REACT_APP_DOCKER_ENV npm run build
 
 # Use a Java JDK image for the backend
 FROM openjdk:21-jdk AS backend
