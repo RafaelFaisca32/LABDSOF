@@ -44,13 +44,15 @@ function Navbar() {
         <Menu.Item header>Netquest</Menu.Item>
         <Menu.Item as={Link} exact='true' to="/">Home</Menu.Item>
         <Menu.Item as={Link} to="/adminpage" style={adminPageStyle()}>Admin Page</Menu.Item>
-        <Menu.Item as={Link} to="/wifispot" style={wifiPageStyle()}>Wifi Map</Menu.Item>
+        <Menu.Item as={Link} to="/wifispot" style={wifiPageStyle()}>Leaderboard</Menu.Item>
+        <Menu.Item as={Link} to="/leaderboard" style={logoutMenuStyle()}>Logout</Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item as={Link} to="/login" style={enterMenuStyle()}>Login</Menu.Item>
           <Menu.Item as={Link} to="/signup" style={enterMenuStyle()}>Sign Up</Menu.Item>
           {userIsAuthenticated() && (
             <Dropdown item text={`Hi ${getUserName()}`} style={logoutMenuStyle()}>
               <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
                 <Dropdown.Item onClick={handleDeleteAccount}>Delete Account</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
