@@ -198,7 +198,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
               </Button>
           ) : processingVisitRequest ? (
               <div style={{position: 'relative', display: 'inline-block'}}>
-                <div className="loader"></div>
+                <div className="loader-small"></div>
                 <Button disabled>
                   {existsVisit ? "Finish Visit" : "Start Visit"}
                 </Button>

@@ -27,7 +27,7 @@ function App() {
           <Route path="/wifispot" element={<PrivateRoute><WifiMapPage /></PrivateRoute>} />
           <Route path="/wifispotfilterpage" element={<PrivateRoute><WifiSpotFilter /></PrivateRoute>} />
           <Route path="/delete-account" element={<PrivateRoute><DeleteAccount /></PrivateRoute>} />
-          <Route path="/profile" elemen={<PrivateRoute><Profile /></PrivateRoute>}/>
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>}/>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
