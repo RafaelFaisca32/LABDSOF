@@ -3,6 +3,7 @@ package com.netquest.pointsearntransaction.unit;
 import com.netquest.domain.pointsearntransaction.exception.PointsEarnTransactionAmountNegativeException;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import org.junit.jupiter.api.Test;
 
@@ -64,5 +65,16 @@ public class PointsEarnTransactionTest {
 
     }
 
+
+    @Test
+    public void pointsEarnTransactionByWifiSpotCreation() {
+        UserId userId = new UserId();
+        WifiSpotId wifiSpotId = new WifiSpotId();
+        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction(userId, wifiSpotId);
+
+        assertThat(pointsEarnTransaction.getUserId()).isEqualTo(userId);
+        assertThat(pointsEarnTransaction.getWifiSpotId()).isEqualTo(wifiSpotId);
+        assertThat(pointsEarnTransaction.getPointsEarnTransactionAmount().getValue()).isEqualTo(600);
+    }
 
 }
