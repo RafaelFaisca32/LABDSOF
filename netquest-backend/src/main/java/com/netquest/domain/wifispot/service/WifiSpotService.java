@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface WifiSpotService {
     List<WifiSpotDto> getWifiSpots();
 
-    WifiSpotDto createWifiSpot(WifiSpotCreateDto wifiSpotDto);
+    WifiSpotDto createWifiSpot(WifiSpotCreateDto wifiSpotDto, UUID userUUID);
 
     int getNumberOfWifiSpots();
 

@@ -6,6 +6,9 @@ import java.util.UUID;
 public record PointsEarnTransactionDto(
         UUID id,
         LocalDateTime datetime,
-        long amount
+        long amount,
+        UUID userId,
+        UUID wifiSpotId,
+        UUID wifiSpotVisitId
 ) {
 }

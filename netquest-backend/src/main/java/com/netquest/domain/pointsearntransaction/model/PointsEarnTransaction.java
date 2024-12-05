@@ -3,6 +3,8 @@ package com.netquest.domain.pointsearntransaction.model;
 
 import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import jakarta.persistence.*;
@@ -21,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 public class PointsEarnTransaction {
 
     private static final int MINUTE_POINTS_MULTIPLIER = 5;
+    private static final int POINTS_BY_WIFI_SPOT_CREATION = 600;
 
     @EmbeddedId
     @AttributeOverrides({
@@ -65,6 +68,16 @@ public class PointsEarnTransaction {
     @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_id", insertable = false, updatable = false)
     private WifiSpotVisit wifiSpotVisit;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_wifi_spot_id"))
+    })
+    private WifiSpotId wifiSpotId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "points_earn_transaction_wifi_spot_id", insertable = false, updatable = false)
+    private WifiSpot wifiSpot;
+
 
     public PointsEarnTransaction(
             UserId userId,
@@ -79,6 +92,14 @@ public class PointsEarnTransaction {
         this.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
     }
 
+    public PointsEarnTransaction(UserId userId, WifiSpotId wifiSpotId) {
+        this.pointsEarnTransactionId = new PointsEarnTransactionId();
+        this.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
+        this.pointsEarnTransactionAmount =  calculateAmountBasedOnWifiSpotCreation();
+        this.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());
+        this.userId = new UserId(userId.getValue());
+    }
+
     public int getMinutePointsMultiplier(){
         return MINUTE_POINTS_MULTIPLIER;
     }
@@ -86,6 +107,10 @@ public class PointsEarnTransaction {
     private PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
         long minutes = ChronoUnit.MINUTES.between(start, end);
         return new PointsEarnTransactionAmount(minutes * MINUTE_POINTS_MULTIPLIER);
+    }
+
+    private PointsEarnTransactionAmount calculateAmountBasedOnWifiSpotCreation(){
+        return new PointsEarnTransactionAmount(POINTS_BY_WIFI_SPOT_CREATION);
     }
 
 }

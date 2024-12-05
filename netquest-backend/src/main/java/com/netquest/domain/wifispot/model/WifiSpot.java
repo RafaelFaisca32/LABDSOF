@@ -1,5 +1,7 @@
 package com.netquest.domain.wifispot.model;
 
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.UserId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -102,7 +104,30 @@ public class WifiSpot {
     })
     private final WifiSpotManagement wifiSpotManagement;
 
-    public WifiSpot(WifiSpotName wifiSpotName, WifiSpotDescription wifiSpotDescription, WifiSpotCoordinates wifiSpotCoordinates, WifiSpotLocationType wifiSpotLocationType, WifiSpotQualityIndicators wifiSpotQualityIndicators, WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures, WifiSpotFacilities wifiSpotFacilities, WifiSpotWeatherFeatures wifiSpotWeatherFeatures, WifiSpotAddress wifiSpotAddress, WifiSpotManagement wifiSpotManagement) {
+    @Embedded
+    @NotNull
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_user_id"))
+    })
+    private UserId userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wifi_spot_user_id", insertable = false, updatable = false)
+    private User user;
+
+    public WifiSpot(
+            WifiSpotName wifiSpotName
+            , WifiSpotDescription wifiSpotDescription
+            , WifiSpotCoordinates wifiSpotCoordinates
+            , WifiSpotLocationType wifiSpotLocationType
+            , WifiSpotQualityIndicators wifiSpotQualityIndicators
+            , WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures
+            , WifiSpotFacilities wifiSpotFacilities
+            , WifiSpotWeatherFeatures wifiSpotWeatherFeatures
+            , WifiSpotAddress wifiSpotAddress
+            , WifiSpotManagement wifiSpotManagement
+            , UserId userId
+    ) {
         this.wifiSpotId = new WifiSpotId();
         this.wifiSpotName = wifiSpotName;
         this.wifiSpotDescription = wifiSpotDescription;
@@ -114,9 +139,23 @@ public class WifiSpot {
         this.wifiSpotWeatherFeatures = wifiSpotWeatherFeatures;
         this.wifiSpotAddress = wifiSpotAddress;
         this.wifiSpotManagement = wifiSpotManagement;
+        this.userId = userId;
     }
 
-    public WifiSpot(WifiSpotId wifiSpotId, WifiSpotName wifiSpotName, WifiSpotDescription wifiSpotDescription, WifiSpotCoordinates wifiSpotCoordinates, WifiSpotLocationType wifiSpotLocationType, WifiSpotQualityIndicators wifiSpotQualityIndicators, WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures, WifiSpotFacilities wifiSpotFacilities, WifiSpotWeatherFeatures wifiSpotWeatherFeatures, WifiSpotAddress wifiSpotAddress, WifiSpotManagement wifiSpotManagement) {
+    public WifiSpot(
+            WifiSpotId wifiSpotId
+            , WifiSpotName wifiSpotName
+            , WifiSpotDescription wifiSpotDescription
+            , WifiSpotCoordinates wifiSpotCoordinates
+            , WifiSpotLocationType wifiSpotLocationType
+            , WifiSpotQualityIndicators wifiSpotQualityIndicators
+            , WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures
+            , WifiSpotFacilities wifiSpotFacilities
+            , WifiSpotWeatherFeatures wifiSpotWeatherFeatures
+            , WifiSpotAddress wifiSpotAddress
+            , WifiSpotManagement wifiSpotManagement
+            , UserId userId
+    ) {
         this.wifiSpotId = wifiSpotId;
         this.wifiSpotName = wifiSpotName;
         this.wifiSpotDescription = wifiSpotDescription;
@@ -128,5 +167,6 @@ public class WifiSpot {
         this.wifiSpotWeatherFeatures = wifiSpotWeatherFeatures;
         this.wifiSpotAddress = wifiSpotAddress;
         this.wifiSpotManagement = wifiSpotManagement;
+        this.userId = userId;
     }
 }

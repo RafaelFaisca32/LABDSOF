@@ -10,7 +10,6 @@ import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
-import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
 import com.netquest.domain.wifispotvisit.exception.*;
 import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
@@ -19,7 +18,6 @@ import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
 import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -119,7 +117,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         if(wifiSpotVisitDto.endDateTime() == null) {
             return;
         }
-        pointsEarnTransactionService.savePointsEarnTransaction(
+        pointsEarnTransactionService.savePointsEarnTransactionByVisit(
                 new PointsEarnTransactionCreateByVisitDto(
                         wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(), wifiSpotVisitDto.userId(), wifiSpotVisitDto.id()
                 )
