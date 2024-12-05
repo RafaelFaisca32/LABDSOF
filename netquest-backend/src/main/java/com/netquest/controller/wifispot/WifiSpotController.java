@@ -2,6 +2,7 @@ package com.netquest.controller.wifispot;
 
 
 import com.netquest.domain.shared.WifiSpotManagementType;
+import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.dto.WifiSpotFilterDto;
@@ -130,5 +131,14 @@ public class WifiSpotController {
             @RequestBody(required = false) WifiSpotFilterDto wifiSpotFilterDto
     ) {
         return wifiSpotService.getWifiSpotsWithFilters(wifiSpotFilterDto);
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @PostMapping(path = "/search-wifi-spots-by-user")
+    @ResponseStatus(HttpStatus.OK)
+    public List<WifiSpotDto> searchWifiSpotsByUser(
+        @RequestBody(required = false) UserDto userDto
+    ) {
+        return wifiSpotService.getWifiSpotsOfUser(userDto);
     }
 }

@@ -2,23 +2,30 @@ package com.netquest.domain.wifispot.service.impl;
 
 
 import com.netquest.domain.shared.*;
+import com.netquest.domain.user.dto.UserDto;
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.Username;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.dto.WifiSpotFilterDto;
 import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
+import com.netquest.infrastructure.user.UserRepository;
 import com.netquest.infrastructure.wifispot.WifiSpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotRepository wifiSpotRepository;
+    private final UserRepository userRepository;
     private final WifiSpotMapper wifiSpotMapper;
 
     @Override
@@ -186,5 +193,20 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 .replace("\\", "\\\\") // Escape backslash
                 .replace("%", "\\%")   // Escape percent
                 .replace("_", "\\_");  // Escape underscore
+    }
+
+    @Override
+    public List<WifiSpotDto> getWifiSpotsOfUser(UserDto userDto) {
+        Optional<User> userOptional = userRepository.findByUsername(new Username(userDto.username()));
+
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        User user = userOptional.get();
+        List<WifiSpot> wifiSpots = wifiSpotRepository.findByUser(user);
+
+        return wifiSpots.stream()
+            .map(wifiSpotMapper::wifiSpotDomainToDto).toList();
     }
 }
