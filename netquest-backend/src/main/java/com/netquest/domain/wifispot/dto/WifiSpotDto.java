@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record WifiSpotDto(
         UUID uuid,
+        UUID userId,
         String name,
         String description,
         double latitude,

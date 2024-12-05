@@ -70,7 +70,11 @@ public class WifiSpotController {
                 wifiSpotCreateDto.address(),
                 WifiSpotManagementType.UNVERIFIED
         );
-        return wifiSpotService.createWifiSpot(updatedDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+
+        return wifiSpotService.createWifiSpot(updatedDto, userDetails.getId());
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})

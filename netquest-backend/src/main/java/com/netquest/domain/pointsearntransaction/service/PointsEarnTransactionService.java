@@ -1,8 +1,11 @@
 package com.netquest.domain.pointsearntransaction.service;
 
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByWifiSpotCreationDto;
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
 
 public interface PointsEarnTransactionService {
-    PointsEarnTransactionDto savePointsEarnTransaction(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto);
+    PointsEarnTransactionDto savePointsEarnTransactionByVisit(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto);
+    PointsEarnTransactionDto savePointsEarnTransactionByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto);
+
 }

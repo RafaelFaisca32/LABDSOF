@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -120,7 +119,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         if(wifiSpotVisitDto.endDateTime() == null) {
             return null;
         }
-        return pointsEarnTransactionService.savePointsEarnTransaction(
+        return pointsEarnTransactionService.savePointsEarnTransactionByVisit(
                 new PointsEarnTransactionCreateByVisitDto(
                     wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(),wifiSpotVisitDto.userId(),wifiSpotVisitDto.id()
                 )
