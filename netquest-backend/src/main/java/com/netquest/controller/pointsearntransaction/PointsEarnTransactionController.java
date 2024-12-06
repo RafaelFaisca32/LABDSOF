@@ -2,6 +2,7 @@ package com.netquest.controller.pointsearntransaction;
 
 
 import com.netquest.domain.pointsearntransaction.dto.LeaderboardEntryDto;
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDetailedDto;
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
 import com.netquest.domain.pointsearntransaction.dto.TotalPointsEarnByUserDto;
 import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
@@ -40,7 +41,7 @@ public class PointsEarnTransactionController {
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/my-points-earn-transactions")
-    public Page<PointsEarnTransactionDto> getMyPointsEarnTransactions(
+    public Page<PointsEarnTransactionDetailedDto> getMyPointsEarnTransactions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size
     ){

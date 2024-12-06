@@ -52,7 +52,7 @@ function Navbar() {
           {userIsAuthenticated() && (
             <Dropdown item text={`Hi ${getUserName()}`} style={logoutMenuStyle()}>
               <Dropdown.Menu>
-                <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
+                <Dropdown.Item as={Link} to="/pointsearntransaction">Points Earned</Dropdown.Item>
                 <Dropdown.Item onClick={handleDeleteAccount}>Delete Account</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

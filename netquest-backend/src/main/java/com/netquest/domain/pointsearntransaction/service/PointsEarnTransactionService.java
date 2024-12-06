@@ -13,5 +13,5 @@ public interface PointsEarnTransactionService {
 
     Page<LeaderboardEntryDto> getLeaderboard(Pageable pageable);
 
-    Page<PointsEarnTransactionDto> getPointsEarnTransactionsByUser(UUID userUUID, Pageable pageable);
+    Page<PointsEarnTransactionDetailedDto> getPointsEarnTransactionsByUser(UUID userUUID, Pageable pageable);
 }

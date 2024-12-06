@@ -2,19 +2,30 @@ package com.netquest.domain.pointsearntransaction.mapper.impl;
 
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByWifiSpotCreationDto;
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDetailedDto;
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
 import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
+import com.netquest.domain.user.mapper.UserMapper;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMapper {
+
+    private final UserMapper userMapper;
+    private final WifiSpotMapper wifiSpotMapper;
+    private final WifiSpotVisitMapper wifiSpotVisitMapper;
+
     @Override
     public PointsEarnTransactionDto toDto(PointsEarnTransaction pointsEarnTransaction) {
 
@@ -31,6 +42,23 @@ public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMap
         return new PointsEarnTransactionDto(
                 id,dateTime,amount,userId,wifiSpotId,wifiSpotVisitId
         );
+    }
+
+    @Override
+    public PointsEarnTransactionDetailedDto toDetailedDto(PointsEarnTransaction pointsEarnTransaction) {
+        UUID id = pointsEarnTransaction.getPointsEarnTransactionId().getValue();
+        LocalDateTime dateTime = pointsEarnTransaction.getPointsEarnTransactionDateTime().getValue();
+        long amount = pointsEarnTransaction.getPointsEarnTransactionAmount().getValue();
+
+        return new PointsEarnTransactionDetailedDto(
+                id,
+                dateTime,
+                amount,
+                userMapper.toUserDto(pointsEarnTransaction.getUser()),
+                wifiSpotMapper.wifiSpotDomainToDto(pointsEarnTransaction.getWifiSpot()),
+                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisit())
+        );
+
     }
 
     @Override

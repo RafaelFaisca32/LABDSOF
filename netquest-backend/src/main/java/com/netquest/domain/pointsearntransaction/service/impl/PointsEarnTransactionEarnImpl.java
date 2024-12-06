@@ -60,7 +60,7 @@ public class PointsEarnTransactionEarnImpl implements PointsEarnTransactionServi
     }
 
     @Override
-    public Page<PointsEarnTransactionDto> getPointsEarnTransactionsByUser(UUID userUUID, Pageable pageable) {
+    public Page<PointsEarnTransactionDetailedDto> getPointsEarnTransactionsByUser(UUID userUUID, Pageable pageable) {
 
         if(!userService.existsById(userUUID)){
             throw new UserNotFoundException("User not found");
@@ -68,6 +68,6 @@ public class PointsEarnTransactionEarnImpl implements PointsEarnTransactionServi
 
         UserId userId = new UserId(userUUID);
 
-        return pointsEarnTransactionRepository.findByUserIdOrderByPointsEarnTransactionDateTimeDesc(userId,pageable).map(pointsEarnTransactionMapper::toDto);
+        return pointsEarnTransactionRepository.findByUserIdOrderByPointsEarnTransactionDateTimeDesc(userId,pageable).map(pointsEarnTransactionMapper::toDetailedDto);
     }
 }

@@ -21,5 +21,14 @@ public interface PointsEarnTransactionRepository extends JpaRepository<PointsEar
 
 
     Page<PointsEarnTransaction> findByUserIdOrderByPointsEarnTransactionDateTimeDesc(UserId userId, Pageable pageable);
+    @Query("SELECT p FROM PointsEarnTransaction p " +
+            "LEFT JOIN FETCH p.user pu " +
+            "LEFT JOIN FETCH p.wifiSpotVisit pwsv " +
+            "LEFT JOIN FETCH p.wifiSpot pws " +
+            "LEFT JOIN FETCH pwsv.wifiSpot pwsvws " +
+            "LEFT JOIN FETCH pwsv.user pwsvu " +
+            "WHERE p.userId = :userId " +
+            "ORDER BY p.pointsEarnTransactionDateTime.value DESC")
+    Page<PointsEarnTransaction> findByUserIdWithDetails(UserId userId, Pageable pageable);
 }
 

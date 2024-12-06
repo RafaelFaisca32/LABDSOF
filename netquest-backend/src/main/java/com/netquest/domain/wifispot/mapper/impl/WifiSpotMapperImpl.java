@@ -16,6 +16,10 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
     @Override
     public WifiSpotDto wifiSpotDomainToDto(WifiSpot wifiSpot) {
 
+        if (wifiSpot == null) {
+            return null;
+        }
+
         UUID userUUID = (wifiSpot.getUserId() != null) ? wifiSpot.getUserId().getValue() : null;
 
         return new WifiSpotDto(
