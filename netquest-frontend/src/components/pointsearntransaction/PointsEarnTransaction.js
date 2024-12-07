@@ -21,7 +21,6 @@ const PointsEarnTransaction = () => {
         try {
             const response = await pointsEarnTransactionApi.getMyPoints(user,page, pageSize);
             if(response.status === 200) {
-                console.log(response);
                 const { content, totalElements } = response.data;
                 const transformedRows = content.map( function(item) {
 
