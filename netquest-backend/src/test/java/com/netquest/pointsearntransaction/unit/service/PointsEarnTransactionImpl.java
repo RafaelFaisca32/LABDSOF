@@ -3,7 +3,8 @@ package com.netquest.pointsearntransaction.unit.service;
 import com.netquest.domain.pointsearntransaction.dto.*;
 import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
-import com.netquest.domain.pointsearntransaction.service.impl.PointsEarnTransactionEarnImpl;
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
+import com.netquest.domain.pointsearntransaction.service.impl.PointsEarnTransactionServiceImpl;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
@@ -35,7 +36,7 @@ class PointsEarnTransactionEarnImplTest {
     private UserService userService;
 
     @InjectMocks
-    private PointsEarnTransactionEarnImpl pointsEarnTransactionService;
+    private PointsEarnTransactionServiceImpl pointsEarnTransactionService;
 
     @BeforeEach
     void setUp() {
