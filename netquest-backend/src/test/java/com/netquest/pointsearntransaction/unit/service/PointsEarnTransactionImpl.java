@@ -18,9 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -45,7 +43,7 @@ class PointsEarnTransactionEarnImplTest {
     }
 
     @Test
-    void savePointsEarnTransactionByVisit_ShouldSaveAndReturnDto() {
+    void savePointsEarnTransactionByVisit_ShouldSaveAndReturnDtoMy() {
         PointsEarnTransactionCreateByVisitDto createDto = new PointsEarnTransactionCreateByVisitDto();
         PointsEarnTransaction entity = new PointsEarnTransaction();
         PointsEarnTransactionDto dto = new PointsEarnTransactionDto();
@@ -54,7 +52,7 @@ class PointsEarnTransactionEarnImplTest {
         when(pointsEarnTransactionRepository.save(entity)).thenReturn(entity);
         when(pointsEarnTransactionMapper.toDto(entity)).thenReturn(dto);
 
-        PointsEarnTransactionDto result = pointsEarnTransactionService.savePointsEarnTransactionByVisit(createDto);
+        PointsEarnTransactionDto result = pointsEarnTransactionService.savePointsEarnTransactionByMyVisit(createDto);
 
         assertEquals(dto, result);
         verify(pointsEarnTransactionRepository).save(entity);

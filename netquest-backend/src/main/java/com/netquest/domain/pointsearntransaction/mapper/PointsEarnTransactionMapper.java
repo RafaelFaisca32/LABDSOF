@@ -1,10 +1,9 @@
 package com.netquest.domain.pointsearntransaction.mapper;
 
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByWifiSpotCreationDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDetailedDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
+import com.netquest.domain.pointsearntransaction.dto.*;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
+
+import java.util.UUID;
 
 public interface PointsEarnTransactionMapper {
     PointsEarnTransactionDto toDto(PointsEarnTransaction pointsEarnTransaction);
@@ -14,4 +13,5 @@ public interface PointsEarnTransactionMapper {
     PointsEarnTransaction toNewEntityByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto);
 
 
+    PointsEarnTransaction toNewEntityByVisitMySpot(PointsEarnTransactionCreateByVisitMySpotDto pointsEarnTransactionCreateByVisitMySpotDto);
 }

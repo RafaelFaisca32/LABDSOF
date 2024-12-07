@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import {useAuth} from "../context/AuthContext";
 import {pointsEarnTransactionApi} from "../misc/PointsEarnTransactionApi";
-import {errorNotification} from "../misc/Helpers";
+import {errorNotification, formatDateTime} from "../misc/Helpers";
 
 const PointsEarnTransaction = () => {
     const Auth = useAuth();
@@ -21,50 +21,44 @@ const PointsEarnTransaction = () => {
         try {
             const response = await pointsEarnTransactionApi.getMyPoints(user,page, pageSize);
             if(response.status === 200) {
-                //console.log(response);
+                console.log(response);
                 const { content, totalElements } = response.data;
                 const transformedRows = content.map( function(item) {
 
                     let reason = "Unknown Reason";
                     let dateString = "";
                     if(!!item.wifiSpot){
-                        //dateString = item.wifiSpot.dateTimeCreated
+
+                        if (!!item.wifiSpot.dateTimeCreated){
+                            dateString = formatDateTime(item.wifiSpot.dateTimeCreated);
+                        } else {
+                            dateString = formatDateTime(item.dateTime);
+                        }
                         reason = "Created Wifi Spot " + item.wifiSpot.name + ", Location: " + item.wifiSpot.latitude + ", " + item.wifiSpot.longitude;
                     }
 
                     if(!!item.wifiSpotVisit){
 
 
-                        const formatedVisitStartDateTime = new Intl.DateTimeFormat('pt-PT', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                        }).format(new Date(item.wifiSpotVisit.startDateTime));
-
-                        const formatedVisitEndDateTime = new Intl.DateTimeFormat('pt-PT', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                        }).format(new Date(item.wifiSpotVisit.endDateTime));
+                        const formatedVisitStartDateTime = formatDateTime(item.wifiSpotVisit.startDateTime);
+                        const formatedVisitEndDateTime = formatDateTime(item.wifiSpotVisit.endDateTime);
 
                         reason = "Visited Wifi Spot " + item.wifiSpotVisit.wifiSpot.name + ", Location: " + item.wifiSpotVisit.wifiSpot.latitude + ", " + item.wifiSpotVisit.wifiSpot.longitude;
                         dateString = " ["+ formatedVisitStartDateTime +" - "+ formatedVisitEndDateTime +"]";
                     }
 
-                    const formatedDateTime = new Intl.DateTimeFormat('pt-PT', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                    }).format(new Date(item.dateTime));
+                    if(!!item.wifiSpotVisitByOther){
+
+                        const formatedVisitStartDateTime = formatDateTime(item.wifiSpotVisitByOther.startDateTime);
+                        const formatedVisitEndDateTime = formatDateTime(item.wifiSpotVisitByOther.endDateTime);
+
+                        reason = "User "+item.wifiSpotVisitByOther.user.username +" Visited YOUR Created Wifi Spot " + item.wifiSpotVisitByOther.wifiSpot.name + ", Location: " + item.wifiSpotVisitByOther.wifiSpot.latitude + ", " + item.wifiSpotVisitByOther.wifiSpot.longitude;
+                        dateString = " ["+ formatedVisitStartDateTime +" - "+ formatedVisitEndDateTime +"]";
+                    }
+
+
+
+                    const formatedDateTime = formatDateTime(item.dateTime);
 
 
                     return {
@@ -81,6 +75,7 @@ const PointsEarnTransaction = () => {
             }
         } catch(ex) {
             errorNotification("Error fetching earned points.");
+            console.error(ex);
         } finally {
             setLoading(false);
         }

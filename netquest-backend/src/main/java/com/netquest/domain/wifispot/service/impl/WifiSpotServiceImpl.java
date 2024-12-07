@@ -9,6 +9,7 @@ import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.dto.WifiSpotFilterDto;
+import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
 import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
@@ -60,6 +61,13 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     public boolean existsById(UUID uuid) {
         WifiSpotId wifiSpotId = new WifiSpotId(uuid);
         return wifiSpotRepository.existsById(wifiSpotId);
+    }
+
+    @Override
+    public WifiSpotDto getWifiSpotById(UUID uuid) {
+        WifiSpotId wifiSpotId = new WifiSpotId(uuid);
+        WifiSpot wifiSpotDto = wifiSpotRepository.findById(wifiSpotId).orElseThrow(() -> new WifiSpotNotFoundException("WifiSpot not found"));
+        return wifiSpotMapper.wifiSpotDomainToDto(wifiSpotDto);
     }
 
     @Override

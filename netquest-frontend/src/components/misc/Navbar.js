@@ -30,7 +30,7 @@ function Navbar() {
 
   const wifiPageStyle = () => {
     const user = getUser();
-    return user && (user.role === 'USER' || user.role === 'USER_PREMIUM' )? { display: 'block' } : { display: 'none' };
+    return user && (user.role === 'USER' || user.role === 'USER_PREMIUM' || user.role === 'ADMIN' )? { display: 'block' } : { display: 'none' };
   };
 
   const getUserName = () => {

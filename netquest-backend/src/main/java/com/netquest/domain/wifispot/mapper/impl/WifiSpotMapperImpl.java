@@ -9,6 +9,8 @@ import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -21,7 +23,7 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
         }
 
         UUID userUUID = (wifiSpot.getUserId() != null) ? wifiSpot.getUserId().getValue() : null;
-
+        LocalDateTime wifiSpotCreateDateTime = (wifiSpot.getWifiSpotCreateDateTime() != null) ? wifiSpot.getWifiSpotCreateDateTime().getValue() : null;
         return new WifiSpotDto(
                 wifiSpot.getWifiSpotId().getValue(),
                 userUUID,
@@ -56,7 +58,8 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpot.getWifiSpotWeatherFeatures().isShadedAreas(),
                 wifiSpot.getWifiSpotWeatherFeatures().isOutdoorFans(),
                 wifiSpotAddressDomainToDto(wifiSpot.getWifiSpotAddress()),
-                wifiSpot.getWifiSpotManagement().getValue()
+                wifiSpot.getWifiSpotManagement().getValue(),
+                wifiSpotCreateDateTime
         );
     }
 

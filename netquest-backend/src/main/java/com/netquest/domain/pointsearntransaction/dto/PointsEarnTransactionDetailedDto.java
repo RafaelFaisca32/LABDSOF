@@ -20,4 +20,5 @@ public class PointsEarnTransactionDetailedDto {
     UserDto user;
     WifiSpotDto wifiSpot;
     WifiSpotVisitDetailedDto wifiSpotVisit;
+    WifiSpotVisitDetailedDto wifiSpotVisitByOther;
 }

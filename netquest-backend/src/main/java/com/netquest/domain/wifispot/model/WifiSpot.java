@@ -105,6 +105,12 @@ public class WifiSpot {
     private final WifiSpotManagement wifiSpotManagement;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_create_date_time", nullable = true))
+    })
+    private final WifiSpotCreateDateTime wifiSpotCreateDateTime;
+
+    @Embedded
     @NotNull
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "wifi_spot_user_id"))
@@ -140,6 +146,7 @@ public class WifiSpot {
         this.wifiSpotAddress = wifiSpotAddress;
         this.wifiSpotManagement = wifiSpotManagement;
         this.userId = userId;
+        this.wifiSpotCreateDateTime = new WifiSpotCreateDateTime();
     }
 
     public WifiSpot(
@@ -168,5 +175,6 @@ public class WifiSpot {
         this.wifiSpotAddress = wifiSpotAddress;
         this.wifiSpotManagement = wifiSpotManagement;
         this.userId = userId;
+        this.wifiSpotCreateDateTime = new WifiSpotCreateDateTime();
     }
 }

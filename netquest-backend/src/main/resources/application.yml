@@ -5,7 +5,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://vs1147.dei.isep.ipp.pt:3306/netquest
+    url: jdbc:mysql://vsgate-s1.dei.isep.ipp.pt:11147/netquest
     username: root
     password: +1rjOGSA8Fjd
 

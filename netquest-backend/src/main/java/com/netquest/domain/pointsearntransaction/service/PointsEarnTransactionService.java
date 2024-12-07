@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface PointsEarnTransactionService {
-    PointsEarnTransactionDto savePointsEarnTransactionByVisit(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto);
+    PointsEarnTransactionDto savePointsEarnTransactionByMyVisit(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto);
 
     PointsEarnTransactionDto savePointsEarnTransactionByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto);
 
@@ -16,4 +16,6 @@ public interface PointsEarnTransactionService {
     Page<PointsEarnTransactionDetailedDto> getPointsEarnTransactionsByUserId(UUID userUUID, Pageable pageable);
 
     Long getTotalPointsEarnTransactionByUserId(UUID userUUID);
+
+    void savePointsEarnTransactionByVisitMySpot(PointsEarnTransactionCreateByVisitMySpotDto pointsEarnTransactionCreateByVisitMySpotDto);
 }

@@ -1,9 +1,6 @@
 package com.netquest.domain.pointsearntransaction.mapper.impl;
 
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByWifiSpotCreationDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDetailedDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
+import com.netquest.domain.pointsearntransaction.dto.*;
 import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
 import com.netquest.domain.user.mapper.UserMapper;
@@ -56,14 +53,15 @@ public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMap
                 amount,
                 userMapper.toUserDto(pointsEarnTransaction.getUser()),
                 wifiSpotMapper.wifiSpotDomainToDto(pointsEarnTransaction.getWifiSpot()),
-                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisit())
+                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisit()),
+                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisitMySpot())
         );
 
     }
 
     @Override
     public PointsEarnTransaction toNewEntityByVisit(PointsEarnTransactionCreateByVisitDto pointsEarnTransactionCreateByVisitDto) {
-        return new PointsEarnTransaction(
+        return PointsEarnTransaction.createPointsEarnTransactionBasedOnMyVisit(
                 new UserId(pointsEarnTransactionCreateByVisitDto.getUserId()),
                 new WifiSpotVisitId(pointsEarnTransactionCreateByVisitDto.getWifiSpotVisitId()),
                 pointsEarnTransactionCreateByVisitDto.getStartDateTime(),
@@ -73,9 +71,19 @@ public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMap
 
     @Override
     public PointsEarnTransaction toNewEntityByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto) {
-        return new PointsEarnTransaction(
+        return PointsEarnTransaction.createPointsEarnTransactionBasedOnSpotCreation(
                 new UserId(pointsEarnTransactionCreateByWifiSpotCreationDto.getUserId()),
                 new WifiSpotId(pointsEarnTransactionCreateByWifiSpotCreationDto.getWifiSpotId())
+        );
+    }
+
+    @Override
+    public PointsEarnTransaction toNewEntityByVisitMySpot(PointsEarnTransactionCreateByVisitMySpotDto pointsEarnTransactionCreateByVisitMySpotDto) {
+        return PointsEarnTransaction.createPointsEarnTransactionBasedOnVisitingMySpot(
+                new UserId(pointsEarnTransactionCreateByVisitMySpotDto.getUserId()),
+                new WifiSpotVisitId(pointsEarnTransactionCreateByVisitMySpotDto.getWifiSpotVisitId()),
+                pointsEarnTransactionCreateByVisitMySpotDto.getStartDateTime(),
+                pointsEarnTransactionCreateByVisitMySpotDto.getEndDateTime()
         );
     }
 }

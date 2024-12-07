@@ -365,7 +365,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot -- WifiSpotEnvironmentalFeatures
     WifiSpot -- WifiSpotFacilities
     WifiSpot -- WifiSpotWeatherFeatures
-    WifiSpot -- WifiSpotDateTimeCreated
+    WifiSpot -- WifiSpotCreateDateTime
     WifiSpotQualityIndicators -- WifiSpotPeakUsageInterval
     WifiSpot "1" --> "1..*" WifiSpotManagement
 
