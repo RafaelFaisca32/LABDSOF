@@ -65,6 +65,17 @@ public class PointsEarnTransactionTest {
 
     }
 
+    @Test
+    public void pointsEarnTransactionByWifiSpotCreation() {
+        UserId userId = new UserId();
+        WifiSpotId wifiSpotId = new WifiSpotId();
+        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction(userId, wifiSpotId);
+
+        assertThat(pointsEarnTransaction.getUserId()).isEqualTo(userId);
+        assertThat(pointsEarnTransaction.getWifiSpotId()).isEqualTo(wifiSpotId);
+        assertThat(pointsEarnTransaction.getPointsEarnTransactionAmount().getValue()).isEqualTo(600);
+    }
+
 
     @Test
     public void pointsEarnTransactionByWifiSpotCreation() {

@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 @Service
-public class PointsEarnTransactionEarnImpl implements PointsEarnTransactionService {
+public class PointsEarnTransactionServiceImpl implements PointsEarnTransactionService {
     private final PointsEarnTransactionRepository pointsEarnTransactionRepository;
     private final PointsEarnTransactionMapper pointsEarnTransactionMapper;
     private final UserService userService;
