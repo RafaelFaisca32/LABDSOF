@@ -60,7 +60,7 @@ public class PointsEarnTransactionEarnImpl implements PointsEarnTransactionServi
     }
 
     @Override
-    public Page<PointsEarnTransactionDetailedDto> getPointsEarnTransactionsByUser(UUID userUUID, Pageable pageable) {
+    public Page<PointsEarnTransactionDetailedDto> getPointsEarnTransactionsByUserId(UUID userUUID, Pageable pageable) {
 
         if(!userService.existsById(userUUID)){
             throw new UserNotFoundException("User not found");
@@ -69,5 +69,15 @@ public class PointsEarnTransactionEarnImpl implements PointsEarnTransactionServi
         UserId userId = new UserId(userUUID);
 
         return pointsEarnTransactionRepository.findByUserIdOrderByPointsEarnTransactionDateTimeDesc(userId,pageable).map(pointsEarnTransactionMapper::toDetailedDto);
+    }
+
+    @Override
+    public Long getTotalPointsEarnTransactionByUserId(UUID userUUID) {
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+
+        UserId userId = new UserId(userUUID);
+        return pointsEarnTransactionRepository.getSumAmountByUserId(userId);
     }
 }
