@@ -21,7 +21,6 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
 
   useEffect(() => {
-    const controller = new AbortController();
     const fetchVisitStatus = async () => {
       if (!spot) return; // Ensure spot is defined
       setLoading(true);
@@ -44,7 +43,6 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     };
 
     fetchVisitStatus();
-    return () => controller.abort();
     // eslint-disable-next-line
   }, [spot]);
 

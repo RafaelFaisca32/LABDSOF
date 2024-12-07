@@ -13,7 +13,6 @@ const PointsEarnTransaction = () => {
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(5);
     const [rowCount, setRowCount] = useState(0);
-    const [totalPoints, setTotalPoints] = useState(null);
 
 
     const fetchPoints = async (page, pageSize) => {
@@ -21,7 +20,7 @@ const PointsEarnTransaction = () => {
         try {
             const response = await pointsEarnTransactionApi.getMyPoints(user,page, pageSize);
             if(response.status === 200) {
-                //console.log(response);
+                console.log(response);
                 const { content, totalElements } = response.data;
                 const transformedRows = content.map( function(item) {
 
@@ -31,6 +30,9 @@ const PointsEarnTransaction = () => {
                         //dateString = item.wifiSpot.dateTimeCreated
                         reason = "Created Wifi Spot " + item.wifiSpot.name + ", Location: " + item.wifiSpot.latitude + ", " + item.wifiSpot.longitude;
                     }
+
+
+
 
                     if(!!item.wifiSpotVisit){
 
@@ -87,29 +89,9 @@ const PointsEarnTransaction = () => {
 
     };
 
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const fetchTotalPoints = async () => {
-            try {
-                const response = await pointsEarnTransactionApi.getMyTotalPoints(user);
-                if(response.status === 200) {
-                    console.log(response);
-                    setTotalPoints(response.data);
-                }
-            } catch (ex){
-                errorNotification("Error fetching total earned points.");
-            }
-        }
-        fetchTotalPoints();
-        return () => controller.abort();
-        // eslint-disable-next-line
-    },[])
-
     // Fetch points when page or pageSize changes
     useEffect(() => {
         fetchPoints(page, pageSize);
-        // eslint-disable-next-line
     }, [page, pageSize]);
 
     // Columns definition for DataGrid
@@ -123,16 +105,8 @@ const PointsEarnTransaction = () => {
     return (
         <Box sx={{ height: "auto", width: "100%", padding: 2 }}>
             <Typography variant="h4" gutterBottom>
-                My Points {totalPoints != null && `- ${totalPoints}`}
+                My Points
             </Typography>
-            {totalPoints === 0 && (
-                <Typography
-                    variant="h5"
-                    style={{ color: "black", fontStyle: "italic", marginTop: "8px" }}
-                >
-                    Start earning points by creating, visiting, or reviewing a spot!
-                </Typography>
-            )}
             {loading ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height={300}>
                     <CircularProgress />

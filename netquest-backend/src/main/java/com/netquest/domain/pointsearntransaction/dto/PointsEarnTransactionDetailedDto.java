@@ -5,14 +5,12 @@ import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDetailedDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class PointsEarnTransactionDetailedDto {
     UUID id;
     LocalDateTime dateTime;
