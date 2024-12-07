@@ -3,8 +3,6 @@ package com.netquest.controller.pointsearntransaction;
 
 import com.netquest.domain.pointsearntransaction.dto.LeaderboardEntryDto;
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDetailedDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
-import com.netquest.domain.pointsearntransaction.dto.TotalPointsEarnByUserDto;
 import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
 import com.netquest.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +46,15 @@ public class PointsEarnTransactionController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
-        return pointsEarnTransactionService.getPointsEarnTransactionsByUser(userDetails.getId(),pageable);
+        return pointsEarnTransactionService.getPointsEarnTransactionsByUserId(userDetails.getId(),pageable);
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/my-total-points-earn-transactions")
+    public Long getMyTotalPointsEarnTransactions(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return pointsEarnTransactionService.getTotalPointsEarnTransactionByUserId(userDetails.getId());
     }
 }
