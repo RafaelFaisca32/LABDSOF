@@ -94,7 +94,7 @@ const PointsEarnTransaction = () => {
             try {
                 const response = await pointsEarnTransactionApi.getMyTotalPoints(user);
                 if(response.status === 200) {
-                    console.log(response);
+                    //console.log(response);
                     setTotalPoints(response.data);
                 }
             } catch (ex){
