@@ -9,4 +9,5 @@ public record WifiSpotVisitDto (
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
         UUID userId,
-        UUID wifiSpotId) {}
+        UUID wifiSpotId
+) {}

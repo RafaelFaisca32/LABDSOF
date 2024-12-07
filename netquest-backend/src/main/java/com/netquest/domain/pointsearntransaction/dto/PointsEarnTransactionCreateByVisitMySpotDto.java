@@ -11,16 +11,12 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PointsEarnTransactionCreateByVisitDto {
-
+public class PointsEarnTransactionCreateByVisitMySpotDto {
     @NotNull
     private LocalDateTime startDateTime;
-
     private LocalDateTime endDateTime;
 
     @NotNull
-    private UUID userId;
-
-    @NotNull
     private UUID wifiSpotVisitId;
+    private UUID userId;
 }

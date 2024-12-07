@@ -30,7 +30,7 @@ function Navbar() {
 
   const wifiPageStyle = () => {
     const user = getUser();
-    return user && (user.role === 'USER' || user.role === 'USER_PREMIUM' )? { display: 'block' } : { display: 'none' };
+    return user && (user.role === 'USER' || user.role === 'USER_PREMIUM' || user.role === 'ADMIN' )? { display: 'block' } : { display: 'none' };
   };
 
   const getUserName = () => {
@@ -45,12 +45,14 @@ function Navbar() {
         <Menu.Item as={Link} exact='true' to="/">Home</Menu.Item>
         <Menu.Item as={Link} to="/adminpage" style={adminPageStyle()}>Admin Page</Menu.Item>
         <Menu.Item as={Link} to="/wifispot" style={wifiPageStyle()}>Wifi Map</Menu.Item>
+        <Menu.Item as={Link} to="/leaderboard" style={logoutMenuStyle()}>Leaderboard</Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item as={Link} to="/login" style={enterMenuStyle()}>Login</Menu.Item>
           <Menu.Item as={Link} to="/signup" style={enterMenuStyle()}>Sign Up</Menu.Item>
           {userIsAuthenticated() && (
             <Dropdown item text={`Hi ${getUserName()}`} style={logoutMenuStyle()}>
               <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/pointsearntransaction">Points Earned</Dropdown.Item>
                 <Dropdown.Item onClick={handleDeleteAccount}>Delete Account</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

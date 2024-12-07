@@ -36,7 +36,7 @@ function MapClickHandler({ onMapClick }) {
 function WifiMapPage() {
   const Auth = useAuth();
   const user = Auth.getUser();
-  const isUser = (user.role === 'USER' || user.role === 'USER_PREMIUM');
+  const isUser = (user.role === 'USER' || user.role === 'USER_PREMIUM' || user.role === 'ADMIN');
 
   const [userLocation, setUserLocation] = useState(null);
   const [wifiSpots, setWifiSpots] = useState([]); // Agora, o estado dos spots é compartilhado
