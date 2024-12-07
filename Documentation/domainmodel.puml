@@ -312,6 +312,10 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
         outdoorFans: bool
     }
 
+    Class WifiSpotDateTimeCreated <<ValueObject>> {
+        value: datetime
+    }
+
     'Entity WifiSpotAddress
     Class WifiSpotAddress <<Entity>>{
 
@@ -361,6 +365,7 @@ frame "Wifi Spot Aggregate" <<wifispot>> {
     WifiSpot -- WifiSpotEnvironmentalFeatures
     WifiSpot -- WifiSpotFacilities
     WifiSpot -- WifiSpotWeatherFeatures
+    WifiSpot -- WifiSpotDateTimeCreated
     WifiSpotQualityIndicators -- WifiSpotPeakUsageInterval
     WifiSpot "1" --> "1..*" WifiSpotManagement
 
@@ -561,6 +566,7 @@ frame "Points Earn Transaction Aggregate" <<pointsearntransaction>> {
     PointsEarnTransaction "1" --> "0..1" Review : points are earned by leaving a review
     PointsEarnTransaction "1" --> "0..1" WifiSpot : points are earned by creating a wifi spot
     PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting a wifi spot
+    PointsEarnTransaction "1" --> "0..1" WifiSpotVisit : points are earned by visiting my spot wifi spot
        
 }
 
