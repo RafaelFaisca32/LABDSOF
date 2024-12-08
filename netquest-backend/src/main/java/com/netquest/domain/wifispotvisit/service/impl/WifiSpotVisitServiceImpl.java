@@ -8,10 +8,12 @@ import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
+import com.netquest.domain.wifispot.model.WifiSpot;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
 import com.netquest.domain.wifispotvisit.exception.*;
 import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
@@ -24,7 +26,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -163,5 +168,29 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         );
     }
 
+    @Override
+    public List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits(UUID userUUID) {
+        List<WifiSpotVisitHistoryDto> wifiSpotVisitHistoryDtos = new ArrayList<>();
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+        UserId userId = new UserId(userUUID);
+        List<WifiSpotVisit> wifiSpotVisit = wifiSpotVisitRepository.getMyWifiSpotsVisits(userId).orElse(new ArrayList<>());
+        List<WifiSpotVisitDto> wifiSpotVisitDtoList = wifiSpotVisit.stream().map(wifiSpotVisitMapper::toDto).collect(Collectors.toList());
+        for (WifiSpotVisitDto wifiSpotDto: wifiSpotVisitDtoList) {
+            WifiSpotDto wifiSpot = wifiSpotService.getWifiSpotById(wifiSpotDto.id());
+            wifiSpot.address();
+            wifiSpotVisitHistoryDtos.add(new WifiSpotVisitHistoryDto(
+                    wifiSpotDto.id(),
+                    wifiSpotDto.startDateTime(),
+                    wifiSpotDto.endDateTime(),
+                    wifiSpot.userId(),
+                    wifiSpot.name(),
+                    wifiSpot.address().addressLine1(),
+                    wifiSpot.uuid()
+            ));
+        }
+        return  wifiSpotVisitHistoryDtos;
+    }
 
 }

@@ -2,6 +2,7 @@ package com.netquest.controller.wifispotvisit;
 
 
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
 import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
 import com.netquest.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
@@ -48,6 +50,15 @@ public class WifiSpotVisitController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return wifiSpotVisitService.getWifiSpotVisitOngoing(userDetails.getId());
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/my-visits")
+    public List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return wifiSpotVisitService.getMyWifiSpotsVisits(userDetails.getId());
     }
 
 }

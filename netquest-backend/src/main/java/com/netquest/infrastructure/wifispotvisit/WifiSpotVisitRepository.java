@@ -53,4 +53,7 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
 
     @Query("SELECT wsv from WifiSpotVisit wsv where wsv.wifiSpotVisitEndDateTime IS NULL and wsv.userId = :userId")
     Optional<WifiSpotVisit> getOnGoingWifiSpotVisitByUserId(UserId userId);
+
+    @Query("SELECT wsv from WifiSpotVisit wsv where wsv.userId = :userId")
+    Optional<List<WifiSpotVisit>> getMyWifiSpotsVisits(UserId userId);
 }
