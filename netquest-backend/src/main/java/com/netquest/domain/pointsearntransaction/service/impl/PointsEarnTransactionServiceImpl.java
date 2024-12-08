@@ -90,7 +90,13 @@ public class PointsEarnTransactionServiceImpl implements PointsEarnTransactionSe
         }
 
         UserId userId = new UserId(userUUID);
-        return pointsEarnTransactionRepository.getSumAmountByUserId(userId);
+
+        Long total = pointsEarnTransactionRepository.getSumAmountByUserId(userId);
+        if(total == null){
+            total = 0L;
+        }
+
+        return total;
     }
 
 
