@@ -5,9 +5,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://vsgate-s1.dei.isep.ipp.pt:11147/netquest
-    username: root
-    password: +1rjOGSA8Fjd
+    url: jdbc:mysql://localhost:3306/netQuest
+    username: netQuest
+    password: netQuestLocal
 
 app:
   cors:
