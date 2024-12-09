@@ -2,7 +2,6 @@ package com.netquest.domain.user.service.impl;
 
 import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.user.exception.UserNotFoundException;
-import com.netquest.domain.user.mapper.UserMapper;
 import com.netquest.domain.user.model.*;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.infrastructure.user.UserRepository;
@@ -20,7 +19,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
     @Override
     public List<User> getUsers() {
