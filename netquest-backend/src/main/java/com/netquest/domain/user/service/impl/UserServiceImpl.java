@@ -85,6 +85,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserDetails(UserDto currentUser){
-        userRepository.updateUser(currentUser.id(),passwordEncoder.encode(currentUser.password()), currentUser.email(), currentUser.vatNumber(), currentUser.addressLine1(), currentUser.addressLine2(), currentUser.addressCity(), currentUser.addressDistrict(), currentUser.addressCountry(),currentUser.addressZipCode());
+        String password = null;
+        if(currentUser.password() != null){
+            password = passwordEncoder.encode(currentUser.password());
+        }
+        userRepository.updateUser(currentUser.id(),password, currentUser.email(), currentUser.vatNumber(), currentUser.addressLine1(), currentUser.addressLine2(), currentUser.addressCity(), currentUser.addressDistrict(), currentUser.addressCountry(),currentUser.addressZipCode());
     }
 }

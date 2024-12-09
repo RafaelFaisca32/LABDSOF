@@ -6,6 +6,7 @@ import {
   Segment,
   Header,
   Checkbox,
+  Message,
 } from "semantic-ui-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -31,6 +32,7 @@ function EditAccount() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -42,6 +44,12 @@ function EditAccount() {
         if (loggedUser) {
           setFormData({
             id: loggedUser.data.id,
+            username: loggedUser.data.username,
+            firstName: loggedUser.data.firstName,
+            lastName: loggedUser.data.lastName,
+            gender: loggedUser.data.gender,
+            role: loggedUser.data.role,
+            birthDate: loggedUser.data.birthDate,
             password: "",
             email: loggedUser.data.email || "",
             vatNumber: loggedUser.data.vatNumber.replace(/[^0-9]/g, "") || "",
@@ -69,21 +77,17 @@ function EditAccount() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const isFormValid = () => {
+    // Check if password is required and missing
+    const isPasswordMissing = isPasswordVisible && !formData.password;
+    // Check if email is required and missing
+    const isEmailMissing = isEmailVisible && !formData.email;
+
+    return !(isPasswordMissing || isEmailMissing);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validation checks
-    if (isPasswordVisible && !formData.password) {
-      setIsError(true);
-      setErrorMessage("Please provide a password if you wish to change it.");
-      return;
-    }
-
-    if (isEmailVisible && !formData.email) {
-      setIsError(true);
-      setErrorMessage("Please provide an email if you wish to change it.");
-      return;
-    }
 
     // Create a copy of formData
     let dataToSend = { ...formData };
@@ -98,26 +102,40 @@ function EditAccount() {
       delete dataToSend.email;
     }
 
+    dataToSend.addressCity = dataToSend.city;
+    delete dataToSend.city;
+    dataToSend.addressCountry = dataToSend.country;
+    delete dataToSend.country;
+    dataToSend.addressDistrict = dataToSend.district;
+    delete dataToSend.district;
+    dataToSend.addressZipCode = dataToSend.zipCode;
+    delete dataToSend.zipCode;
+
     try {
       await authApi.editUser(dataToSend, Auth.getUser());
 
+      // Set success message after successful update
+      setSuccessMessage("Your account has been updated successfully!");
+
       const updatedUser = {
         ...Auth.getUser(),
-        password: dataToSend.password || Auth.getUser().password, // Only update email if changed
+        password: dataToSend.password || Auth.getUser().password, // Only update password if changed
       };
 
-      Auth.userLogout();
       navigate("/"); // Redirect to home page
-      const response = await authApi.authenticate(
-        updatedUser.name,
-        updatedUser.password,
-      );
-      const { id, name, role } = response.data;
-      const authdata = window.btoa(
-        updatedUser.name + ":" + updatedUser.password,
-      );
-      const authenticatedUser = { id, name, role, authdata };
-      Auth.userLogin(authenticatedUser);
+      if (updatedUser.password) {
+        Auth.userLogout();
+        const response = await authApi.authenticate(
+          updatedUser.name,
+          updatedUser.password,
+        );
+        const { id, name, role } = response.data;
+        const authdata = window.btoa(
+          updatedUser.name + ":" + updatedUser.password,
+        );
+        const authenticatedUser = { id, name, role, authdata };
+        Auth.userLogin(authenticatedUser);
+      }
 
       setFormData({
         id: "",
@@ -159,9 +177,105 @@ function EditAccount() {
         <Header as="h2" color="blue" textAlign="center">
           Manage Account
         </Header>
+        {/* Success message */}
+        {successMessage && <Message success>{successMessage}</Message>}
         {isError && <p style={{ color: "red" }}>{errorMessage}</p>}
         <Form size="large" onSubmit={handleSubmit}>
           <Segment>
+            <Form.Input
+              fluid
+              name="username"
+              icon="user"
+              iconPosition="left"
+              label="Username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleInputChange}
+              disabled
+            />
+            {isPasswordVisible && (
+              <Form.Input
+                required
+                fluid
+                name="password"
+                icon="lock"
+                iconPosition="left"
+                label="Password"
+                placeholder="Password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+              />
+            )}
+            <Form.Input
+              fluid
+              name="firstName"
+              icon="address card"
+              iconPosition="left"
+              label="First Name"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              disabled
+            />
+            <Form.Input
+              fluid
+              name="lastName"
+              icon="address card"
+              iconPosition="left"
+              label="Last Name"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              disabled
+            />
+            {isEmailVisible && (
+              <Form.Input
+                required
+                fluid
+                name="email"
+                icon="at"
+                iconPosition="left"
+                placeholder="Email"
+                label="Email"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+            )}
+            <Form.Input
+              fluid
+              selection
+              placeholder="Select Gender"
+              label="Gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              disabled
+            />
+            <Form.Input
+              fluid
+              selection
+              label="Role"
+              placeholder="Select Role"
+              name="role"
+              value={formData.role}
+              onChange={handleInputChange}
+              disabled
+            />
+            <Form.Input
+              required={true}
+              fluid
+              name="birthDate"
+              icon="calendar"
+              iconPosition="left"
+              label="Birth Date"
+              placeholder="Birth Date (YYYY-MM-DD)"
+              type="date"
+              value={formData.birthDate}
+              onChange={handleInputChange}
+              max={new Date().toISOString().split("T")[0]}
+              disabled
+            />
             <Form.Input
               fluid
               name="vatNumber"
@@ -224,38 +338,13 @@ function EditAccount() {
               onChange={() => setIsPasswordVisible((prev) => !prev)}
               style={{ marginRight: "20px" }}
             />
-            {isPasswordVisible && (
-              <Form.Input
-                required
-                fluid
-                name="password"
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                type="password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            )}
             <Checkbox
               label="Change email"
               checked={isEmailVisible}
               onChange={() => setIsEmailVisible((prev) => !prev)}
             />
-            {isEmailVisible && (
-              <Form.Input
-                required
-                fluid
-                name="email"
-                icon="at"
-                iconPosition="left"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-            )}
-            <Button color="blue" fluid size="large">
-              Edit
+            <Button color="blue" fluid size="large" disabled={!isFormValid()}>
+              Update
             </Button>
           </Segment>
         </Form>
