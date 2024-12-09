@@ -1,5 +1,6 @@
 package com.netquest.domain.user.service;
 
+import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.user.model.User;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface UserService {
     Optional<User> validUsernameAndPassword(String username, String password);
 
     boolean existsById(UUID userUUID);
+
+    void updateUserDetails(UserDto currentUser);
 }
