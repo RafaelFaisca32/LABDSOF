@@ -103,9 +103,7 @@ describe("EditAccount", () => {
 
     // Wait for user data to be loaded
     await waitFor(() => expect(getByText("Username")).toBeInTheDocument());
-
     fireEvent.click(getByText(/update/i));
-
     // Check for error message
     await waitFor(() => expect(getByText("Invalid email")).toBeInTheDocument());
   });
