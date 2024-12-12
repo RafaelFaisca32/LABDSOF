@@ -1,5 +1,6 @@
 package com.netquest.domain.wifispot.mapper.impl;
 
+import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.dto.WifiSpotAddressCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotAddressDto;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
@@ -8,12 +9,24 @@ import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 public class WifiSpotMapperImpl implements WifiSpotMapper {
     @Override
     public WifiSpotDto wifiSpotDomainToDto(WifiSpot wifiSpot) {
+
+        if (wifiSpot == null) {
+            return null;
+        }
+
+        UUID userUUID = (wifiSpot.getUserId() != null) ? wifiSpot.getUserId().getValue() : null;
+        LocalDateTime wifiSpotCreateDateTime = (wifiSpot.getWifiSpotCreateDateTime() != null) ? wifiSpot.getWifiSpotCreateDateTime().getValue() : null;
         return new WifiSpotDto(
                 wifiSpot.getWifiSpotId().getValue(),
+                userUUID,
                 wifiSpot.getWifiSpotName().getValue(),
                 wifiSpot.getWifiSpotDescription().getValue(),
                 wifiSpot.getWifiSpotCoordinates().getLatitude(),
@@ -45,12 +58,13 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpot.getWifiSpotWeatherFeatures().isShadedAreas(),
                 wifiSpot.getWifiSpotWeatherFeatures().isOutdoorFans(),
                 wifiSpotAddressDomainToDto(wifiSpot.getWifiSpotAddress()),
-                wifiSpot.getWifiSpotManagement().getValue()
+                wifiSpot.getWifiSpotManagement().getValue(),
+                wifiSpotCreateDateTime
         );
     }
 
     @Override
-    public WifiSpot wifiSpotCreateDtoToDomain(WifiSpotCreateDto wifiSpotDto) {
+    public WifiSpot wifiSpotCreateDtoToDomain(WifiSpotCreateDto wifiSpotDto, UUID userUUID) {
         return new WifiSpot(
                 new WifiSpotName(wifiSpotDto.name()),
                 new WifiSpotDescription(wifiSpotDto.description()),
@@ -91,7 +105,8 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpotAddressCreateDtoToDomain(wifiSpotDto.address()),
                 new WifiSpotManagement(
                         wifiSpotDto.wifiSpotManagementType()
-                )
+                ),
+                new UserId(userUUID)
         );
     }
 
@@ -138,7 +153,8 @@ public class WifiSpotMapperImpl implements WifiSpotMapper {
                 wifiSpotAddressDtoToDomain(wifiSpotDto.address()),
                 new WifiSpotManagement(
                         wifiSpotDto.wifiSpotManagementType()
-                )
+                ),
+                new UserId(wifiSpotDto.userId())
         );
     }
 

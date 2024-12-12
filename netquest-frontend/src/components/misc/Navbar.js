@@ -30,7 +30,7 @@ function Navbar() {
 
   const wifiPageStyle = () => {
     const user = getUser();
-    return user && (user.role === 'USER' || user.role === 'USER_PREMIUM' )? { display: 'block' } : { display: 'none' };
+    return user && (user.role === 'USER' || user.role === 'USER_PREMIUM' || user.role === 'ADMIN' )? { display: 'block' } : { display: 'none' };
   };
 
   const getUserName = () => {
@@ -51,6 +51,7 @@ function Navbar() {
           {userIsAuthenticated() && (
             <Dropdown item text={`Hi ${getUserName()}`} style={logoutMenuStyle()}>
               <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/pointsearntransaction">Points Earned</Dropdown.Item>
                 <Dropdown.Item onClick={handleDeleteAccount}>Delete Account</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

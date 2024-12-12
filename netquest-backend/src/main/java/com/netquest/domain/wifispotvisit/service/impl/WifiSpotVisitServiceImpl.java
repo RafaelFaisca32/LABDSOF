@@ -1,17 +1,17 @@
 package com.netquest.domain.wifispotvisit.service.impl;
 
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitDto;
-import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionDto;
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByVisitMySpotDto;
 import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
+import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
-import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
 import com.netquest.domain.wifispotvisit.exception.*;
 import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -74,7 +74,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     }
 
     @Override
-    public WifiSpotVisitDto updateWifiSpotVisitEndDateTime(UUID userUUID, UUID wifiSpotVisitUUID, WifiSpotVisitUpdateDateTimeDto wifiSpotVisitEndDateTimeDto) {
+    public WifiSpotVisitDto finishVisit(UUID userUUID, UUID wifiSpotVisitUUID) {
         WifiSpotVisitId wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitUUID);
         UserId userId = new UserId(userUUID);
         WifiSpotVisit wifiSpotVisit = wifiSpotVisitRepository.findByWifiSpotVisitIdAndUserId(wifiSpotVisitId,userId)
@@ -87,7 +87,7 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
 
 
 
-        WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(wifiSpotVisitEndDateTimeDto.getDateTime());
+        WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(LocalDateTime.now());
         wifiSpotVisit.updateEndDateTime(wifiSpotVisitEndDateTime);
 
         WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
@@ -108,24 +108,59 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     }
 
     @Override
-    public WifiSpotVisitDto saveWifiSpotVisitSimple(UUID userUUID, UUID wifiSpotUUID) {
+    public WifiSpotVisitDto startVisit(UUID userUUID, UUID wifiSpotUUID) {
         WifiSpotVisitCreateDto wifiSpotVisitCreateDto = new WifiSpotVisitCreateDto();
         wifiSpotVisitCreateDto.setWifiSpotId(wifiSpotUUID);
         wifiSpotVisitCreateDto.setStartDateTime(LocalDateTime.now());
         return saveWifiSpotVisit(userUUID, wifiSpotVisitCreateDto) ;
     }
+    private void createPointsEarnTransactionBasedOnVisit(WifiSpotVisitDto wifiSpotVisitDto) {
+        createPointsEarnTransactionBasedOnMyVisit(wifiSpotVisitDto);
+        createPointsEarnTransactionBasedOnVisitMySpot(wifiSpotVisitDto);
+    }
 
-
-    private PointsEarnTransactionDto createPointsEarnTransactionBasedOnVisit(WifiSpotVisitDto wifiSpotVisitDto) {
+    private void createPointsEarnTransactionBasedOnMyVisit(WifiSpotVisitDto wifiSpotVisitDto) {
         if(wifiSpotVisitDto.endDateTime() == null) {
-            return null;
+            return;
         }
-        return pointsEarnTransactionService.savePointsEarnTransaction(
+        pointsEarnTransactionService.savePointsEarnTransactionByMyVisit(
                 new PointsEarnTransactionCreateByVisitDto(
-                    wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(),wifiSpotVisitDto.userId(),wifiSpotVisitDto.id()
+                        wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(), wifiSpotVisitDto.userId(), wifiSpotVisitDto.id()
                 )
         );
 
+    }
+
+    private void createPointsEarnTransactionBasedOnVisitMySpot(WifiSpotVisitDto wifiSpotVisitDto){
+
+        if(wifiSpotVisitDto.endDateTime() == null) {
+            return;
+        }
+        if(wifiSpotVisitDto.startDateTime() == null) {
+            return;
+        }
+
+        if(ChronoUnit.MINUTES.between(wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime()) < 10){
+            return;
+        }
+
+        WifiSpotDto wifiSpotDto;
+        try {
+            wifiSpotDto = wifiSpotService.getWifiSpotById(wifiSpotVisitDto.wifiSpotId());
+        } catch (WifiSpotNotFoundException e) {
+            return;
+        }
+
+        if(!userService.existsById(wifiSpotDto.userId())){
+            return;
+        }
+
+
+        pointsEarnTransactionService.savePointsEarnTransactionByVisitMySpot(
+                new PointsEarnTransactionCreateByVisitMySpotDto(
+                        wifiSpotVisitDto.startDateTime(), wifiSpotVisitDto.endDateTime(), wifiSpotVisitDto.id(),wifiSpotDto.userId()
+                )
+        );
     }
 
 
