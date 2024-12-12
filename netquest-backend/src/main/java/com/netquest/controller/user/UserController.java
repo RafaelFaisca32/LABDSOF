@@ -1,25 +1,21 @@
 package com.netquest.controller.user;
 
+import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.user.mapper.UserMapper;
 import com.netquest.domain.user.model.User;
-import com.netquest.domain.user.dto.UserDto;
-import com.netquest.security.CustomUserDetails;
 import com.netquest.domain.user.service.UserService;
+import com.netquest.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
@@ -59,6 +55,12 @@ public class UserController {
         User user = userService.validateAndGetUserByUsername(username);
         userService.deleteUser(user);
         return userMapper.toUserDto(user);
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @PutMapping("/edit")
+    public void editUser(@Valid @RequestBody UserDto userDto) {
+        userService.updateUserDetails(userDto);
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})

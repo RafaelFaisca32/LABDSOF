@@ -22,7 +22,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.GET, "/api/users/me").hasAnyAuthority(ADMIN, USER,USER_PREMIUM)
+                        .requestMatchers(HttpMethod.GET, "/api/users/me", "/api/users/**").hasAnyAuthority(ADMIN, USER,USER_PREMIUM)
+                        .requestMatchers(HttpMethod.PUT, "/api/users/edit").hasAnyAuthority(ADMIN, USER,USER_PREMIUM)
                         .requestMatchers(HttpMethod.DELETE, "/api/users/deleteMyAccount/**").hasAnyAuthority(ADMIN, USER, USER_PREMIUM)
                         .requestMatchers(HttpMethod.POST, "/api/wifi-spot").hasAnyAuthority(ADMIN, USER, USER_PREMIUM)
                         .requestMatchers(HttpMethod.GET, "/api/wifi-spot").hasAnyAuthority(ADMIN, USER, USER_PREMIUM)
