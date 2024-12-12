@@ -8,19 +8,19 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReviewIdTest {
+class ReviewIdTest {
 
     @Test
-    public void ReviewIdRandomGenerateTest() {
+    void ReviewIdRandomGenerateTest() {
         int numInstances = 100;
         Set<ReviewId> ids = new HashSet<>();
 
         for (int i = 0; i < numInstances; i++) {
-            ReviewId ReviewId = new ReviewId();
-            ids.add(ReviewId);
+            ReviewId reviewId = new ReviewId();
+            ids.add(reviewId);
         }
 
         // Check that all IDs are unique by comparing the set size to the number of instances
-        assertThat(ids.size()).isEqualTo(numInstances);
+        assertThat(ids).hasSize(numInstances);
     }
 }
