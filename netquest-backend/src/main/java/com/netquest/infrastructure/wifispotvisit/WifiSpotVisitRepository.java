@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,11 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
     @Query("SELECT wsv from WifiSpotVisit wsv where wsv.wifiSpotVisitEndDateTime IS NULL and wsv.userId = :userId")
     Optional<WifiSpotVisit> getOnGoingWifiSpotVisitByUserId(UserId userId);
 
-    @Query("SELECT wsv from WifiSpotVisit wsv where wsv.userId = :userId")
-    Optional<List<WifiSpotVisit>> getMyWifiSpotsVisits(UserId userId);
+    @Query("SELECT wsv from WifiSpotVisit wsv " +
+            "inner join WifiSpot ws on ws.wifiSpotId = wsv.wifiSpotId " +
+            "where wsv.userId = :userId " +
+            "and (:wifiSpotName is null or lower(ws.wifiSpotName.value) like lower(:wifiSpotName))" +
+            "and (:startDate is null or wsv.wifiSpotVisitStartDateTime.value >= :startDate)" +
+            "and (:endDate is null or wsv.wifiSpotVisitEndDateTime.value <= :endDate)")
+    Optional<List<WifiSpotVisit>> getMyWifiSpotsVisits(UserId userId, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate);
 }

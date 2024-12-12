@@ -5,7 +5,7 @@ import { errorNotification, successNotification } from "../misc/Helpers";
 import {Modal, Header, Button, Segment} from 'semantic-ui-react';
 import { countries } from './AddSpotModal';
 
-function SpotDetailsModal({ userLocation, spot, onClose }) {
+function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
   const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
   const Auth = useAuth();
   const user = Auth.getUser();
@@ -43,7 +43,8 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
       }
     };
 
-    fetchVisitStatus();
+    if (!justDetails)
+      fetchVisitStatus();
     return () => controller.abort();
     // eslint-disable-next-line
   }, [spot]);
@@ -193,6 +194,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
             <p><strong>Longitude:</strong> {spot.longitude}</p>
           </Segment>
         </Modal.Content>
+        {!justDetails ? (
         <Modal.Actions>
           {loading ? (
               <Button disabled>
@@ -216,7 +218,12 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
           <Button onClick={openDirections}>Get Directions</Button>
           <Button onClick={onClose}>Close</Button>
         </Modal.Actions>
-      {appSelectionModalOpen && (
+        ) : (
+          <Modal.Actions>
+            <Button onClick={onClose}>Close</Button>
+          </Modal.Actions>
+        )}
+      {appSelectionModalOpen && !justDetails && (
         <Modal open={appSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
           <Modal.Header>Select App to Open Directions</Modal.Header>
           <Modal.Content>

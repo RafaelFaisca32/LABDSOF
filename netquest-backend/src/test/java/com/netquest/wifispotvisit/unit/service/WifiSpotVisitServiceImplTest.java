@@ -48,15 +48,15 @@ class WifiSpotVisitServiceImplTest {
     @Test
     void testGetMyWifiSpotsVisits_NoVisits() {
         when(userService.existsById(userUUID)).thenReturn(true);
-        when(wifiSpotVisitRepository.getMyWifiSpotsVisits(new UserId(userUUID)))
+        when(wifiSpotVisitRepository.getMyWifiSpotsVisits(new UserId(userUUID), null, null, null))
                 .thenReturn(Optional.empty());
 
-        List<WifiSpotVisitHistoryDto> result = wifiSpotVisitService.getMyWifiSpotsVisits(userUUID);
+        List<WifiSpotVisitHistoryDto> result = wifiSpotVisitService.getMyWifiSpotsVisits(userUUID, null, null, null);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(userService, times(1)).existsById(userUUID);
-        verify(wifiSpotVisitRepository, times(1)).getMyWifiSpotsVisits(new UserId(userUUID));
+        verify(wifiSpotVisitRepository, times(1)).getMyWifiSpotsVisits(new UserId(userUUID), null, null, null);
         verifyNoInteractions(wifiSpotVisitMapper);
     }
 }

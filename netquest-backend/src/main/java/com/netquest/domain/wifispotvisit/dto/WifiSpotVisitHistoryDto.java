@@ -1,5 +1,7 @@
 package com.netquest.domain.wifispotvisit.dto;
 
+import com.netquest.domain.wifispot.dto.WifiSpotDto;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -9,7 +11,5 @@ public record WifiSpotVisitHistoryDto(
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
         UUID userId,
-        String wifiSpotName,
-        String wifiSpotAddress,
-        UUID wifiSpotId
+        WifiSpotDto wifiSpotDto
 ) {}
