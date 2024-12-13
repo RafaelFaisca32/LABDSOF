@@ -82,6 +82,7 @@ function Navbar() {
               style={logoutMenuStyle()}
             >
               <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/visited-locations">Visited Locations</Dropdown.Item>
                 <Dropdown.Item as={Link} to="/pointsearntransaction">
                   Points Earned
                 </Dropdown.Item>

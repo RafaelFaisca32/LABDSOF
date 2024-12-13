@@ -4,7 +4,18 @@ import { config } from '../../Constants'
 export const wifiSpotVisitApi = {
   startVisit,
   finishVisit,
-  getOngoingWifiSpotVisit
+  getOngoingWifiSpotVisit,
+  getMyVisits
+}
+
+function getMyVisits(user, filters){
+  return instance.get('/api/wifi-spot-visit/my-visits', {
+    params: filters,
+    headers: {
+      'Content-type': 'application/json',
+      'Authorization': basicAuth(user)
+    }
+  })
 }
 
 function getOngoingWifiSpotVisit(user){
