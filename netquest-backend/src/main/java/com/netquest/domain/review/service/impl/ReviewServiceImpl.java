@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class ReviewServiceImp implements ReviewService {
+public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
     private final UserService userService;
