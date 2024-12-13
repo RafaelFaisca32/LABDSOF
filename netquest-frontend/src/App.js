@@ -14,6 +14,7 @@ import WifiSpotFilter from './components/wifiSpotFilter/WifiSpotFilter';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import PointsEarnTransaction from './components/pointsearntransaction/PointsEarnTransaction'
+import WifiSpotsCreated from "./components/wifispostscreated/WifiSpotsCreated";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path="/adminpage" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/wifispot" element={<PrivateRoute><WifiMapPage /></PrivateRoute>} />
+          <Route path="/wifispots-created" element={<PrivateRoute><WifiSpotsCreated /></PrivateRoute>} />
           <Route path="/wifispotfilterpage" element={<PrivateRoute><WifiSpotFilter /></PrivateRoute>} />
           <Route path="/edit-account" element={<PrivateRoute><EditAccount /></PrivateRoute>} />
           <Route path="/delete-account" element={<PrivateRoute><DeleteAccount /></PrivateRoute>} />

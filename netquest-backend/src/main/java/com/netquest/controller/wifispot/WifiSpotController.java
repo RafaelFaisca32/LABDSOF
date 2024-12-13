@@ -3,6 +3,10 @@ package com.netquest.controller.wifispot;
 
 import com.netquest.domain.shared.WifiSpotManagementType;
 import com.netquest.domain.user.dto.UserDto;
+import com.netquest.domain.user.mapper.UserMapper;
+import com.netquest.domain.user.mapper.impl.UserMapperImpl;
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.dto.WifiSpotFilterDto;
@@ -32,6 +36,8 @@ import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
 @RequestMapping("api/wifi-spot")
 public class WifiSpotController {
     private final WifiSpotService wifiSpotService;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.CREATED)
@@ -142,8 +148,10 @@ public class WifiSpotController {
     @PostMapping(path = "/search-wifi-spots-by-user")
     @ResponseStatus(HttpStatus.OK)
     public List<WifiSpotDto> searchWifiSpotsByUser(
-        @RequestBody(required = false) UserDto userDto
     ) {
-        return wifiSpotService.getWifiSpotsOfUser(userDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userService.getUserById(userDetails.getId());
+        return wifiSpotService.getWifiSpotsOfUser(userMapper.toUserDto(user));
     }
 }

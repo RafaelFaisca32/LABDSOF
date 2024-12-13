@@ -15,6 +15,9 @@ function Navbar() {
     navigate("/delete-account"); // Navigate to the delete account page
   };
 
+  const handleWifiSpotsCreated = () => {
+    navigate("/wifispots-created"); // Navigate to the delete account page
+  };
   const handleEditAccount = () => {
     navigate("/edit-account"); // Navigate to the delete account page
   };
@@ -84,6 +87,9 @@ function Navbar() {
               <Dropdown.Menu>
                 <Dropdown.Item as={Link} to="/pointsearntransaction">
                   Points Earned
+                </Dropdown.Item>
+                <Dropdown.Item onClick={handleWifiSpotsCreated}>
+                  View Wifi Spots Created
                 </Dropdown.Item>
                 <Dropdown.Item onClick={handleEditAccount}>
                   Manage Account
