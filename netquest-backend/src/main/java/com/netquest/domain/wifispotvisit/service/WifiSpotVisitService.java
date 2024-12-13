@@ -19,5 +19,7 @@ public interface WifiSpotVisitService {
 
     WifiSpotVisitDto finishVisit(UUID id, UUID wifiSpotVisitUUID);
 
+    boolean hasUserVisitedWifiSpotBasedOnMinutes(UUID userUUID, UUID wifiSpotUUID, long minutes);
+
     List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits(UUID userUUID, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate);
 }

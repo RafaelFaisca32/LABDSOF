@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, WifiSpotVisitId> {
@@ -54,6 +55,9 @@ public interface WifiSpotVisitRepository extends JpaRepository<WifiSpotVisit, Wi
 
     @Query("SELECT wsv from WifiSpotVisit wsv where wsv.wifiSpotVisitEndDateTime IS NULL and wsv.userId = :userId")
     Optional<WifiSpotVisit> getOnGoingWifiSpotVisitByUserId(UserId userId);
+
+
+    List<WifiSpotVisit> findByWifiSpotIdAndUserIdAndWifiSpotVisitEndDateTimeIsNotNull(WifiSpotId wifiSpotId, UserId userId);
 
     @Query("SELECT wsv from WifiSpotVisit wsv " +
             "inner join WifiSpot ws on ws.wifiSpotId = wsv.wifiSpotId " +

@@ -24,9 +24,11 @@ import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -99,6 +101,22 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         WifiSpotVisitDto wifiSpotVisitDto = wifiSpotVisitMapper.toDto(wifiSpotVisitRepository.save(wifiSpotVisit));
         createPointsEarnTransactionBasedOnVisit(wifiSpotVisitDto);
         return wifiSpotVisitDto;
+    }
+
+    @Override
+    public boolean hasUserVisitedWifiSpotBasedOnMinutes(UUID userUUID, UUID wifiSpotUUID,long minutes) {
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+
+        if(!wifiSpotService.existsById(wifiSpotUUID)){
+            throw new WifiSpotNotFoundException("Wifi Spot not found");
+        }
+        List<WifiSpotVisit> listWifiSpotVisits = wifiSpotVisitRepository.findByWifiSpotIdAndUserIdAndWifiSpotVisitEndDateTimeIsNotNull(new WifiSpotId(wifiSpotUUID),new UserId(userUUID));
+        long totalMinutes = listWifiSpotVisits.stream()
+                .mapToLong(visit -> Duration.between(visit.getWifiSpotVisitStartDateTime().getValue(), visit.getWifiSpotVisitEndDateTime().getValue()).toMinutes())
+                .sum();
+        return totalMinutes >= minutes;
     }
 
     @Override
