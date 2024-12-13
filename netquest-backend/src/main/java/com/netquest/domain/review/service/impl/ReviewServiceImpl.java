@@ -42,6 +42,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public boolean userAllowedToCreateReview(UUID userUUID, UUID wifiSpotUUID) {
-        return wifiSpotVisitService.hasUserVisitedWifiSpotBasedOnMinutes(userUUID,wifiSpotUUID,10);
+        return wifiSpotVisitService.hasUserVisitedWifiSpotBasedOnMinutes(userUUID,wifiSpotUUID,2);
     }
 }
