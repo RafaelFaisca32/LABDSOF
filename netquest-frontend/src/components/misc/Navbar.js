@@ -83,6 +83,7 @@ function Navbar() {
             >
               <Dropdown.Menu>
                 <Dropdown.Item as={Link} to="/visited-locations">Visited Locations</Dropdown.Item>
+                <Dropdown.Item as={Link} to="/my-reviews">My Reviews</Dropdown.Item>
                 <Dropdown.Item as={Link} to="/pointsearntransaction">
                   Points Earned
                 </Dropdown.Item>
