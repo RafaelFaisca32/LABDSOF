@@ -231,7 +231,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         }
 
         User user = userOptional.get();
-        List<WifiSpot> wifiSpots = wifiSpotRepository.findByUser(user);
+        List<WifiSpot> wifiSpots = wifiSpotRepository.findByUserId(user.getUserId());
 
         return wifiSpots.stream()
             .map(wifiSpotMapper::wifiSpotDomainToDto).toList();
