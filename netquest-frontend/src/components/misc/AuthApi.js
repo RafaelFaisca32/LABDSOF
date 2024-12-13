@@ -7,6 +7,7 @@ export const authApi = {
   numberOfUsers,
   getUsers,
   deleteUser,
+  editUser,
 };
 
 function authenticate(username, password) {
@@ -45,6 +46,15 @@ export function deleteUser(user, username) {
 export function deleteUserById(user) {
   return instance.delete(`/api/users/deleteMyAccount`, {
     headers: { Authorization: basicAuth(user) },
+  });
+}
+
+export function editUser(user, loggedUser) {
+  return instance.put(`/api/users/edit`, user, {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: basicAuth(loggedUser),
+    },
   });
 }
 
