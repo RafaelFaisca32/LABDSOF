@@ -6,7 +6,7 @@ import {reviewApi} from "../misc/ReviewApi";
 function AddReviewModal({ spot, open, onClose,user }) {
     const initialReviewDetails = {
         reviewComment: "",
-        reviewOverallClassification: 0,
+        reviewOverallClassification: "",
         reviewAttributeClassificationDtoList: [],
         wifiSpotId: spot.uuid
     };
@@ -65,6 +65,8 @@ function AddReviewModal({ spot, open, onClose,user }) {
 
     const isMandatoryFilled = () => {
         return (
+            reviewDetails.reviewOverallClassification !== "" &&
+            !isNaN(reviewDetails.reviewOverallClassification) &&
             reviewDetails.reviewOverallClassification >= 0 &&
             reviewDetails.reviewOverallClassification <= 5 &&
             (
