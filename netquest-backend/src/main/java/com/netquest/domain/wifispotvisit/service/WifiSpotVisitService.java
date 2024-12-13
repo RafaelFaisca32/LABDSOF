@@ -14,4 +14,6 @@ public interface WifiSpotVisitService {
     WifiSpotVisitDto startVisit(UUID userUUID, UUID wifiSpotUUID);
 
     WifiSpotVisitDto finishVisit(UUID id, UUID wifiSpotVisitUUID);
+
+    boolean hasUserVisitedWifiSpotBasedOnMinutes(UUID userUUID, UUID wifiSpotUUID, long minutes);
 }

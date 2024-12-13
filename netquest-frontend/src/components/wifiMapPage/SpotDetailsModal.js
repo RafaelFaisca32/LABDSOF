@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
+import { reviewApi } from "../misc/ReviewApi";
 import { useAuth } from '../context/AuthContext';
 import { errorNotification, successNotification } from "../misc/Helpers";
 import {Modal, Header, Button, Segment} from 'semantic-ui-react';
 import { countries } from './AddSpotModal';
+import AddReviewModal from '../review/AddReviewModal';
 
 function SpotDetailsModal({ userLocation, spot, onClose }) {
   const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
@@ -13,6 +15,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
   const [loading, setLoading] = useState(true);
   const [processingVisitRequest, setProcessingVisitRequest] = useState(false);
   const [wifiSpotVisitId,setWifiSpotVisitId] = useState(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   const getCountryByValue = (value) => {
     const country = countries.find((c) => c.value === value);
@@ -47,6 +50,9 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     return () => controller.abort();
     // eslint-disable-next-line
   }, [spot]);
+
+
+
 
   if (!spot) return null;
 
@@ -130,6 +136,21 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
     }
   };
 
+  const openReview = async () => {
+    let canReview = false;
+    try {
+      const response = await reviewApi.userAllowedToCreateReview(user, spot.uuid);
+      canReview = !!response && response.status === 200 && response.data
+      if(canReview) {
+        setReviewModalOpen(true);
+      } else {
+        errorNotification("You must visit this spot for longer than 10 minutes to make a review!");
+      }
+    }catch (err) {
+      errorNotification(err.response?.data?.message || "Error checking if is allowed to review");
+    }
+  }
+
   return (
       <Modal open={!!spot} onClose={onClose} size="small">
         <Modal.Header>Spot Details</Modal.Header>
@@ -212,7 +233,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
           )}
 
 
-
+          <Button onClick={openReview}>Make a Review</Button>
           <Button onClick={openDirections}>Get Directions</Button>
           <Button onClick={onClose}>Close</Button>
         </Modal.Actions>
@@ -228,7 +249,17 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
             <Button onClick={() => setAppSelectionModalOpen(false)}>Cancel</Button>
         </Modal>
       )}
+        <AddReviewModal
+          spot={spot}
+          onClose={() => setReviewModalOpen(false)}
+          open = {reviewModalOpen}
+          user = {user}
+        >
+
+        </AddReviewModal>
     </Modal>
+
+
   );
 }
 
