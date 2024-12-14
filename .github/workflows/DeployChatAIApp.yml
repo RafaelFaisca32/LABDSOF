@@ -19,10 +19,6 @@ jobs:
       - name: Build Docker Image
         working-directory: ./chat-mysql
         run: docker compose build
-      - name: Tag Docker Image
-        run: |
-          IMAGE_ID=$(docker images --filter "dangling=false" --filter "reference=chat-mysql-app:latest" -q)
-          docker tag $IMAGE_ID ${{ secrets.DOCKER_CHAT_AI_REPO }}:devprod
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_HUB_AI_REPO }}:devprod
       # - name: Webhook for render deployment
