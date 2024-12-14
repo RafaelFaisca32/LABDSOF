@@ -5,6 +5,8 @@ import com.netquest.domain.pointsearntransaction.dto.TotalPointsEarnByUserDto;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransactionId;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpotId;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +28,10 @@ public interface PointsEarnTransactionRepository extends JpaRepository<PointsEar
             " from PointsEarnTransaction p " +
             " where p.userId = :userId")
     Long getSumAmountByUserId(UserId userId);
+
+    @Query(" SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false end from PointsEarnTransaction  p " +
+            " inner join Review r on r.reviewId = p.reviewId" +
+            " where p.userId = :userId and r.wifiSpotId = :wifiSpotId ")
+    boolean existsPointsEarnTransactionByUserIdAndWifiSpotId(UserId userId, WifiSpotId wifiSpotId);
 }
 
