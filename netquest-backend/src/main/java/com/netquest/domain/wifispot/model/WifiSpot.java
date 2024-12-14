@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 @Entity
 @Table(name = "wifi_spot", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"wifi_spot_latitude", "wifi_spot_longitude"})
+        @UniqueConstraint(columnNames = {"wifi_spot_latitude", "wifi_spot_longitude", "wifi_spot_name"})
 })
+
 public class WifiSpot {
 
     @EmbeddedId
@@ -64,7 +65,7 @@ public class WifiSpot {
             @AttributeOverride(name = "outdoorSeating", column = @Column(name = "wifi_spot_outdoor_seating", nullable = false)),
             @AttributeOverride(name = "goodView", column = @Column(name = "wifi_spot_good_view", nullable = false)),
             @AttributeOverride(name = "noiseLevel", column = @Column(name = "wifi_spot_noise_level", nullable = false)),
-            @AttributeOverride(name = "petFriendly", column = @Column(name = "wifi_spot_pet_fiendly", nullable = false)),
+            @AttributeOverride(name = "petFriendly", column = @Column(name = "wifi_spot_pet_friendly", nullable = false)),
             @AttributeOverride(name = "childFriendly", column = @Column(name = "wifi_spot_child_friendly", nullable = false)),
             @AttributeOverride(name = "disabledAccess", column = @Column(name = "wifi_spot_disabled_access", nullable = false))
     })
