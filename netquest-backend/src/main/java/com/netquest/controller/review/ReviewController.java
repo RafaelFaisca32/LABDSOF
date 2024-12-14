@@ -60,4 +60,15 @@ public class ReviewController {
 
         return reviewService.getMyReviews(userDetails.getId(), wifiSpotName, startDate, endDate);
     }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/review-of-wifi-spot/{wifi-spot-id}")
+    public List<ReviewDto> getReviewOfWifiSpot(
+            @PathVariable(name = "wifi-spot-id") UUID wifiSpotId
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return reviewService.getReviewOfWifiSpot(wifiSpotId,userDetails.getId());
+    }
 }

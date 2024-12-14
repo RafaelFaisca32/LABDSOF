@@ -18,4 +18,5 @@ public class ReviewDto {
     List<ReviewAttributeClassificationDto> reviewAttributeClassificationDtoList;
     UUID wifiSpotId;
     UUID userId;
+    String username;
 }

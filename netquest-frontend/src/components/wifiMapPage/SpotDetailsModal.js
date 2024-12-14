@@ -3,7 +3,7 @@ import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
 import { reviewApi } from "../misc/ReviewApi";
 import { useAuth } from '../context/AuthContext';
 import { errorNotification, successNotification } from "../misc/Helpers";
-import {Modal, Header, Button, Segment} from 'semantic-ui-react';
+import {Modal, Header, Button, Segment, Dropdown, Divider} from 'semantic-ui-react';
 import { countries } from './AddSpotModal';
 import AddReviewModal from '../review/AddReviewModal';
 
@@ -16,6 +16,9 @@ function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
   const [processingVisitRequest, setProcessingVisitRequest] = useState(false);
   const [wifiSpotVisitId,setWifiSpotVisitId] = useState(null);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [sortedReviews, setSortedReviews] = useState([]);
+  const [filter, setFilter] = useState("Most Recent");
 
   const getCountryByValue = (value) => {
     const country = countries.find((c) => c.value === value);
@@ -52,7 +55,37 @@ function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
     // eslint-disable-next-line
   }, [spot]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!spot) return;
+      try {
+        const response = await reviewApi.getReviewsOfWifiSpot(user, spot.uuid);
+        if (response && response.status === 200) {
+          const reviewsData = response.data;
+          setReviews(reviewsData);
+          setSortedReviews(sortReviews(reviewsData, filter));
+        }
+      } catch (err) {
+        errorNotification(err.response?.data?.message || "Error fetching reviews");
+      }
+    };
+    fetchReviews();
+  }, [spot, filter]);
 
+  const sortReviews = (reviews, filterType) => {
+    if (filterType === "Highest Rating") {
+      return [...reviews].sort((a, b) => b.reviewOverallClassification - a.reviewOverallClassification);
+    }
+    if (filterType === "Most Recent") {
+      return [...reviews].sort((a, b) => new Date(b.reviewCreateDateTime) - new Date(a.reviewCreateDateTime));
+    }
+    return reviews;
+  };
+
+  const handleFilterChange = (e, { value }) => {
+    setFilter(value);
+    setSortedReviews(sortReviews(reviews, value));
+  };
 
 
   if (!spot) return null;
@@ -213,6 +246,41 @@ function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
             <p><strong>Zip Code:</strong> {spot.address.zipCode}</p>
             <p><strong>Latitude:</strong> {spot.latitude}</p>
             <p><strong>Longitude:</strong> {spot.longitude}</p>
+          </Segment>
+
+          <Segment>
+            <Header as="h4">Reviews</Header>
+            {reviews.length > 0 ? (
+                <>
+                  <Dropdown
+                      selection
+                      options={[
+                        { key: "most-recent", text: "Most Recent", value: "Most Recent" },
+                        { key: "highest-rating", text: "Highest Rating", value: "Highest Rating" },
+                      ]}
+                      value={filter}
+                      onChange={handleFilterChange}
+                      placeholder="Filter Reviews"
+                  />
+                  {sortedReviews.map((review) => (
+                      <Segment key={review.reviewId}>
+                        <p><strong>Reviewer:</strong> {review.username}</p>
+                        <p><strong>Date:</strong> {new Date(review.reviewCreateDateTime).toLocaleString()}</p>
+                        <p><strong>Rating:</strong> {review.reviewOverallClassification}</p>
+                        <p><strong>Attribute Classifications:</strong> {review.reviewAttributeClassificationDtoList.map(
+                            (attr, index) => (
+                                <div key={index}>
+                                  {attr.name}: {attr.value}
+                                </div>
+                            )
+                        )}</p>
+                        <p><strong>Comment:</strong> {review.reviewComment}</p>
+                      </Segment>
+                  ))}
+                </>
+            ) : (
+                <p>No reviews available for this Wi-Fi location.</p>
+            )}
           </Segment>
         </Modal.Content>
         {!justDetails ? (

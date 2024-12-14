@@ -1,15 +1,19 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import SpotDetailsModal from './SpotDetailsModal';
 import { useAuth } from '../context/AuthContext';
+import { reviewApi } from '../misc/ReviewApi';
 
 // Mock the useAuth hook to return a mock user
 jest.mock('../context/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
+// Mock the Review API
+jest.mock('../misc/ReviewApi');
+
 describe('SpotDetailsModal', () => {
-  let userLocation, spot, onClose;
+  let userLocation, spot, onClose, mockReviews;
 
   beforeEach(() => {
     // Mock user object that would be returned by useAuth
@@ -62,6 +66,32 @@ describe('SpotDetailsModal', () => {
       longitude: -73.9683,
     };
     onClose = jest.fn(); // Mock the onClose function
+
+    // Mock reviews
+    mockReviews = [
+      {
+        reviewId: 'review1',
+        username: 'User1',
+        reviewCreateDateTime: '2024-01-01T12:00:00',
+        reviewOverallClassification: 5,
+        reviewComment: 'Great place!',
+        reviewAttributeClassificationDtoList: [
+          { name: 'Cleanliness', value: '5' },
+          { name: 'Comfort', value: '4' },
+        ],
+      },
+      {
+        reviewId: 'review2',
+        username: 'User2',
+        reviewCreateDateTime: '2024-01-02T14:00:00',
+        reviewOverallClassification: 3,
+        reviewComment: 'Average experience.',
+        reviewAttributeClassificationDtoList: [
+          { name: 'Cleanliness', value: '3' },
+          { name: 'Comfort', value: '3' },
+        ],
+      },
+    ];
   });
 
   test('renders correctly with spot details', () => {
@@ -116,5 +146,67 @@ describe('SpotDetailsModal', () => {
     expect(alertMock).toHaveBeenCalledWith('User location is not available.');
 
     alertMock.mockRestore(); // Restore original implementation of alert
+  });
+
+  // New Test Cases
+  test('displays reviews in the "Reviews" section', async () => {
+    reviewApi.getReviewsOfWifiSpot.mockResolvedValueOnce({
+      status: 200,
+      data: mockReviews,
+    });
+
+    const { getByText } = render(
+        <SpotDetailsModal userLocation={userLocation} spot={spot} onClose={onClose} />
+    );
+
+    await waitFor(() => {
+      expect(getByText('User1')).toBeInTheDocument();
+      expect(getByText('User2')).toBeInTheDocument();
+    });
+  });
+
+  test('displays "No reviews available" when there are no reviews', async () => {
+    reviewApi.getReviewsOfWifiSpot.mockResolvedValueOnce({
+      status: 200,
+      data: [],
+    });
+
+    const { getByText } = render(
+        <SpotDetailsModal userLocation={userLocation} spot={spot} onClose={onClose} />
+    );
+
+    await waitFor(() => {
+      expect(getByText('No reviews available for this Wi-Fi location.')).toBeInTheDocument();
+    });
+  });
+
+  test('filters reviews by highest rating', async () => {
+    reviewApi.getReviewsOfWifiSpot.mockResolvedValueOnce({
+      status: 200,
+      data: mockReviews,
+    });
+
+    const { getByText, getByRole } = render(
+        <SpotDetailsModal userLocation={userLocation} spot={spot} onClose={onClose} />
+    );
+
+    await waitFor(() => {
+      fireEvent.click(getByRole('option', { name: /Highest Rating/i }));
+    });
+  });
+
+  test('filters reviews by most recent', async () => {
+    reviewApi.getReviewsOfWifiSpot.mockResolvedValueOnce({
+      status: 200,
+      data: mockReviews,
+    });
+
+    const { getByText, getByRole } = render(
+        <SpotDetailsModal userLocation={userLocation} spot={spot} onClose={onClose} />
+    );
+
+    await waitFor(() => {
+      fireEvent.click(getByRole('option', { name: /Most Recent/i }));
+    });
   });
 });
