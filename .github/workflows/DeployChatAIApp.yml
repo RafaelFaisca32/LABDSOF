@@ -18,7 +18,12 @@ jobs:
           password: ${{ secrets.DOCKER_CHAT_AI_TOKEN }}
       - name: Build Docker Image
         working-directory: ./chat-mysql
-        run: docker compose build --tag ${{ secrets.DOCKER_HUB_AI_REPO }}:devprod
+        run: docker compose build
+      - name: Tag Docker Image
+        run: |
+          IMAGE_ID=$(docker images -q <image_name>)  # Get the image ID
+          docker tag $IMAGE_ID ${{ secrets.DOCKER_HUB_AI_REPO }}:devprod  # Tag the image
+        -
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_HUB_AI_REPO }}:devprod
       # - name: Webhook for render deployment
