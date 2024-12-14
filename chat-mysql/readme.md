@@ -1,4 +1,4 @@
-# MySQL Python Chatbot with GPT-4 and Mistral AI
+# MySQL WIFI Spot Python Chatbot with Grook
 
 🟡 This repository was inspired by this video [YouTube video tutorial](https://youtu.be/YqqRkuizNN4).
 
@@ -24,6 +24,15 @@ To launch the Streamlit app and interact with the chatbot:
 ```bash
 uvicorn main:app --reload
 ```
+
+## Docker Usage
+To have the image running in your docker locally just run 
+
+```bash
+docker-compose up --build
+```
+
+within this folder.
 
 ## Request example, running locally Windows
 

@@ -49,7 +49,7 @@ describe("SearchWifiSpots Component", () => {
     fireEvent.click(screen.getByText(/Search/i));
 
     await waitFor(() => {
-      expect(warningNotification).toHaveBeenCalledWith("No wi-fi spots apply to that request");
+      expect(warningNotification).toHaveBeenCalledWith("No Wi-fi spots apply to that request");
       expect(mockHandleApplyFilters).toHaveBeenCalledWith([]);
     });
   });
