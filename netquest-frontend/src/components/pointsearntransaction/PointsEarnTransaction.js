@@ -55,6 +55,16 @@ const PointsEarnTransaction = () => {
                         dateString = " ["+ formatedVisitStartDateTime +" - "+ formatedVisitEndDateTime +"]";
                     }
 
+                    if(!!item.review){
+
+                        reason = "Reviewed wifi spot " + item.review.wifiSpot.name+ " with classification "+item.review.reviewOverallClassification+"/5";
+                        if(!!item.review.reviewComment){
+                            reason += " with the comment \""+item.review.reviewComment+"\" ";
+                        }
+
+                        dateString = formatDateTime(item.review.reviewCreateDateTime);
+                    }
+
 
 
                     const formatedDateTime = formatDateTime(item.dateTime);

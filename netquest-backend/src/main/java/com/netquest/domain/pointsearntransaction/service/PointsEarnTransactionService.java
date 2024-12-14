@@ -11,6 +11,8 @@ public interface PointsEarnTransactionService {
 
     PointsEarnTransactionDto savePointsEarnTransactionByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto);
 
+    PointsEarnTransactionDto savePointsEarnTransactionByReview(PointsEarnTransactionCreateByReviewDto pointsEarnTransactionCreateByReviewDto);
+
     Page<LeaderboardEntryDto> getLeaderboard(Pageable pageable);
 
     Page<PointsEarnTransactionDetailedDto> getPointsEarnTransactionsByUserId(UUID userUUID, Pageable pageable);

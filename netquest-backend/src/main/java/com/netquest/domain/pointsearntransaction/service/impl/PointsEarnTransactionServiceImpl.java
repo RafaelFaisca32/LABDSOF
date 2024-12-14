@@ -4,15 +4,10 @@ import com.netquest.domain.pointsearntransaction.dto.*;
 import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
 import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
-import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
-import com.netquest.domain.wifispot.dto.WifiSpotDto;
-import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
-import com.netquest.domain.wifispot.model.WifiSpot;
-import com.netquest.domain.wifispot.service.WifiSpotService;
-import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.infrastructure.pointsearntransaction.PointsEarnTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,6 +44,17 @@ public class PointsEarnTransactionServiceImpl implements PointsEarnTransactionSe
     public PointsEarnTransactionDto savePointsEarnTransactionByWifiSpotCreation(PointsEarnTransactionCreateByWifiSpotCreationDto pointsEarnTransactionCreateByWifiSpotCreationDto) {
         PointsEarnTransaction pointsEarnTransaction = pointsEarnTransactionMapper
                 .toNewEntityByWifiSpotCreation(pointsEarnTransactionCreateByWifiSpotCreationDto);
+        return pointsEarnTransactionMapper.toDto(pointsEarnTransactionRepository.save(pointsEarnTransaction));
+    }
+
+    @Override
+    public PointsEarnTransactionDto savePointsEarnTransactionByReview(PointsEarnTransactionCreateByReviewDto PointsEarnTransactionCreateByReviewDto) {
+        UserId userId = new UserId(PointsEarnTransactionCreateByReviewDto.getUserUUID());
+        WifiSpotId wifiSpotId = new WifiSpotId(PointsEarnTransactionCreateByReviewDto.getWifiSpotUUID());
+        if(pointsEarnTransactionRepository.existsPointsEarnTransactionByUserIdAndWifiSpotId(userId,wifiSpotId)){
+            return null;
+        }
+        PointsEarnTransaction pointsEarnTransaction = pointsEarnTransactionMapper.toNewEntityByReview(PointsEarnTransactionCreateByReviewDto);
         return pointsEarnTransactionMapper.toDto(pointsEarnTransactionRepository.save(pointsEarnTransaction));
     }
 
