@@ -25,7 +25,7 @@ function SearchWifiSpots({ handleApplyFilters, clearFilters }) {
           coordinates: { lat: spot.latitude, lng: spot.longitude },
         }));
         if(filteredSpots.length === 0){
-            warningNotification("No wi-fi spots apply to that request");
+            warningNotification("No Wi-fi spots apply to that request");
         }
         handleApplyFilters(filteredSpots); 
       } else {
