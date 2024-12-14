@@ -1,5 +1,7 @@
 package com.netquest.domain.review.service.impl;
 
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByReviewDto;
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
 import com.netquest.domain.review.dto.ReviewCreateDto;
 import com.netquest.domain.review.dto.ReviewDto;
 import com.netquest.domain.review.dto.ReviewHistoryDto;
@@ -34,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserService userService;
     private final WifiSpotService wifiSpotService;
     private final WifiSpotVisitService wifiSpotVisitService;
+    private final PointsEarnTransactionService pointsEarnTransactionService;
 
     @Override
     public ReviewDto saveReview(ReviewCreateDto reviewCreateDto, UUID userUUID){
@@ -46,14 +49,25 @@ public class ReviewServiceImpl implements ReviewService {
             throw new WifiSpotNotFoundException("Wifi Spot not found");
         }
 
-
-        return reviewMapper.toDto(reviewRepository.save(review));
+        ReviewDto reviewDto = reviewMapper.toDto(reviewRepository.save(review));
+        createPointsEarnTransaction(reviewDto);
+        return reviewDto;
     }
 
     @Override
     public boolean userAllowedToCreateReview(UUID userUUID, UUID wifiSpotUUID) {
-        return wifiSpotVisitService.hasUserVisitedWifiSpotBasedOnMinutes(userUUID,wifiSpotUUID,2);
+        return wifiSpotVisitService.hasUserVisitedWifiSpotBasedOnMinutes(userUUID,wifiSpotUUID,10);
     }
+
+    private void createPointsEarnTransaction(ReviewDto reviewDto){
+        PointsEarnTransactionCreateByReviewDto pointsEarnTransactionCreateByReviewDto = new PointsEarnTransactionCreateByReviewDto(
+                reviewDto.getUserId(),
+                reviewDto.getReviewId(),
+                reviewDto.getWifiSpotId()
+        );
+        pointsEarnTransactionService.savePointsEarnTransactionByReview(pointsEarnTransactionCreateByReviewDto);
+    }
+
 
     @Override
     public List<ReviewHistoryDto> getMyReviews(UUID userUUID, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate) {
