@@ -58,6 +58,7 @@ yarn-debug.log*
 yarn-error.log*
 
 .eslintcache
+.pyc
 
 ### MAC OS ###
 *.DS_Store

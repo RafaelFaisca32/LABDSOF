@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
     Box,
-    Typography,
     Button,
     CircularProgress,
     Table,
@@ -18,6 +17,7 @@ import { useAuth } from "../context/AuthContext";
 import { reviewApi } from "../misc/ReviewApi";
 import { errorNotification, formatDateTime } from "../misc/Helpers";
 import SpotDetailsModal from "../wifiMapPage/SpotDetailsModal";
+import {  Header } from 'semantic-ui-react';
 
 const ReviewHistory = ({ userLocation }) => {
     const Auth = useAuth();
@@ -95,10 +95,9 @@ const ReviewHistory = ({ userLocation }) => {
 
     return (
         <Box sx={{ padding: 2 }}>
-            <Typography variant="h4" gutterBottom>
-                Reviews History
-            </Typography>
-
+            <Header as="h2" color="blue" textAlign="center">
+                  Reviews History
+            </Header>
             {/* Filters */}
             <Box display="flex" gap={2} mb={2}>
                 <TextField
