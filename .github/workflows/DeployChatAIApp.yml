@@ -20,7 +20,7 @@ jobs:
         working-directory: ./chat-mysql
         run: docker compose build
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_HUB_AI_REPO }}:final
+        run: docker push ${{ secrets.DOCKER_HUB_AI_REPO }}
       # - name: Webhook for render deployment
       #   uses: distributhor/workflow-webhook@v3
       #   with:
