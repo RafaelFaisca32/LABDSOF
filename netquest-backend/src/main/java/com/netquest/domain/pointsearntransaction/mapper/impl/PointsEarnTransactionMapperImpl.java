@@ -3,6 +3,8 @@ package com.netquest.domain.pointsearntransaction.mapper.impl;
 import com.netquest.domain.pointsearntransaction.dto.*;
 import com.netquest.domain.pointsearntransaction.mapper.PointsEarnTransactionMapper;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
+import com.netquest.domain.review.mapper.ReviewMapper;
+import com.netquest.domain.review.model.ReviewId;
 import com.netquest.domain.user.mapper.UserMapper;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
@@ -22,6 +24,7 @@ public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMap
     private final UserMapper userMapper;
     private final WifiSpotMapper wifiSpotMapper;
     private final WifiSpotVisitMapper wifiSpotVisitMapper;
+    private final ReviewMapper reviewMapper;
 
     @Override
     public PointsEarnTransactionDto toDto(PointsEarnTransaction pointsEarnTransaction) {
@@ -54,7 +57,8 @@ public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMap
                 userMapper.toUserDto(pointsEarnTransaction.getUser()),
                 wifiSpotMapper.wifiSpotDomainToDto(pointsEarnTransaction.getWifiSpot()),
                 wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisit()),
-                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisitMySpot())
+                wifiSpotVisitMapper.toDetailedDto(pointsEarnTransaction.getWifiSpotVisitMySpot()),
+                reviewMapper.toDetailedDto(pointsEarnTransaction.getReview())
         );
 
     }
@@ -84,6 +88,14 @@ public class PointsEarnTransactionMapperImpl implements PointsEarnTransactionMap
                 new WifiSpotVisitId(pointsEarnTransactionCreateByVisitMySpotDto.getWifiSpotVisitId()),
                 pointsEarnTransactionCreateByVisitMySpotDto.getStartDateTime(),
                 pointsEarnTransactionCreateByVisitMySpotDto.getEndDateTime()
+        );
+    }
+
+    @Override
+    public PointsEarnTransaction toNewEntityByReview(PointsEarnTransactionCreateByReviewDto pointsEarnTransactionCreateByReviewDto) {
+        return PointsEarnTransaction.createPointsEarnTransactionBasedOnReview(
+                new UserId(pointsEarnTransactionCreateByReviewDto.getUserUUID()),
+                new ReviewId(pointsEarnTransactionCreateByReviewDto.getReviewUUID())
         );
     }
 }

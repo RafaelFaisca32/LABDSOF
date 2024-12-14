@@ -1,6 +1,8 @@
 package com.netquest.domain.pointsearntransaction.model;
 
 
+import com.netquest.domain.review.model.Review;
+import com.netquest.domain.review.model.ReviewId;
 import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.WifiSpot;
@@ -24,6 +26,7 @@ public class PointsEarnTransaction {
 
     private static final int MINUTE_VISIT_POINTS_MULTIPLIER = 5;
     private static final int POINTS_BY_WIFI_SPOT_CREATION = 600;
+    private static final int POINTS_BY_REVIEW = 1000;
     private static final int MINUTE_VISIT_MY_SPOT_POINTS_MULTIPLIER = MINUTE_VISIT_POINTS_MULTIPLIER/3;
 
     @EmbeddedId
@@ -58,7 +61,6 @@ public class PointsEarnTransaction {
     @JoinColumn(name = "points_earn_transaction_user_id", insertable = false, updatable = false)
     private User user;
 
-
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_wifi_spot_visit_id"))
@@ -89,6 +91,16 @@ public class PointsEarnTransaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_my_spot_id", insertable = false, updatable = false)
     private WifiSpotVisit wifiSpotVisitMySpot;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_review_id"))
+    })
+    private ReviewId reviewId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "points_earn_transaction_review_id",insertable = false, updatable = false)
+    private Review review;
 
 
     public static PointsEarnTransaction createPointsEarnTransactionBasedOnMyVisit(
@@ -121,6 +133,19 @@ public class PointsEarnTransaction {
         return pointsEarnTransaction;
     }
 
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnReview(
+            UserId userId,
+            ReviewId reviewId
+    ){
+        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();
+        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();
+        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
+        pointsEarnTransaction.pointsEarnTransactionAmount = calculateAmountBasedOnReviewCreation();
+        pointsEarnTransaction.userId = new UserId(userId.getValue());
+        pointsEarnTransaction.reviewId = new ReviewId(reviewId.getValue());
+        return pointsEarnTransaction;
+    }
+
     public static PointsEarnTransaction createPointsEarnTransactionBasedOnSpotCreation(UserId userId, WifiSpotId wifiSpotId) {
         PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();
         pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();
@@ -145,6 +170,10 @@ public class PointsEarnTransaction {
         return new PointsEarnTransactionAmount(minutes * getMinuteVisitMySpotPointsMultiplier() );
     }
 
+    private static PointsEarnTransactionAmount calculateAmountBasedOnReviewCreation(){
+        return new PointsEarnTransactionAmount(getPointsByReview());
+    }
+
     public static int getVisitMinutePointsMultiplier(){
         return MINUTE_VISIT_POINTS_MULTIPLIER;
     }
@@ -155,6 +184,10 @@ public class PointsEarnTransaction {
 
     public static int getPointsByWifiSpotCreation(){
         return POINTS_BY_WIFI_SPOT_CREATION;
+    }
+
+    public static int getPointsByReview() {
+        return POINTS_BY_REVIEW;
     }
 
 }
