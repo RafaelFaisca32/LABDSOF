@@ -4,6 +4,7 @@ import { Box, Typography, CircularProgress } from "@mui/material";
 import {useAuth} from "../context/AuthContext";
 import {pointsEarnTransactionApi} from "../misc/PointsEarnTransactionApi";
 import {errorNotification, formatDateTime} from "../misc/Helpers";
+import {  Header } from 'semantic-ui-react';
 
 const PointsEarnTransaction = () => {
     const Auth = useAuth();
@@ -125,9 +126,9 @@ const PointsEarnTransaction = () => {
 
     return (
         <Box sx={{ height: "auto", width: "100%", padding: 2 }}>
-            <Typography variant="h4" gutterBottom>
-                My Points {totalPoints != null && `- ${totalPoints}`}
-            </Typography>
+            <Header as="h2" color="blue" textAlign="center">
+            My Points {totalPoints != null && `- ${totalPoints}`}
+            </Header>
             {totalPoints === 0 && (
                 <Typography
                     variant="h5"

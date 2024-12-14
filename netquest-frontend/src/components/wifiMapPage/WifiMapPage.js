@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Container, Button, Modal } from 'semantic-ui-react';
+import { Container, Button, Modal, Header } from 'semantic-ui-react';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -170,7 +170,9 @@ function WifiMapPage() {
 
   return (
     <Container>
-      <h3>WiFi Map</h3>
+      <Header as="h2" color="blue" textAlign="center">
+          Wifi Map
+        </Header>
       <Button primary onClick={() => setFilterModalOpen(true)} style={{ marginBottom: '15px' }}>
         Filtrar
       </Button>

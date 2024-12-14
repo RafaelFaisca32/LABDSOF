@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
     Box,
-    Typography,
     Button,
     CircularProgress,
     Table,
@@ -17,13 +16,12 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { wifiSpotVisitApi } from "../misc/WifiSpotVisitApi";
 import { errorNotification, formatDateTime } from "../misc/Helpers";
-import { useNavigate } from "react-router-dom";
+import {  Header } from 'semantic-ui-react';
 import SpotDetailsModal from "../wifiMapPage/SpotDetailsModal"; // Import your modal
 
 const WifiSpotVisitHistory = ({userLocation}) => {
     const Auth = useAuth();
     const user = Auth.getUser();
-    const navigate = useNavigate();
 
     const [visitData, setVisitData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -90,9 +88,9 @@ const WifiSpotVisitHistory = ({userLocation}) => {
 
     return (
         <Box sx={{ padding: 2 }}>
-            <Typography variant="h4" gutterBottom>
+            <Header as="h2" color="blue" textAlign="center">
                 Visited Locations History
-            </Typography>
+            </Header>
 
             {/* Filters */}
             <Box display="flex" gap={2} mb={2}>

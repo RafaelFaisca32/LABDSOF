@@ -20,25 +20,27 @@ import ReviewHistory from "./components/review/ReviewHistory";
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path="/adminpage" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
-          <Route path="/wifispot" element={<PrivateRoute><WifiMapPage /></PrivateRoute>} />
-          <Route path="/wifispotfilterpage" element={<PrivateRoute><WifiSpotFilter /></PrivateRoute>} />
-          <Route path="/edit-account" element={<PrivateRoute><EditAccount /></PrivateRoute>} />
-          <Route path="/delete-account" element={<PrivateRoute><DeleteAccount /></PrivateRoute>} />
-          <Route path="/pointsearntransaction" element={<PrivateRoute><PointsEarnTransaction /></PrivateRoute>}/>
-          <Route path="/visited-locations" element={<PrivateRoute><WifiSpotVisitHistory /></PrivateRoute>}/>
-          <Route path="/my-reviews" element={<PrivateRoute><ReviewHistory /></PrivateRoute>}/>
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
-      <ToastContainer/>
-    </AuthProvider>
+  <Router>
+    <Navbar>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/adminpage" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
+        <Route path="/wifispot" element={<PrivateRoute><WifiMapPage /></PrivateRoute>} />
+        <Route path="/wifispotfilterpage" element={<PrivateRoute><WifiSpotFilter /></PrivateRoute>} />
+        <Route path="/edit-account" element={<PrivateRoute><EditAccount /></PrivateRoute>} />
+        <Route path="/delete-account" element={<PrivateRoute><DeleteAccount /></PrivateRoute>} />
+        <Route path="/pointsearntransaction" element={<PrivateRoute><PointsEarnTransaction /></PrivateRoute>} />
+        <Route path="/visited-locations" element={<PrivateRoute><WifiSpotVisitHistory /></PrivateRoute>} />
+        <Route path="/my-reviews" element={<PrivateRoute><ReviewHistory /></PrivateRoute>}/>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Navbar>
+    <ToastContainer />
+  </Router>
+</AuthProvider>
+
   )
 }
 
