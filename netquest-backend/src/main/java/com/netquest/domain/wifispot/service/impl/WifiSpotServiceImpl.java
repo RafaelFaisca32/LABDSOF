@@ -93,8 +93,12 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         }
 
         List<String> wifiSpotNames = new ArrayList<>();
-        if(aiResponse.startsWith("SELECT")){
+        if(aiResponse.startsWith("SELECT ws.wifi_spot_name")){
             wifiSpotNames = executeQuery(aiResponse);
+        }else if(aiResponse.startsWith("SELECT COUNT")) {
+            return new ArrayList<>();
+        }else{
+            throw new IllegalArgumentException(aiResponse);
         }
 
 

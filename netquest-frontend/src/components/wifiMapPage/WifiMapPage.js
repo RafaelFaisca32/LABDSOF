@@ -10,6 +10,7 @@ import AddSpotModal from './AddSpotModal';
 import WifiSpotFilter from '../wifiSpotFilter/WifiSpotFilter';
 import { wifiSpotApi } from "../misc/WifiSpotApi";
 import { errorNotification, successNotification } from "../misc/Helpers";
+import SearchWifiSpots from '../wifiSpotAISearch/SearchWifiSpots';
 
 const userIcon = new L.Icon({
   iconUrl: '/icons/user.png',
@@ -70,6 +71,7 @@ function WifiMapPage() {
       }
     };
     loadExistingWifiSpots();
+    // eslint-disable-next-line
   }, []);
 
   // Atualiza os WiFi spots
@@ -176,11 +178,10 @@ function WifiMapPage() {
         Clear Filters
       </Button>
       {userLocation ? (
-        <MapContainer center={userLocation} zoom={13} style={{ height: '60vh', width: '100%' }}>
+        <><MapContainer center={userLocation} zoom={13} style={{ height: '60vh', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
+            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors' />
           <MapClickHandler onMapClick={handleMapClick} />
           <Marker position={userLocation} icon={userIcon}>
             <Tooltip direction="top" offset={[0, -20]} opacity={1}>
@@ -203,6 +204,7 @@ function WifiMapPage() {
             </Marker>
           ))}
         </MapContainer>
+        <SearchWifiSpots handleApplyFilters={handleApplyFilters} clearFilters={clearFilters}></SearchWifiSpots></>
       ) : (
         <p>Loading map... You should activate the location sharing for it to load.</p>
       )}
