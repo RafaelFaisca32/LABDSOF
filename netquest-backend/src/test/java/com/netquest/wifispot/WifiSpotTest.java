@@ -1,6 +1,7 @@
 package com.netquest.wifispot;
 
 import com.netquest.domain.shared.*;
+import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ class WifiSpotTest {
     private WifiSpotWeatherFeatures wifiSpotWeatherFeatures;
     private WifiSpotAddress wifiSpotAddress;
     private WifiSpotManagement wifiSpotManagement;
+    private UserId userId;
 
     @BeforeEach
     void setUp() {
@@ -32,6 +34,7 @@ class WifiSpotTest {
         wifiSpotWeatherFeatures = mock(WifiSpotWeatherFeatures.class);
         wifiSpotAddress = mock(WifiSpotAddress.class);
         wifiSpotManagement = mock(WifiSpotManagement.class);
+        userId = mock(UserId.class);
     }
 
     @Test
@@ -46,7 +49,8 @@ class WifiSpotTest {
                 wifiSpotFacilities,
                 wifiSpotWeatherFeatures,
                 wifiSpotAddress,
-                wifiSpotManagement
+                wifiSpotManagement,
+                userId
         );
 
         assertNotNull(wifiSpot);
@@ -86,7 +90,8 @@ class WifiSpotTest {
                         new WifiSpotAddressCity("Gondomar"),
                         new WifiSpotAddressDistrict("Porto")
                 ),
-                new WifiSpotManagement(WifiSpotManagementType.UNVERIFIED)
+                new WifiSpotManagement(WifiSpotManagementType.UNVERIFIED),
+                new UserId()
         );
 
         assertNotNull(wifiSpot);

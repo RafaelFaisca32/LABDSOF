@@ -74,10 +74,9 @@ public class WifiSpotVisit {
         this.userId = new UserId(userId.getValue());
     }
 
-    public WifiSpotVisit updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
+    public void updateEndDateTime(WifiSpotVisitEndDateTime endDateTime){
         validateEndDateBeforeStartDate(this.wifiSpotVisitStartDateTime, endDateTime);
         this.wifiSpotVisitEndDateTime = new WifiSpotVisitEndDateTime(endDateTime.getValue());
-        return this;
     }
 
     private void validateEndDateBeforeStartDate(WifiSpotVisitStartDateTime wifiSpotVisitStartDateTime, WifiSpotVisitEndDateTime wifiSpotVisitEndDateTime){

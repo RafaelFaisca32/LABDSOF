@@ -1,13 +1,14 @@
 package com.netquest.domain.wifispot.dto;
 
 import com.netquest.domain.shared.*;
-import com.netquest.domain.wifispot.model.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
 public record WifiSpotDto(
         UUID uuid,
+        UUID userId,
         String name,
         String description,
         double latitude,
@@ -39,6 +40,7 @@ public record WifiSpotDto(
         boolean shadedAreas,
         boolean outdoorFans,
         WifiSpotAddressDto address,
-        WifiSpotManagementType wifiSpotManagementType
+        WifiSpotManagementType wifiSpotManagementType,
+        LocalDateTime dateTimeCreated
 ) {
 }

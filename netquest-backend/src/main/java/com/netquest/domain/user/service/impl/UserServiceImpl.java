@@ -1,8 +1,9 @@
 package com.netquest.domain.user.service.impl;
 
+import com.netquest.domain.user.dto.UserDto;
+import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.*;
 import com.netquest.domain.user.service.UserService;
-import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.infrastructure.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -78,5 +79,14 @@ public class UserServiceImpl implements UserService {
     public boolean existsById(UUID userUUID) {
         UserId userId = new UserId(userUUID);
         return userRepository.existsById(userId);
+    }
+
+    @Override
+    public void updateUserDetails(UserDto currentUser){
+        String password = null;
+        if(currentUser.password() != null){
+            password = passwordEncoder.encode(currentUser.password());
+        }
+        userRepository.updateUser(currentUser.id(),password, currentUser.email(), currentUser.vatNumber(), currentUser.addressLine1(), currentUser.addressLine2(), currentUser.addressCity(), currentUser.addressDistrict(), currentUser.addressCountry(),currentUser.addressZipCode());
     }
 }

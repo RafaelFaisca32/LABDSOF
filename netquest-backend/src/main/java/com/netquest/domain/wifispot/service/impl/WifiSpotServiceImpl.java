@@ -1,10 +1,15 @@
 package com.netquest.domain.wifispot.service.impl;
 
 
+import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByWifiSpotCreationDto;
+import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
 import com.netquest.domain.shared.*;
+import com.netquest.domain.user.exception.UserNotFoundException;
+import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.dto.WifiSpotFilterDto;
+import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
 import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
@@ -33,6 +38,8 @@ import java.util.stream.Collectors;
 public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotRepository wifiSpotRepository;
     private final WifiSpotMapper wifiSpotMapper;
+    private final UserService userService;
+    private final PointsEarnTransactionService pointsEarnTransactionService;
     @Value("${netquestaiurl}")
     private String aiUrl;
     @Value("${spring.datasource.url}")
@@ -41,6 +48,8 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     private String dbUser;
     @Value("${spring.datasource.password}")
     private String dbPassword;
+
+
 
     @Override
     public List<WifiSpotDto> getWifiSpots() {
@@ -116,9 +125,21 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     }
 
     @Override
-    public WifiSpotDto createWifiSpot(WifiSpotCreateDto wifiSpotDto) {
-        WifiSpot wifiSpot = wifiSpotMapper.wifiSpotCreateDtoToDomain(wifiSpotDto);
-        return wifiSpotMapper.wifiSpotDomainToDto(wifiSpotRepository.save(wifiSpot));
+    public WifiSpotDto createWifiSpot(WifiSpotCreateDto wifiSpotDto, UUID userUUID) {
+
+
+
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+
+
+        WifiSpot wifiSpot = wifiSpotMapper.wifiSpotCreateDtoToDomain(wifiSpotDto,userUUID);
+        WifiSpotDto wifiSpotDtoNew = wifiSpotMapper.wifiSpotDomainToDto(wifiSpotRepository.save(wifiSpot));
+
+        createPointsEarnTransactionBasedOnWifiSpotCreation(wifiSpotDtoNew);
+
+        return wifiSpotDtoNew;
     }
 
     @Override
@@ -130,6 +151,13 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     public boolean existsById(UUID uuid) {
         WifiSpotId wifiSpotId = new WifiSpotId(uuid);
         return wifiSpotRepository.existsById(wifiSpotId);
+    }
+
+    @Override
+    public WifiSpotDto getWifiSpotById(UUID uuid) {
+        WifiSpotId wifiSpotId = new WifiSpotId(uuid);
+        WifiSpot wifiSpotDto = wifiSpotRepository.findById(wifiSpotId).orElseThrow(() -> new WifiSpotNotFoundException("WifiSpot not found"));
+        return wifiSpotMapper.wifiSpotDomainToDto(wifiSpotDto);
     }
 
     @Override
@@ -274,5 +302,13 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 .replace("\\", "\\\\") // Escape backslash
                 .replace("%", "\\%")   // Escape percent
                 .replace("_", "\\_");  // Escape underscore
+    }
+
+    private void createPointsEarnTransactionBasedOnWifiSpotCreation(WifiSpotDto wifiSpotDto) {
+        pointsEarnTransactionService.savePointsEarnTransactionByWifiSpotCreation(
+                new PointsEarnTransactionCreateByWifiSpotCreationDto(
+                        wifiSpotDto.userId(), wifiSpotDto.uuid()
+                )
+        );
     }
 }

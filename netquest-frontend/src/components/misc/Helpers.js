@@ -35,3 +35,14 @@ export const errorNotification = (message)=>{
     theme: "colored",
   });
 }
+
+export const formatDateTime = (dateTime) => {
+  return new Intl.DateTimeFormat('pt-PT', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).format(new Date(dateTime))
+}

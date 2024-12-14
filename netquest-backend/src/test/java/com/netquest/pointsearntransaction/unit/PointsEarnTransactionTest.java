@@ -3,6 +3,7 @@ package com.netquest.pointsearntransaction.unit;
 import com.netquest.domain.pointsearntransaction.exception.PointsEarnTransactionAmountNegativeException;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import org.junit.jupiter.api.Test;
 
@@ -23,10 +24,10 @@ public class PointsEarnTransactionTest {
         LocalDateTime start = end.minusMinutes(minutes);
 
         LocalDateTime now = LocalDateTime.now();
-        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction(userId, wifiSpotVisitId, start, end);
+        PointsEarnTransaction pointsEarnTransaction = PointsEarnTransaction.createPointsEarnTransactionBasedOnMyVisit(userId, wifiSpotVisitId, start, end);
         LocalDateTime now2 = LocalDateTime.now();
 
-        int multiplier = pointsEarnTransaction.getMinutePointsMultiplier();
+        int multiplier = PointsEarnTransaction.getVisitMinutePointsMultiplier();
 
         assertThat(pointsEarnTransaction.getUserId()).isEqualTo(userId);
         assertThat(pointsEarnTransaction.getWifiSpotVisitId()).isEqualTo(wifiSpotVisitId);
@@ -45,7 +46,7 @@ public class PointsEarnTransactionTest {
         LocalDateTime start = end.minusMinutes(minutes);
         PointsEarnTransactionAmountNegativeException exception = catchThrowableOfType(
                 () ->
-                        new PointsEarnTransaction(userId, wifiSpotVisitId, end, start),
+                        PointsEarnTransaction.createPointsEarnTransactionBasedOnMyVisit(userId, wifiSpotVisitId, end, start),
                 PointsEarnTransactionAmountNegativeException.class
         );
         assertThat(exception.getMessage()).isNotEmpty();
@@ -55,7 +56,7 @@ public class PointsEarnTransactionTest {
     public void pointsEarnTransactionNullTest() {
         NullPointerException exception = catchThrowableOfType(
                 () ->
-                        new PointsEarnTransaction(null, null, null, null),
+                        PointsEarnTransaction.createPointsEarnTransactionBasedOnMyVisit(null, null, null, null),
                 NullPointerException.class
         );
 
@@ -64,5 +65,16 @@ public class PointsEarnTransactionTest {
 
     }
 
+
+    @Test
+    public void pointsEarnTransactionByWifiSpotCreation() {
+        UserId userId = new UserId();
+        WifiSpotId wifiSpotId = new WifiSpotId();
+        PointsEarnTransaction pointsEarnTransaction = PointsEarnTransaction.createPointsEarnTransactionBasedOnSpotCreation(userId, wifiSpotId);
+
+        assertThat(pointsEarnTransaction.getUserId()).isEqualTo(userId);
+        assertThat(pointsEarnTransaction.getWifiSpotId()).isEqualTo(wifiSpotId);
+        assertThat(pointsEarnTransaction.getPointsEarnTransactionAmount().getValue()).isEqualTo(600);
+    }
 
 }

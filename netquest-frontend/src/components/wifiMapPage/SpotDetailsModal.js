@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { wifiSpotVisitApi } from '../misc/WifiSpotVisitApi';
+import { reviewApi } from "../misc/ReviewApi";
 import { useAuth } from '../context/AuthContext';
 import { errorNotification, successNotification } from "../misc/Helpers";
 import {Modal, Header, Button, Segment} from 'semantic-ui-react';
 import { countries } from './AddSpotModal';
+import AddReviewModal from '../review/AddReviewModal';
 
-function SpotDetailsModal({ userLocation, spot, onClose }) {
+function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
   const [appSelectionModalOpen, setAppSelectionModalOpen] = useState(false);
   const Auth = useAuth();
   const user = Auth.getUser();
   const [existsVisit, setExistsVisit] = useState(null); // Track if visit exists
   const [loading, setLoading] = useState(true);
+  const [processingVisitRequest, setProcessingVisitRequest] = useState(false);
   const [wifiSpotVisitId,setWifiSpotVisitId] = useState(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   const getCountryByValue = (value) => {
     const country = countries.find((c) => c.value === value);
@@ -20,6 +24,7 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchVisitStatus = async () => {
       if (!spot) return; // Ensure spot is defined
       setLoading(true);
@@ -41,9 +46,14 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
       }
     };
 
-    fetchVisitStatus();
+    if (!justDetails)
+      fetchVisitStatus();
+    return () => controller.abort();
     // eslint-disable-next-line
   }, [spot]);
+
+
+
 
   if (!spot) return null;
 
@@ -97,29 +107,50 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
 
 
 
-  const createVisit = async () => {
+  const startVisit = async () => {
+    setProcessingVisitRequest(true);
     try {
-      const response = await wifiSpotVisitApi.createVisitSimple(user, spot.uuid);
+      const response = await wifiSpotVisitApi.startVisit(user, spot.uuid);
       if (response && response.status === 201) {
         onClose(); // Close the modal
-        successNotification("Wifi Spot Visit created successfully.");
+        successNotification("Wifi Spot Visit started successfully.");
       }
     } catch (err) {
-      errorNotification(err.response?.data?.message || "Error creating visit");
+      errorNotification(err.response?.data?.message || "Error starting visit");
+    } finally {
+      setProcessingVisitRequest(false);
     }
   };
 
   const finishVisit = async () => {
+    setProcessingVisitRequest(true);
     try {
-      const response = await wifiSpotVisitApi.endVisit(user,wifiSpotVisitId);
+      const response = await wifiSpotVisitApi.finishVisit(user,wifiSpotVisitId);
       if (response && response.status === 200) {
         onClose(); // Close the modal
         successNotification("Wifi Spot Visit finished successfully.");
       }
     } catch (err) {
       errorNotification(err.response?.data?.message || "Error finishing visit");
+    } finally {
+      setProcessingVisitRequest(false);
     }
   };
+
+  const openReview = async () => {
+    let canReview = false;
+    try {
+      const response = await reviewApi.userAllowedToCreateReview(user, spot.uuid);
+      canReview = !!response && response.status === 200 && response.data
+      if(canReview) {
+        setReviewModalOpen(true);
+      } else {
+        errorNotification("You must visit this spot for longer than 10 minutes to make a review!");
+      }
+    }catch (err) {
+      errorNotification(err.response?.data?.message || "Error checking if is allowed to review");
+    }
+  }
 
   return (
       <Modal open={!!spot} onClose={onClose} size="small">
@@ -184,19 +215,36 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
             <p><strong>Longitude:</strong> {spot.longitude}</p>
           </Segment>
         </Modal.Content>
+        {!justDetails ? (
         <Modal.Actions>
           {loading ? (
-              <p>Loading visit status...</p>
-          ) : existsVisit ? (
-              <Button onClick={finishVisit}>Finish Visit</Button>
+              <Button disabled>
+                Loading...
+              </Button>
+          ) : processingVisitRequest ? (
+              <div style={{position: 'relative', display: 'inline-block'}}>
+                <div className="loader-small"></div>
+                <Button disabled>
+                  {existsVisit ? "Finish Visit" : "Start Visit"}
+                </Button>
+              </div>
           ) : (
-              <Button onClick={createVisit}>Record Visit</Button>
+              <Button onClick={existsVisit ? finishVisit : startVisit}>
+                {existsVisit ? "Finish Visit" : "Start Visit"}
+              </Button>
           )}
 
+
+          <Button onClick={openReview}>Make a Review</Button>
           <Button onClick={openDirections}>Get Directions</Button>
           <Button onClick={onClose}>Close</Button>
         </Modal.Actions>
-      {appSelectionModalOpen && (
+        ) : (
+          <Modal.Actions>
+            <Button onClick={onClose}>Close</Button>
+          </Modal.Actions>
+        )}
+      {appSelectionModalOpen && !justDetails && (
         <Modal open={appSelectionModalOpen} onClose={() => setAppSelectionModalOpen(false)} size="small">
           <Modal.Header>Select App to Open Directions</Modal.Header>
           <Modal.Content>
@@ -208,7 +256,17 @@ function SpotDetailsModal({ userLocation, spot, onClose }) {
             <Button onClick={() => setAppSelectionModalOpen(false)}>Cancel</Button>
         </Modal>
       )}
+        <AddReviewModal
+          spot={spot}
+          onClose={() => setReviewModalOpen(false)}
+          open = {reviewModalOpen}
+          user = {user}
+        >
+
+        </AddReviewModal>
     </Modal>
+
+
   );
 }
 

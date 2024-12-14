@@ -1,14 +1,18 @@
 package com.netquest.domain.user.service;
 
+import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.model.*;
 import com.netquest.domain.user.service.impl.UserServiceImpl;
 import com.netquest.infrastructure.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -192,6 +196,94 @@ class UserServiceImplTest {
 
         // Assert
         assertTrue(exists);
+    }
+
+    @Test
+    void testUpdateUserDetails_withPassword() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        String rawPassword = "newPassword123";
+        String encodedPassword = "encodedPassword123";
+
+        UserDto currentUser = new UserDto(
+                userId,
+                "john_doe",
+                "John",
+                "Doe",
+                "Male",
+                rawPassword,
+                "john.doe@example.com",
+                "USER",
+                LocalDate.of(1990, 1, 1),
+                "VAT123456",
+                "Address Line 1",
+                "Address Line 2",
+                "City",
+                "District",
+                "Country",
+                "12345"
+        );
+
+        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+
+        // When
+        userService.updateUserDetails(currentUser);
+
+        // Then
+        verify(userRepository).updateUser(
+                userId,
+                encodedPassword,
+                "john.doe@example.com",
+                "VAT123456",
+                "Address Line 1",
+                "Address Line 2",
+                "City",
+                "District",
+                "Country",
+                "12345"
+        );
+    }
+
+    @Test
+    void testUpdateUserDetails_withoutPassword() {
+        // Given
+        UUID userId = UUID.randomUUID();
+
+        UserDto currentUser = new UserDto(
+                userId,
+                "john_doe",
+                "John",
+                "Doe",
+                "Male",
+                null, // No password
+                "john.doe@example.com",
+                "USER",
+                LocalDate.of(1990, 1, 1),
+                "123456789",
+                "Address Line 1",
+                "Address Line 2",
+                "City",
+                "District",
+                "Country",
+                "12345"
+        );
+
+        // When
+        userService.updateUserDetails(currentUser);
+
+        // Then
+        verify(userRepository).updateUser(
+                userId,
+                null,
+                "john.doe@example.com",
+                "123456789",
+                "Address Line 1",
+                "Address Line 2",
+                "City",
+                "District",
+                "Country",
+                "12345"
+        );
     }
 }
 

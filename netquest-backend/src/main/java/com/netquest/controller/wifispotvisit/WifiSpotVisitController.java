@@ -1,21 +1,22 @@
 package com.netquest.controller.wifispotvisit;
 
 
-import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
-import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitUpdateDateTimeDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
 import com.netquest.domain.wifispotvisit.service.WifiSpotVisitService;
 import com.netquest.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static com.netquest.config.SwaggerConfig.BASIC_AUTH_SECURITY_SCHEME;
@@ -28,34 +29,21 @@ public class WifiSpotVisitController {
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public WifiSpotVisitDto create(@Valid @RequestBody WifiSpotVisitCreateDto wifiSpotVisitCreateDto) {
+    @PostMapping("/start/{wifi-spot-id}")
+    public WifiSpotVisitDto startVisit(@PathVariable(name = "wifi-spot-id") UUID wifiSpotUUID) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        return wifiSpotVisitService.saveWifiSpotVisit(userDetails.getId(),wifiSpotVisitCreateDto);
-    }
-
-    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/simple/{wifi-spot-id}")
-    public WifiSpotVisitDto createSimple(@PathVariable(name = "wifi-spot-id") UUID wifiSpotUUID) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        return wifiSpotVisitService.saveWifiSpotVisitSimple(userDetails.getId(),wifiSpotUUID);
+        return wifiSpotVisitService.startVisit(userDetails.getId(),wifiSpotUUID);
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/update-end-date-time/{id}")
-    public WifiSpotVisitDto updateWifiSpotVisitEndDateTime(
-            @PathVariable(name = "id") UUID wifiSpotVisitUUID,
-            @Valid @RequestBody WifiSpotVisitUpdateDateTimeDto wifiSpotVisitUpdateDateTimeDto) {
+    @PostMapping("/finish/{id}")
+    public WifiSpotVisitDto finishVisit(
+            @PathVariable(name = "id") UUID wifiSpotVisitUUID) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        WifiSpotVisitUpdateDateTimeDto endDateNow = new WifiSpotVisitUpdateDateTimeDto();
-        endDateNow.setDateTime(LocalDateTime.now());
-        return wifiSpotVisitService.updateWifiSpotVisitEndDateTime(userDetails.getId() ,wifiSpotVisitUUID,endDateNow);
+        return wifiSpotVisitService.finishVisit(userDetails.getId() ,wifiSpotVisitUUID);
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
@@ -65,6 +53,20 @@ public class WifiSpotVisitController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return wifiSpotVisitService.getWifiSpotVisitOngoing(userDetails.getId());
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/my-visits")
+    public List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits(
+            @RequestParam(required = false) String wifiSpotName,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        return wifiSpotVisitService.getMyWifiSpotsVisits(userDetails.getId(), wifiSpotName, startDate, endDate);
     }
 
 }

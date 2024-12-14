@@ -3,6 +3,8 @@ package com.netquest.domain.pointsearntransaction.model;
 
 import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.wifispot.model.WifiSpot;
+import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisitId;
 import jakarta.persistence.*;
@@ -20,7 +22,9 @@ import java.time.temporal.ChronoUnit;
 @Table(name = "points_earn_transaction")
 public class PointsEarnTransaction {
 
-    private static final int MINUTE_POINTS_MULTIPLIER = 5;
+    private static final int MINUTE_VISIT_POINTS_MULTIPLIER = 5;
+    private static final int POINTS_BY_WIFI_SPOT_CREATION = 600;
+    private static final int MINUTE_VISIT_MY_SPOT_POINTS_MULTIPLIER = MINUTE_VISIT_POINTS_MULTIPLIER/3;
 
     @EmbeddedId
     @AttributeOverrides({
@@ -65,27 +69,92 @@ public class PointsEarnTransaction {
     @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_id", insertable = false, updatable = false)
     private WifiSpotVisit wifiSpotVisit;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_wifi_spot_id"))
+    })
+    private WifiSpotId wifiSpotId;
 
-    public PointsEarnTransaction(
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "points_earn_transaction_wifi_spot_id", insertable = false, updatable = false)
+    private WifiSpot wifiSpot;
+
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "points_earn_transaction_wifi_spot_visit_my_spot_id"))
+    })
+    private WifiSpotVisitId wifiSpotVisitMySpotId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "points_earn_transaction_wifi_spot_visit_my_spot_id", insertable = false, updatable = false)
+    private WifiSpotVisit wifiSpotVisitMySpot;
+
+
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnMyVisit(
             UserId userId,
             WifiSpotVisitId wifiSpotVisitId,
             @NonNull LocalDateTime start,
             @NonNull LocalDateTime end
     ) {
-        this.pointsEarnTransactionId = new PointsEarnTransactionId();
-        this.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
-        this.pointsEarnTransactionAmount = calculateAmountBasedOnDateTimes(start, end);
-        this.userId = new UserId(userId.getValue());
-        this.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
+        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();
+        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();
+        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
+        pointsEarnTransaction.pointsEarnTransactionAmount = calculateAmountBasedOnVisitDateTimes(start, end);
+        pointsEarnTransaction.userId = new UserId(userId.getValue());
+        pointsEarnTransaction.wifiSpotVisitId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
+        return pointsEarnTransaction;
     }
 
-    public int getMinutePointsMultiplier(){
-        return MINUTE_POINTS_MULTIPLIER;
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnVisitingMySpot(
+            UserId userId,
+            WifiSpotVisitId wifiSpotVisitId,
+            @NonNull LocalDateTime start,
+            @NonNull LocalDateTime end
+    ) {
+        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();
+        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();
+        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
+        pointsEarnTransaction.pointsEarnTransactionAmount = calculateAmountBasedOnVisitMySpotDateTimes(start, end);
+        pointsEarnTransaction.userId = new UserId(userId.getValue());
+        pointsEarnTransaction.wifiSpotVisitMySpotId = new WifiSpotVisitId(wifiSpotVisitId.getValue());
+        return pointsEarnTransaction;
     }
 
-    private PointsEarnTransactionAmount calculateAmountBasedOnDateTimes(LocalDateTime start, LocalDateTime end){
+    public static PointsEarnTransaction createPointsEarnTransactionBasedOnSpotCreation(UserId userId, WifiSpotId wifiSpotId) {
+        PointsEarnTransaction pointsEarnTransaction = new PointsEarnTransaction();
+        pointsEarnTransaction.pointsEarnTransactionId = new PointsEarnTransactionId();
+        pointsEarnTransaction.pointsEarnTransactionDateTime = new PointsEarnTransactionDateTime();
+        pointsEarnTransaction.pointsEarnTransactionAmount =  calculateAmountBasedOnWifiSpotCreation();
+        pointsEarnTransaction.wifiSpotId = new WifiSpotId(wifiSpotId.getValue());
+        pointsEarnTransaction.userId = new UserId(userId.getValue());
+        return pointsEarnTransaction;
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnVisitDateTimes(LocalDateTime start, LocalDateTime end){
         long minutes = ChronoUnit.MINUTES.between(start, end);
-        return new PointsEarnTransactionAmount(minutes * MINUTE_POINTS_MULTIPLIER);
+        return new PointsEarnTransactionAmount(minutes * getVisitMinutePointsMultiplier() );
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnWifiSpotCreation(){
+        return new PointsEarnTransactionAmount(getPointsByWifiSpotCreation());
+    }
+
+    private static PointsEarnTransactionAmount calculateAmountBasedOnVisitMySpotDateTimes(LocalDateTime start, LocalDateTime end){
+        long minutes = ChronoUnit.MINUTES.between(start, end);
+        return new PointsEarnTransactionAmount(minutes * getMinuteVisitMySpotPointsMultiplier() );
+    }
+
+    public static int getVisitMinutePointsMultiplier(){
+        return MINUTE_VISIT_POINTS_MULTIPLIER;
+    }
+
+    public static int getMinuteVisitMySpotPointsMultiplier(){
+        return MINUTE_VISIT_MY_SPOT_POINTS_MULTIPLIER;
+    }
+
+    public static int getPointsByWifiSpotCreation(){
+        return POINTS_BY_WIFI_SPOT_CREATION;
     }
 
 }
