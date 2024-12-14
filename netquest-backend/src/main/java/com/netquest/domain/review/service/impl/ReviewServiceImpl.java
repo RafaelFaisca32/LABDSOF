@@ -13,6 +13,7 @@ import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
+import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
@@ -91,5 +92,18 @@ public class ReviewServiceImpl implements ReviewService {
             ));
         }
         return reviewHistoryDtos;
+    }
+
+    @Override
+    public List<ReviewDto> getReviewOfWifiSpot(UUID wifiSpotId, UUID userUUID) {
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+        if(!wifiSpotService.existsById(wifiSpotId)){
+            throw new WifiSpotNotFoundException("Wifi Spot not found");
+        }
+        WifiSpotId wifiSpotId1 = new WifiSpotId(wifiSpotId);
+        List<Review> reviews = reviewRepository.getReviewsOfWifiSpot(wifiSpotId1).orElse(new ArrayList<>());
+        return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
     }
 }
