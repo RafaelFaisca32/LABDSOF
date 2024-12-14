@@ -3,7 +3,18 @@ import { config } from '../../Constants';
 
 export const reviewApi = {
     userAllowedToCreateReview,
-    createReview
+    createReview,
+    getMyReviews
+}
+
+function getMyReviews(user, filters){
+    return instance.get('/api/review/my-reviews', {
+        params: filters,
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': basicAuth(user)
+        }
+    })
 }
 
 function createReview(user, review) {
