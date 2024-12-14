@@ -6,7 +6,9 @@ import com.netquest.domain.review.mapper.ReviewMapper;
 import com.netquest.domain.review.model.*;
 import com.netquest.domain.review.service.impl.ReviewServiceImpl;
 import com.netquest.domain.user.exception.UserNotFoundException;
+import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
+import com.netquest.domain.user.model.Username;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispot.service.impl.WifiSpotServiceImpl;
@@ -124,7 +126,8 @@ class ReviewServiceImplTest {
                         .map(attr -> new ReviewAttributeClassificationDto(attr.getName(), attr.getValue()))
                         .collect(Collectors.toList()),
                 review1.getWifiSpotId().getValue(),
-                review1.getUserId().getValue()
+                review1.getUserId().getValue(),
+                ""
         );
 
         ReviewDto reviewDto2 = new ReviewDto(
@@ -136,11 +139,16 @@ class ReviewServiceImplTest {
                         .map(attr -> new ReviewAttributeClassificationDto(attr.getName(), attr.getValue()))
                         .collect(Collectors.toList()),
                 review2.getWifiSpotId().getValue(),
-                review2.getUserId().getValue()
+                review2.getUserId().getValue(),
+                ""
         );
+
+        User user = new User();
+        user.setUsername(new Username(""));
 
         // Mock behavior
         when(userService.existsById(userUUID)).thenReturn(true);
+        when(userService.getUserById(userUUID)).thenReturn(user);
         when(wifiSpotService.existsById(wifiSpotUUID)).thenReturn(true);
         when(reviewRepository.getReviewsOfWifiSpot(new WifiSpotId(wifiSpotUUID))).thenReturn(Optional.of(reviews));
         when(reviewMapper.toDto(review1)).thenReturn(reviewDto1);

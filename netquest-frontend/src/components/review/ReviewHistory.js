@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     Box,
     Typography,
@@ -60,6 +60,11 @@ const ReviewHistory = ({ userLocation }) => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchReviewData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Pagination controls
     const handlePageChange = (event, newPage) => {

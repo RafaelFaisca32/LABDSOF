@@ -9,6 +9,7 @@ import com.netquest.domain.review.mapper.ReviewMapper;
 import com.netquest.domain.review.model.Review;
 import com.netquest.domain.review.service.ReviewService;
 import com.netquest.domain.user.exception.UserNotFoundException;
+import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
@@ -104,6 +105,12 @@ public class ReviewServiceImpl implements ReviewService {
         }
         WifiSpotId wifiSpotId1 = new WifiSpotId(wifiSpotId);
         List<Review> reviews = reviewRepository.getReviewsOfWifiSpot(wifiSpotId1).orElse(new ArrayList<>());
-        return reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
+        List<ReviewDto> reviewDtos = reviews.stream().map(reviewMapper::toDto).collect(Collectors.toList());
+        for (ReviewDto reviewDto: reviewDtos) {
+            User user = userService.getUserById(reviewDto.getUserId());
+            reviewDto.setUsername(user.getUsername().getUserName());
+        }
+
+        return reviewDtos;
     }
 }

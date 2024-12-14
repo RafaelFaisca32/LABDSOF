@@ -56,7 +56,8 @@ public class ReviewMapperImpl implements ReviewMapper {
                 review.getReviewOverallClassification().getValue(),
                 review.getReviewAttributeClassificationList().stream().map(this::toAttributeClassificationDto).toList(),
                 review.getWifiSpotId().getValue(),
-                review.getUserId().getValue()
+                review.getUserId().getValue(),
+                null
         );
     }
 

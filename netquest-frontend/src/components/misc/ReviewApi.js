@@ -4,7 +4,17 @@ import { config } from '../../Constants';
 export const reviewApi = {
     userAllowedToCreateReview,
     createReview,
-    getMyReviews
+    getMyReviews,
+    getReviewsOfWifiSpot
+}
+
+function getReviewsOfWifiSpot(user, wifiSpotId){
+    return instance.get('/api/review/review-of-wifi-spot/' + wifiSpotId, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': basicAuth(user)
+        }
+    })
 }
 
 function getMyReviews(user, filters){
