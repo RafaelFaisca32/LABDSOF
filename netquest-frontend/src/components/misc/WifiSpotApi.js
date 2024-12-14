@@ -5,7 +5,8 @@ export const wifiSpotApi = {
   getWifiSpots,
   createWifiSpot,
   getNumberWifiSpots,
-  getFilteredWifiSpots // Adicionado o novo método
+  getFilteredWifiSpots,
+  getWifiSpotsIA
 };
 
 function getNumberWifiSpots() {
@@ -25,9 +26,14 @@ function getWifiSpots(user) {
 }
 
 function getFilteredWifiSpots(user, filters) {
-  const params = new URLSearchParams(filters).toString(); // Converte os filtros em uma query string
   return instance.post(`/api/wifi-spot/search-wifi-spots`,filters, {
     headers: { 'Content-type': 'application/json', 'Authorization': basicAuth(user) }
+  });
+}
+
+function getWifiSpotsIA(searchTerm,user) {
+  return instance.get(`/api/wifi-spot/getAIWifiSpots?request=`+ searchTerm.toString(), {
+    headers: { 'Authorization': basicAuth(user) }
   });
 }
 

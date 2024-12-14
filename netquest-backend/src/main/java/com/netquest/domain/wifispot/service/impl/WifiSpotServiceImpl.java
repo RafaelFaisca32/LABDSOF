@@ -15,10 +15,23 @@ import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.infrastructure.wifispot.WifiSpotRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -27,11 +40,92 @@ public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotMapper wifiSpotMapper;
     private final UserService userService;
     private final PointsEarnTransactionService pointsEarnTransactionService;
+    @Value("${netquestaiurl}")
+    private String aiUrl;
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+    @Value("${spring.datasource.username}")
+    private String dbUser;
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+
+
 
     @Override
     public List<WifiSpotDto> getWifiSpots() {
         List<WifiSpot> wifiSpotList = wifiSpotRepository.findAll();
         return wifiSpotList.stream().map(wifiSpotMapper::wifiSpotDomainToDto).toList();
+    }
+
+    @Override
+    public List<WifiSpotDto> getWifiSpotsIA(String message) {
+        String aiResponse = "";
+        try {
+            // Endpoint URL
+            URL url = new URL(aiUrl);
+
+            // Create connection
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            // JSON payload
+            String jsonInputString = String.format("{\"user_query\": \"%s\"}", message);
+
+            // Write the request body
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            // Read the response
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                aiResponse = response.replaceAll("\\\\", ""); // Remove backslashes
+                aiResponse = aiResponse.replaceAll("\n", ""); // Replace escaped newlines with spaces
+                aiResponse = aiResponse.replaceAll("^.*\"sql_query\":\"", ""); // Remove prefix up to the query
+                aiResponse = aiResponse.replaceAll("\"}$", ""); // Remove trailing characters
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        List<String> wifiSpotNames = new ArrayList<>();
+        if(aiResponse.startsWith("SELECT ws.wifi_spot_name")){
+            wifiSpotNames = executeQuery(aiResponse);
+        }else if(aiResponse.startsWith("SELECT COUNT")) {
+            return new ArrayList<>();
+        }else{
+            throw new IllegalArgumentException(aiResponse);
+        }
+
+
+        List<WifiSpotName> wifiSpotNamesValue = wifiSpotNames
+                .stream()
+                .map(id -> new WifiSpotName(id))
+                .collect(Collectors.toList());
+
+
+        return wifiSpotRepository.findByWifiSpotNameIn(wifiSpotNamesValue).stream().map(wifiSpotMapper::wifiSpotDomainToDto).toList();
+    }
+
+    private List<String> executeQuery(String sqlQuery) {
+        List<String> wifiSpotIds = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+             PreparedStatement statement = connection.prepareStatement(sqlQuery);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                wifiSpotIds.add(resultSet.getString("wifi_spot_name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return wifiSpotIds;
     }
 
     @Override
