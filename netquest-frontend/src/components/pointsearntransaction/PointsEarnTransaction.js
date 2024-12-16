@@ -4,6 +4,7 @@ import { Box, Typography, CircularProgress } from "@mui/material";
 import {useAuth} from "../context/AuthContext";
 import {pointsEarnTransactionApi} from "../misc/PointsEarnTransactionApi";
 import {errorNotification, formatDateTime} from "../misc/Helpers";
+import {  Header } from 'semantic-ui-react';
 
 const PointsEarnTransaction = () => {
     const Auth = useAuth();
@@ -53,6 +54,16 @@ const PointsEarnTransaction = () => {
 
                         reason = "User "+item.wifiSpotVisitByOther.user.username +" Visited YOUR Created Wifi Spot " + item.wifiSpotVisitByOther.wifiSpot.name + ", Location: " + item.wifiSpotVisitByOther.wifiSpot.latitude + ", " + item.wifiSpotVisitByOther.wifiSpot.longitude;
                         dateString = " ["+ formatedVisitStartDateTime +" - "+ formatedVisitEndDateTime +"]";
+                    }
+
+                    if(!!item.review){
+
+                        reason = "Reviewed wifi spot " + item.review.wifiSpot.name+ " with classification "+item.review.reviewOverallClassification+"/5";
+                        if(!!item.review.reviewComment){
+                            reason += " with the comment \""+item.review.reviewComment+"\" ";
+                        }
+
+                        dateString = formatDateTime(item.review.reviewCreateDateTime);
                     }
 
 
@@ -115,9 +126,9 @@ const PointsEarnTransaction = () => {
 
     return (
         <Box sx={{ height: "auto", width: "100%", padding: 2 }}>
-            <Typography variant="h4" gutterBottom>
-                My Points {totalPoints != null && `- ${totalPoints}`}
-            </Typography>
+            <Header as="h2" color="blue" textAlign="center">
+            My Points {totalPoints != null && `- ${totalPoints}`}
+            </Header>
             {totalPoints === 0 && (
                 <Typography
                     variant="h5"

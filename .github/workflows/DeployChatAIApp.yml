@@ -1,0 +1,27 @@
+name: Deploy Chat AI App
+on:
+  workflow_dispatch:
+jobs:
+  pipeline:
+    name: Deploy Chat AI App pipeline
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.pull_request.title, '[skip ci]') && !contains(github.event.pull_request.title, '[ci skip]')"
+    timeout-minutes: 40
+    env:
+      JHI_DISABLE_WEBPACK_LOGS: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_CHAT_AI_USERNAME }}
+          password: ${{ secrets.DOCKER_CHAT_AI_TOKEN }}
+      - name: Build Docker Image
+        working-directory: ./chat-mysql
+        run: docker compose build
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_HUB_AI_REPO }}:devprod
+      - name: Webhook for render deployment
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.RENDER_WEBHOOK_AI }}

@@ -8,10 +8,12 @@ import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
+import com.netquest.domain.wifispot.model.WifiSpot;
 import com.netquest.domain.wifispot.model.WifiSpotId;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitCreateDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDto;
+import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitHistoryDto;
 import com.netquest.domain.wifispotvisit.exception.*;
 import com.netquest.domain.wifispotvisit.mapper.WifiSpotVisitMapper;
 import com.netquest.domain.wifispotvisit.model.WifiSpotVisit;
@@ -22,9 +24,15 @@ import com.netquest.infrastructure.wifispotvisit.WifiSpotVisitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -96,6 +104,22 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
     }
 
     @Override
+    public boolean hasUserVisitedWifiSpotBasedOnMinutes(UUID userUUID, UUID wifiSpotUUID,long minutes) {
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+
+        if(!wifiSpotService.existsById(wifiSpotUUID)){
+            throw new WifiSpotNotFoundException("Wifi Spot not found");
+        }
+        List<WifiSpotVisit> listWifiSpotVisits = wifiSpotVisitRepository.findByWifiSpotIdAndUserIdAndWifiSpotVisitEndDateTimeIsNotNull(new WifiSpotId(wifiSpotUUID),new UserId(userUUID));
+        long totalMinutes = listWifiSpotVisits.stream()
+                .mapToLong(visit -> Duration.between(visit.getWifiSpotVisitStartDateTime().getValue(), visit.getWifiSpotVisitEndDateTime().getValue()).toMinutes())
+                .sum();
+        return totalMinutes >= minutes;
+    }
+
+    @Override
     public WifiSpotVisitDto getWifiSpotVisitOngoing(UUID userUUID) {
         if(!userService.existsById(userUUID)){
             throw new UserNotFoundException("User not found");
@@ -163,5 +187,27 @@ public class WifiSpotVisitServiceImpl implements WifiSpotVisitService {
         );
     }
 
+    @Override
+    public List<WifiSpotVisitHistoryDto> getMyWifiSpotsVisits(UUID userUUID, String wifiSpotName, LocalDateTime startDate, LocalDateTime endDate) {
+        List<WifiSpotVisitHistoryDto> wifiSpotVisitHistoryDtos = new ArrayList<>();
+        if(!userService.existsById(userUUID)){
+            throw new UserNotFoundException("User not found");
+        }
+        UserId userId = new UserId(userUUID);
+        List<WifiSpotVisit> wifiSpotVisit = wifiSpotVisitRepository.getMyWifiSpotsVisits(userId, wifiSpotName != null ? "%" + wifiSpotName + "%" : null, startDate, endDate).orElse(new ArrayList<>());
+        List<WifiSpotVisitDto> wifiSpotVisitDtoList = wifiSpotVisit.stream().map(wifiSpotVisitMapper::toDto).collect(Collectors.toList());
+        for (WifiSpotVisitDto wifiSpotVisitDto: wifiSpotVisitDtoList) {
+            WifiSpotDto wifiSpot = wifiSpotService.getWifiSpotById(wifiSpotVisitDto.wifiSpotId());
+            wifiSpot.address();
+            wifiSpotVisitHistoryDtos.add(new WifiSpotVisitHistoryDto(
+                    wifiSpotVisitDto.id(),
+                    wifiSpotVisitDto.startDateTime(),
+                    wifiSpotVisitDto.endDateTime(),
+                    wifiSpot.userId(),
+                    wifiSpot
+            ));
+        }
+        return  wifiSpotVisitHistoryDtos;
+    }
 
 }

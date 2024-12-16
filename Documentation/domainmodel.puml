@@ -395,6 +395,10 @@ frame "Review Aggregate" <<review>> {
 
     }
 
+    Class ReviewCreateDateTime <<ValueObject>> {
+
+    }
+
     Class ReviewId <<ValueObject>>{
         value: UUIDv4
     }
@@ -420,6 +424,7 @@ frame "Review Aggregate" <<review>> {
     'Review Entity Relationships w/ VOs
     Review -- ReviewId
     Review -- ReviewOverallClassification
+    Review -- ReviewCreateDateTime
     Review "1" --> "*" ReviewAttributeClassification
     Review -- ReviewComment
 

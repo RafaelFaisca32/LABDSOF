@@ -5,6 +5,7 @@ import com.netquest.domain.user.model.User;
 import com.netquest.domain.user.model.UserId;
 import com.netquest.domain.wifispot.model.WifiSpot;
 import com.netquest.domain.wifispot.model.WifiSpotId;
+import com.netquest.domain.wifispot.model.WifiSpotName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,9 @@ public interface WifiSpotRepository extends JpaRepository<WifiSpot, WifiSpotId> 
     int getNumberOfWifiSpots();
 
     WifiSpot getWifiSpotByWifiSpotId(WifiSpotId wifiSpotId);
+
+
+    List<WifiSpot> findByWifiSpotNameIn(List<WifiSpotName> wifiSpotIds);
 
     @Query("SELECT wfs FROM WifiSpot wfs " +
             "WHERE ( wfs.wifiSpotName.value like :name  OR :name is null) " +

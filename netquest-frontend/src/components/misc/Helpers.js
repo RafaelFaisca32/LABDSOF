@@ -36,6 +36,19 @@ export const errorNotification = (message)=>{
   });
 }
 
+export const warningNotification = (message)=>{
+  toast.warning(message, {
+    position: "top-right",
+    autoClose: 5000, // Closes after 5 seconds
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+  });
+}
+
 export const formatDateTime = (dateTime) => {
   return new Intl.DateTimeFormat('pt-PT', {
     year: 'numeric',

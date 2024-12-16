@@ -93,6 +93,13 @@ public class WifiSpotController {
     }
 
     @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(path = "/getAIWifiSpots")
+    public List<WifiSpotDto> getWifiSpotIA(@RequestParam(required = false) String request) {
+        return wifiSpotService.getWifiSpotsIA(request);
+    }
+
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
     @GetMapping(path = "/getFilteredWifiSpots")
     @ResponseStatus(HttpStatus.OK)
     public List<WifiSpotDto> getFilteredWifiSpots(

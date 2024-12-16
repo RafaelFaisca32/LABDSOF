@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteUserById } from "../misc/AuthApi";
 import { useAuth } from "../context/AuthContext";
+import {  Header } from 'semantic-ui-react';
 
 function DeleteAccount() {
   const navigate = useNavigate();
@@ -27,7 +28,9 @@ function DeleteAccount() {
 
   return (
     <div>
-      <h1>Delete Account</h1>
+      <Header as="h2" color="blue" textAlign="center">
+      Delete Account
+      </Header>
       <p>Are you sure you want to delete your account? This action cannot be undone.</p>
       <button onClick={handleDeleteClick}>Delete Account</button>
     </div>

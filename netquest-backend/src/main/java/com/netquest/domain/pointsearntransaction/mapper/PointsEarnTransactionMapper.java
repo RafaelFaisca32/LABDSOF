@@ -3,8 +3,6 @@ package com.netquest.domain.pointsearntransaction.mapper;
 import com.netquest.domain.pointsearntransaction.dto.*;
 import com.netquest.domain.pointsearntransaction.model.PointsEarnTransaction;
 
-import java.util.UUID;
-
 public interface PointsEarnTransactionMapper {
     PointsEarnTransactionDto toDto(PointsEarnTransaction pointsEarnTransaction);
     PointsEarnTransactionDetailedDto toDetailedDto(PointsEarnTransaction pointsEarnTransaction);
@@ -14,4 +12,6 @@ public interface PointsEarnTransactionMapper {
 
 
     PointsEarnTransaction toNewEntityByVisitMySpot(PointsEarnTransactionCreateByVisitMySpotDto pointsEarnTransactionCreateByVisitMySpotDto);
+
+    PointsEarnTransaction toNewEntityByReview(PointsEarnTransactionCreateByReviewDto pointsEarnTransactionCreateByReviewDto);
 }

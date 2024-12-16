@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Container, Button, Modal } from 'semantic-ui-react';
+import { Container, Button, Modal, Header } from 'semantic-ui-react';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -10,6 +10,7 @@ import AddSpotModal from './AddSpotModal';
 import WifiSpotFilter from '../wifiSpotFilter/WifiSpotFilter';
 import { wifiSpotApi } from "../misc/WifiSpotApi";
 import { errorNotification, successNotification } from "../misc/Helpers";
+import SearchWifiSpots from '../wifiSpotAISearch/SearchWifiSpots';
 
 const userIcon = new L.Icon({
   iconUrl: '/icons/user.png',
@@ -70,6 +71,7 @@ function WifiMapPage() {
       }
     };
     loadExistingWifiSpots();
+    // eslint-disable-next-line
   }, []);
 
   // Atualiza os WiFi spots
@@ -168,7 +170,9 @@ function WifiMapPage() {
 
   return (
     <Container>
-      <h3>WiFi Map</h3>
+      <Header as="h2" color="blue" textAlign="center">
+          Wifi Map
+        </Header>
       <Button primary onClick={() => setFilterModalOpen(true)} style={{ marginBottom: '15px' }}>
         Filtrar
       </Button>
@@ -176,11 +180,10 @@ function WifiMapPage() {
         Clear Filters
       </Button>
       {userLocation ? (
-        <MapContainer center={userLocation} zoom={13} style={{ height: '60vh', width: '100%' }}>
+        <><MapContainer center={userLocation} zoom={13} style={{ height: '60vh', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
+            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors' />
           <MapClickHandler onMapClick={handleMapClick} />
           <Marker position={userLocation} icon={userIcon}>
             <Tooltip direction="top" offset={[0, -20]} opacity={1}>
@@ -203,6 +206,7 @@ function WifiMapPage() {
             </Marker>
           ))}
         </MapContainer>
+        <SearchWifiSpots handleApplyFilters={handleApplyFilters} clearFilters={clearFilters}></SearchWifiSpots></>
       ) : (
         <p>Loading map... You should activate the location sharing for it to load.</p>
       )}

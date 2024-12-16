@@ -1,5 +1,6 @@
 package com.netquest.domain.pointsearntransaction.dto;
 
+import com.netquest.domain.review.dto.ReviewDetailedDto;
 import com.netquest.domain.user.dto.UserDto;
 import com.netquest.domain.wifispot.dto.WifiSpotDto;
 import com.netquest.domain.wifispotvisit.dto.WifiSpotVisitDetailedDto;
@@ -21,4 +22,5 @@ public class PointsEarnTransactionDetailedDto {
     WifiSpotDto wifiSpot;
     WifiSpotVisitDetailedDto wifiSpotVisit;
     WifiSpotVisitDetailedDto wifiSpotVisitByOther;
+    ReviewDetailedDto review;
 }
