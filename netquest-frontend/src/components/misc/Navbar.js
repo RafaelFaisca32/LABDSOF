@@ -14,31 +14,6 @@ function Navbar({ children }) {
   };
 
 
-  const handleDeleteAccount = () => {
-    navigate("/delete-account"); // Navigate to the delete account page
-  };
-
-  const handleWifiSpotsCreated = () => {
-    navigate("/wifispots-created"); // Navigate to the delete account page
-  };
-  const handleEditAccount = () => {
-    navigate("/edit-account"); // Navigate to the delete account page
-  };
-
-  const enterMenuStyle = () => {
-    return userIsAuthenticated() ? { display: "none" } : { display: "block" };
-  };
-
-  const logoutMenuStyle = () => {
-    return userIsAuthenticated() ? { display: "block" } : { display: "none" };
-  };
-
-  const adminPageStyle = () => {
-    const user = getUser();
-    return user && user.role === "ADMIN"
-      ? { display: "block" }
-      : { display: "none" };
-  };
 
   const links = [
     { to: "/", icon: "home", label: "Home", visible: true },
@@ -51,7 +26,7 @@ function Navbar({ children }) {
     { to: "/pointsearntransaction", icon: "star", label: "Points Earned", visible: () => userIsAuthenticated() },
     { to: "/edit-account", icon: "user", label: "Manage Account", visible: () => userIsAuthenticated() },
     { to: "/delete-account", icon: "trash", label: "Delete Account", visible: () => userIsAuthenticated() },
-    { to: "/my-reviews", icon: "comments", label: "My Reviews", visible: () => userIsAuthenticated() }, 
+    { to: "/my-reviews", icon: "comments", label: "My Reviews", visible: () => userIsAuthenticated() },
     { to: "/", icon: "sign-out", label: "Logout", visible: () => userIsAuthenticated(), action: logout },
   ];
 
