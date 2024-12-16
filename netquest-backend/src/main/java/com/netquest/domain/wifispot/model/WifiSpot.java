@@ -179,4 +179,32 @@ public class WifiSpot {
         this.wifiSpotCreateDateTime = new WifiSpotCreateDateTime();
     }
 
+    public WifiSpot update(
+        WifiSpotName wifiSpotName,
+        WifiSpotDescription wifiSpotDescription,
+        WifiSpotCoordinates wifiSpotCoordinates,
+        WifiSpotLocationType wifiSpotLocationType,
+        WifiSpotQualityIndicators wifiSpotQualityIndicators,
+        WifiSpotEnvironmentalFeatures wifiSpotEnvironmentalFeatures,
+        WifiSpotFacilities wifiSpotFacilities,
+        WifiSpotWeatherFeatures wifiSpotWeatherFeatures,
+        WifiSpotAddress wifiSpotAddress,
+        WifiSpotManagement wifiSpotManagement
+    ) {
+        return new WifiSpot(
+            this.wifiSpotId, // Retain the existing ID
+            wifiSpotName != null ? wifiSpotName : this.wifiSpotName,
+            wifiSpotDescription != null ? wifiSpotDescription : this.wifiSpotDescription,
+            wifiSpotCoordinates != null ? wifiSpotCoordinates : this.wifiSpotCoordinates,
+            wifiSpotLocationType != null ? wifiSpotLocationType : this.wifiSpotLocationType,
+            wifiSpotQualityIndicators != null ? wifiSpotQualityIndicators : this.wifiSpotQualityIndicators,
+            wifiSpotEnvironmentalFeatures != null ? wifiSpotEnvironmentalFeatures : this.wifiSpotEnvironmentalFeatures,
+            wifiSpotFacilities != null ? wifiSpotFacilities : this.wifiSpotFacilities,
+            wifiSpotWeatherFeatures != null ? wifiSpotWeatherFeatures : this.wifiSpotWeatherFeatures,
+            wifiSpotAddress != null ? wifiSpotAddress : this.wifiSpotAddress,
+            wifiSpotManagement != null ? wifiSpotManagement : this.wifiSpotManagement,
+            this.userId // Retain the existing user ID
+        );
+    }
+
 }

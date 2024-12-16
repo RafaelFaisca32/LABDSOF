@@ -62,6 +62,7 @@ function WifispotsCreated() {
   };
 
   const handleEditClick = (spot) => {
+    console.log(spot.address.addressLine1);
     setSpotDetails({
       ...spot,
       name: spot.name || "",
@@ -70,13 +71,14 @@ function WifispotsCreated() {
       wifiQuality: spot.wifiQuality || "",
       signalStrength: spot.signalStrength || "",
       bandwidth: spot.bandwidth || "",
-      addressLine1: spot.address?.addressLine1 || "",
-      city: spot.address?.city || "",
-      district: spot.address?.district || "",
-      country: spot.address?.country || "",
-      zipCode: spot.address?.zipCode || "",
+      addressLine1: spot.address.addressLine1 || "",
+      city: spot.address.city || "",
+      district: spot.address.district || "",
+      country: spot.address.country || "",
+      zipCode: spot.address.zipCode || "",
       coordinates: { lat: spot.latitude, lng: spot.longitude },
     });
+    console.log(spotDetails);
     setEditModalOpen(true);
   };
 
