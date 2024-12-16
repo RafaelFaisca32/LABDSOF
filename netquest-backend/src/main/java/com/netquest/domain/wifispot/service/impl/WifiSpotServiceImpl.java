@@ -4,6 +4,9 @@ package com.netquest.domain.wifispot.service.impl;
 import com.netquest.domain.pointsearntransaction.dto.PointsEarnTransactionCreateByWifiSpotCreationDto;
 import com.netquest.domain.pointsearntransaction.service.PointsEarnTransactionService;
 import com.netquest.domain.shared.*;
+import com.netquest.domain.user.dto.UserDto;
+import com.netquest.domain.user.model.User;
+import com.netquest.domain.user.model.Username;
 import com.netquest.domain.user.exception.UserNotFoundException;
 import com.netquest.domain.user.service.UserService;
 import com.netquest.domain.wifispot.dto.WifiSpotCreateDto;
@@ -13,6 +16,7 @@ import com.netquest.domain.wifispot.exception.WifiSpotNotFoundException;
 import com.netquest.domain.wifispot.mapper.WifiSpotMapper;
 import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
+import com.netquest.infrastructure.user.UserRepository;
 import com.netquest.infrastructure.wifispot.WifiSpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +33,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,6 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class WifiSpotServiceImpl implements WifiSpotService {
     private final WifiSpotRepository wifiSpotRepository;
+    private final UserRepository userRepository;
     private final WifiSpotMapper wifiSpotMapper;
     private final UserService userService;
     private final PointsEarnTransactionService pointsEarnTransactionService;
@@ -308,11 +314,29 @@ public class WifiSpotServiceImpl implements WifiSpotService {
                 .replace("_", "\\_");  // Escape underscore
     }
 
+
+    @Override
+    public List<WifiSpotDto> getWifiSpotsOfUser(UserDto userDto) {
+        Optional<User> userOptional = userRepository.findByUsername(new Username(userDto.username()));
+
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        User user = userOptional.get();
+        List<WifiSpot> wifiSpots = wifiSpotRepository.findByUserId(user.getUserId());
+
+        return wifiSpots.stream()
+            .map(wifiSpotMapper::wifiSpotDomainToDto).toList();
+    }
+
+
     private void createPointsEarnTransactionBasedOnWifiSpotCreation(WifiSpotDto wifiSpotDto) {
         pointsEarnTransactionService.savePointsEarnTransactionByWifiSpotCreation(
                 new PointsEarnTransactionCreateByWifiSpotCreationDto(
                         wifiSpotDto.userId(), wifiSpotDto.uuid()
                 )
         );
+
     }
 }

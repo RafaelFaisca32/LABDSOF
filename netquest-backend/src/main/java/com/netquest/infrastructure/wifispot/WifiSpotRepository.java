@@ -79,5 +79,5 @@ public interface WifiSpotRepository extends JpaRepository<WifiSpot, WifiSpotId> 
     );
 
 
-
+    List<WifiSpot> findByUserId(UserId userId);
 }

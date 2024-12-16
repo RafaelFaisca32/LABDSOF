@@ -13,6 +13,8 @@ function Navbar({ children }) {
     setVisible(false);
   };
 
+
+
   const links = [
     { to: "/", icon: "home", label: "Home", visible: true },
     { to: "/adminpage", icon: "user secret", label: "Admin Page", visible: () => getUser()?.role === "ADMIN" },
@@ -20,12 +22,14 @@ function Navbar({ children }) {
     { to: "/login", icon: "sign-in", label: "Login", visible: () => !userIsAuthenticated() },
     { to: "/signup", icon: "signup", label: "Sign Up", visible: () => !userIsAuthenticated() },
     { to: "/visited-locations", icon: "map marker alternate", label: "Visited Locations", visible: () => userIsAuthenticated() },
+    { to: "/wifispots-created", icon: "map marker alternate", label: "Created Locations", visible: () => userIsAuthenticated() },
     { to: "/pointsearntransaction", icon: "star", label: "Points Earned", visible: () => userIsAuthenticated() },
     { to: "/edit-account", icon: "user", label: "Manage Account", visible: () => userIsAuthenticated() },
     { to: "/delete-account", icon: "trash", label: "Delete Account", visible: () => userIsAuthenticated() },
-    { to: "/my-reviews", icon: "comments", label: "My Reviews", visible: () => userIsAuthenticated() }, 
+    { to: "/my-reviews", icon: "comments", label: "My Reviews", visible: () => userIsAuthenticated() },
     { to: "/", icon: "sign-out", label: "Logout", visible: () => userIsAuthenticated(), action: logout },
   ];
+
 
   const isActive = (path) => location.pathname === path;
 
@@ -54,6 +58,7 @@ function Navbar({ children }) {
                 if (action) action();
               }}
             >
+
               <Icon name={icon} />
               {label}
             </Menu.Item>
