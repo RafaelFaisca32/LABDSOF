@@ -18,6 +18,7 @@ import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.infrastructure.user.UserRepository;
 import com.netquest.infrastructure.wifispot.WifiSpotRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -339,4 +341,56 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         );
 
     }
+
+    public boolean verifyOwnershipOrPermission(UUID uuid, UUID userId) {
+        WifiSpot wifiSpot = wifiSpotRepository.findById(new WifiSpotId(uuid))
+            .orElseThrow(() -> new EntityNotFoundException("Wi-Fi Spot not found"));
+
+        if (!wifiSpot.getUserId().equals(userId)) {
+            new Exception("You do not have permission to update this Wi-Fi Spot");
+            return false;
+        }
+        return true;
+    }
+    public WifiSpotDto updateWifiSpot(UUID uuid, WifiSpotDto wifiSpotDto) {
+        // Retrieve the existing Wi-Fi Spot
+        WifiSpot existingSpot = wifiSpotRepository.findById(new WifiSpotId(uuid))
+            .orElseThrow(() -> new EntityNotFoundException("Wi-Fi Spot not found"));
+
+        // Update fields of the existing Wi-Fi Spot
+        existingSpot.setName(wifiSpotDto.name());
+        existingSpot.setDescription(wifiSpotDto.description());
+        existingSpot.setLocationType(wifiSpotDto.locationType());
+        existingSpot.setWifiQuality(wifiSpotDto.wifiQuality());
+        existingSpot.setSignalStrength(wifiSpotDto.signalStrength());
+        existingSpot.setBandwidth(wifiSpotDto.bandwidth());
+        existingSpot.setCoordinates(wifiSpotDto.coordinates());
+        existingSpot.setAddress(wifiSpotDto.address());
+        existingSpot.setCrowded(wifiSpotDto.crowded());
+        existingSpot.setCoveredArea(wifiSpotDto.coveredArea());
+        existingSpot.setAirConditioning(wifiSpotDto.airConditioning());
+        existingSpot.setGoodView(wifiSpotDto.goodView());
+        existingSpot.setNoiseLevel(wifiSpotDto.noiseLevel());
+        existingSpot.setPetFriendly(wifiSpotDto.petFriendly());
+        existingSpot.setChildFriendly(wifiSpotDto.childFriendly());
+        existingSpot.setDisableAccess(wifiSpotDto.disableAccess());
+        existingSpot.setAvailablePowerOutlets(wifiSpotDto.availablePowerOutlets());
+        existingSpot.setChargingStations(wifiSpotDto.chargingStations());
+        existingSpot.setRestroomsAvailable(wifiSpotDto.restroomsAvailable());
+        existingSpot.setParkingAvailability(wifiSpotDto.parkingAvailability());
+        existingSpot.setFoodOptions(wifiSpotDto.foodOptions());
+        existingSpot.setDrinkOptions(wifiSpotDto.drinkOptions());
+        existingSpot.setOpenDuringRain(wifiSpotDto.openDuringRain());
+        existingSpot.setOpenDuringHeat(wifiSpotDto.openDuringHeat());
+        existingSpot.setHeatedInWinter(wifiSpotDto.heatedInWinter());
+        existingSpot.setShadedAreas(wifiSpotDto.shadedAreas());
+        existingSpot.setOutdoorFans(wifiSpotDto.outdoorFans());
+
+        // Save the updated Wi-Fi Spot back to the repository
+        WifiSpot updatedSpot = wifiSpotRepository.save(existingSpot);
+
+        // Convert the updated Wi-Fi Spot entity back to a DTO and return it
+        return wifiSpotMapper.wifiSpotDomainToDto(updatedSpot);
+    }
 }
+

@@ -178,4 +178,5 @@ public class WifiSpot {
         this.userId = userId;
         this.wifiSpotCreateDateTime = new WifiSpotCreateDateTime();
     }
+
 }

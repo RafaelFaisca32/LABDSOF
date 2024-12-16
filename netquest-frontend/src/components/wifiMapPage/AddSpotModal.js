@@ -92,7 +92,7 @@ async function reverseGeocodeWithNominatim(lat, lng) {
     };
 }
 
-function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails}) {
+function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails,isEditing}) {
     const [hasRoadName, setHasRoadName] = useState(false);
     const [activeSections, setActiveSections] = useState({
         basicInfo: true,
@@ -178,7 +178,7 @@ function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails}) {
 
     return (
         <Modal open={open} onClose={onClose} size="large">
-            <Modal.Header>Add a New Spot</Modal.Header>
+           <Modal.Header>{isEditing ? "Edit Spot" : "Add a New Spot"}</Modal.Header>
             <Modal.Content scrolling style={{maxHeight: "70vh", overflowY: "auto"}}>
                 <Form>
                     <Segment>
@@ -565,14 +565,14 @@ function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails}) {
                 </Form>
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={onClose}>Cancel</Button>
-                <Button
-                    primary
-                    onClick={onSave}
-                    disabled={!isMandatoryFilled()}
-                >
-                    Add Spot
-                </Button>
+              <Button onClick={onClose}>Cancel</Button>
+              <Button
+                primary
+                onClick={onSave}
+                disabled={!isMandatoryFilled()}
+              >
+                {isEditing ? "Save Changes" : "Add Spot"}
+              </Button>
             </Modal.Actions>
         </Modal>
     );

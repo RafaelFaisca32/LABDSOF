@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { wifiSpotApi } from "../misc/WifiSpotApi";
 import { useAuth } from "../context/AuthContext";
 import "../../index.css";
+import EditSpotModal from "../wifiMapPage/AddSpotModal"; // Import the modal component
 
 function WifispotsCreated() {
-  const navigate = useNavigate();
   const { getUser } = useAuth();
   const user = getUser();
 
@@ -17,23 +16,24 @@ function WifispotsCreated() {
     locationType: "",
   });
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [spotDetails, setSpotDetails] = useState({ coordinates: { lat: "", lng: "" } });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await wifiSpotApi.fetchWifiSpotsByUser(user);
-        console.log("API response:", response); // Ensure we are getting correct data
         const data = Array.isArray(response.data) ? response.data : [];
+        console.log(data);
         setWifiSpots(data);
         setFilteredWifiSpots(data);
       } catch (error) {
         console.error("Failed to fetch Wi-Fi spots:", error);
       }
     };
-
     fetchData();
-  }, []); // Fetches only once when the component mounts
+  }, []);
 
-  // Filter handler
   useEffect(() => {
     let filtered = [...wifiSpots];
 
@@ -59,6 +59,39 @@ function WifispotsCreated() {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditClick = (spot) => {
+    setSpotDetails({
+      ...spot,
+      name: spot.name || "",
+      description: spot.description || "",
+      locationType: spot.locationType || "",
+      wifiQuality: spot.wifiQuality || "",
+      signalStrength: spot.signalStrength || "",
+      bandwidth: spot.bandwidth || "",
+      addressLine1: spot.address?.addressLine1 || "",
+      city: spot.address?.city || "",
+      district: spot.address?.district || "",
+      country: spot.address?.country || "",
+      zipCode: spot.address?.zipCode || "",
+      coordinates: { lat: spot.latitude, lng: spot.longitude },
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await wifiSpotApi.updateWifiSpot(spotDetails.uuid, spotDetails,user);
+      setEditModalOpen(false);
+
+      // Refresh spots
+      const response = await wifiSpotApi.fetchWifiSpotsByUser(user);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setWifiSpots(data);
+    } catch (error) {
+      console.error("Failed to save changes:", error);
+    }
   };
 
   return (
@@ -111,37 +144,35 @@ function WifispotsCreated() {
             {filteredWifiSpots.map((spot) => (
               <div className="wifi-spot" key={spot.uuid}>
                 <h3 className="wifi-spot-title">{spot.name}</h3>
-                <p className="wifi-spot-info">
-                  <strong>Address:</strong> {spot.address?.addressLine1}, {spot.address?.city},{" "}
-                  {spot.address?.district}
+                <p>
+                  <strong>Address:</strong> {spot.address?.addressLine1}, {spot.city}
                 </p>
-                <p className="wifi-spot-info">
+                <p>
                   <strong>Wi-Fi Quality:</strong> {spot.wifiQuality}
                 </p>
-                <p className="wifi-spot-info">
+                <p>
                   <strong>Location Type:</strong> {spot.locationType}
                 </p>
-                <div className="environmental-features">
-                  <strong>Environmental Features:</strong>
-                  {spot.environmentalFeatures && spot.environmentalFeatures.length > 0 ? (
-                    <div>
-                      {spot.environmentalFeatures.map((feature, index) => (
-                        <span className="feature-badge" key={index}>
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="no-data"> None</span>
-                  )}
-                </div>
+                <button onClick={() => handleEditClick(spot)} className="edit-button">
+                  Edit
+                </button>
               </div>
             ))}
           </div>
         ) : (
-          <p className="no-data">No Wi-Fi spots match the selected filters.</p>
+          <p>No Wi-Fi spots match the selected filters.</p>
         )}
       </div>
+
+      {/* Edit Modal */}
+      <EditSpotModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleSaveEdit}
+        spotDetails={spotDetails}
+        setSpotDetails={setSpotDetails}
+        isEditing={true} // Pass true to indicate this is for editing
+      />
     </div>
   );
 }
