@@ -154,6 +154,7 @@ function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails,isEdit
     };
 
     const handleCoordinatesChange = async (lat, lng) => {
+      console.log("roger auau");
         if (lat && lng) {
             const addressData = await reverseGeocodeWithNominatim(lat, lng);
             if (addressData) {
@@ -171,7 +172,7 @@ function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails,isEdit
     };
 
     useEffect(() => {
-        if (spotDetails && spotDetails.coordinates && spotDetails.coordinates.lat && spotDetails.coordinates.lng) {
+        if (spotDetails && spotDetails.coordinates && spotDetails.coordinates.lat && spotDetails.coordinates.lng && !isEditing ) {
             handleCoordinatesChange(spotDetails.coordinates.lat,spotDetails.coordinates.lng);
         }
     }, [open, spotDetails.coordinates]);
