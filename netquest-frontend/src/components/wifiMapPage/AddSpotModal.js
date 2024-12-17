@@ -154,7 +154,6 @@ function AddSpotModal({open, onClose, onSave, spotDetails, setSpotDetails,isEdit
     };
 
     const handleCoordinatesChange = async (lat, lng) => {
-      console.log("roger auau");
         if (lat && lng) {
             const addressData = await reverseGeocodeWithNominatim(lat, lng);
             if (addressData) {
