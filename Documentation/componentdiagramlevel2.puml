@@ -6,12 +6,17 @@ actor User
 component reactive_frontend as "React Responsive Frontend" {
     portout " " as port_frontend_to_user
     portin " " as port_frontend_to_backend
+    portin " " as port_backend_to_google_api
 }
 component system_backend as "Java System Backend" {
     portout " " as port_backend_from_frontend
     portin " " as port_backend_to_ai_api
-    portin " " as port_backend_to_google_api
     portin " " as port_backend_from_db
+}
+
+component ai_component as "AI Python query constructor" {
+    portout " " as port_ai_to_backend_api
+    portout " " as port_ai_to_groq_api
 }
 
 database database_mysql_db as "MySQL Relational Database" {
@@ -20,8 +25,9 @@ database database_mysql_db as "MySQL Relational Database" {
 
 interface interface_frontendpage as " "
 
+interface interface_ai_grook_api as "Groq API" 
 interface interface_ai_api as "AI API"  
-interface interface_google_api as "Google API"
+interface interface_google_api as "Leaflet API"
 interface interface_backend as "Backend API" 
 interface interface_mysql_db as "MySQL API" 
 
@@ -30,6 +36,9 @@ User -right-( interface_frontendpage
 
 port_backend_from_frontend -down- interface_backend
 port_frontend_to_backend -left-( interface_backend
+
+port_ai_to_backend_api -down- interface_ai_api
+port_ai_to_groq_api -down-( interface_ai_grook_api
 
 port_backend_to_ai_api -up-( interface_ai_api
 port_backend_to_google_api -up-( interface_google_api
