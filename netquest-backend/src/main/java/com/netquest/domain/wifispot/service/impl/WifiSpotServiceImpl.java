@@ -18,6 +18,7 @@ import com.netquest.domain.wifispot.model.*;
 import com.netquest.domain.wifispot.service.WifiSpotService;
 import com.netquest.infrastructure.user.UserRepository;
 import com.netquest.infrastructure.wifispot.WifiSpotRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -339,4 +341,76 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         );
 
     }
+
+    public boolean verifyOwnershipOrPermission(UUID uuid, UUID userId) {
+        WifiSpot wifiSpot = wifiSpotRepository.findById(new WifiSpotId(uuid))
+            .orElseThrow(() -> new EntityNotFoundException("Wi-Fi Spot not found"));
+
+        if (!wifiSpot.getUserId().equals(userId)) {
+            new Exception("You do not have permission to update this Wi-Fi Spot");
+            return false;
+        }
+        return true;
+    }
+    public WifiSpotDto updateWifiSpot(UUID uuid, WifiSpotDto wifiSpotDto) {
+        // Retrieve the existing Wi-Fi Spot
+        WifiSpot existingSpot = wifiSpotRepository.findById(new WifiSpotId(uuid))
+            .orElseThrow(() -> new EntityNotFoundException("Wi-Fi Spot not found"));
+
+        // Update fields of the existing Wi-Fi Spot
+        WifiSpot updatedSpot = existingSpot.update(
+            wifiSpotDto.name() != null ? new WifiSpotName(wifiSpotDto.name()) : null,
+            wifiSpotDto.description() != null ? new WifiSpotDescription(wifiSpotDto.description()) : null,
+            new WifiSpotCoordinates(wifiSpotDto.latitude(), wifiSpotDto.longitude()),
+            new WifiSpotLocationType(wifiSpotDto.locationType()),
+            new WifiSpotQualityIndicators(
+                wifiSpotDto.wifiQuality(),
+                wifiSpotDto.signalStrength(),
+                wifiSpotDto.bandwidth(),
+                new WifiSpotPeakUsageInterval(wifiSpotDto.peakUsageStart(),wifiSpotDto.peakUsageEnd())
+            ),
+            new WifiSpotEnvironmentalFeatures(
+                wifiSpotDto.crowded(),
+                wifiSpotDto.coveredArea(),
+                wifiSpotDto.airConditioning(),
+                wifiSpotDto.outdoorSeating(),
+                wifiSpotDto.goodView(),
+                wifiSpotDto.noiseLevel(),
+                wifiSpotDto.petFriendly(),
+                wifiSpotDto.childFriendly(),
+                wifiSpotDto.disableAccess()
+            ),
+            new WifiSpotFacilities(
+                wifiSpotDto.availablePowerOutlets(),
+                wifiSpotDto.chargingStations(),
+                wifiSpotDto.restroomsAvailable(),
+                wifiSpotDto.parkingAvailability(),
+                wifiSpotDto.foodOptions(),
+                wifiSpotDto.drinkOptions()
+            ),
+            new WifiSpotWeatherFeatures(
+                wifiSpotDto.openDuringRain(),
+                wifiSpotDto.openDuringHeat(),
+                wifiSpotDto.heatedInWinter(),
+                wifiSpotDto.shadedAreas(),
+                wifiSpotDto.outdoorFans()
+            ),
+            new WifiSpotAddress(
+                new WifiSpotAddressCountry(wifiSpotDto.address().country()),
+                new WifiSpotAddressZipCode(wifiSpotDto.address().zipCode()),
+                new WifiSpotAddressLine1(wifiSpotDto.address().addressLine1()),
+                new WifiSpotAddressLine2(wifiSpotDto.address().addressLine2()),
+                new WifiSpotAddressCity(wifiSpotDto.address().city()),
+                new WifiSpotAddressDistrict(wifiSpotDto.address().district())
+            ),
+            new WifiSpotManagement(wifiSpotDto.wifiSpotManagementType())
+        );
+
+        // Save the updated Wi-Fi Spot back to the repository
+        WifiSpot savedSpot = wifiSpotRepository.save(updatedSpot);
+
+        // Convert the updated Wi-Fi Spot entity back to a DTO and return it
+        return wifiSpotMapper.wifiSpotDomainToDto(savedSpot);
+    }
 }
+

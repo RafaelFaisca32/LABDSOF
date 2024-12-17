@@ -32,4 +32,8 @@ public interface WifiSpotService {
     List<WifiSpotDto> getWifiSpotsWithFilters(WifiSpotFilterDto wifiSpotFilterDto);
 
     List<WifiSpotDto> getWifiSpotsOfUser(UserDto userDto);
+
+    boolean verifyOwnershipOrPermission(UUID uuid, UUID id);
+
+    WifiSpotDto updateWifiSpot(UUID uuid, WifiSpotDto wifiSpotDto);
 }

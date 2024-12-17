@@ -161,4 +161,20 @@ public class WifiSpotController {
         User user = userService.getUserById(userDetails.getId());
         return wifiSpotService.getWifiSpotsOfUser(userMapper.toUserDto(user));
     }
+    @Operation(security = {@SecurityRequirement(name = BASIC_AUTH_SECURITY_SCHEME)})
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{uuid}")
+    public WifiSpotDto updateWifiSpot(
+        @PathVariable UUID uuid,
+        @Valid @RequestBody WifiSpotDto wifiSpotDto
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // Ensure only the owner or authorized users can update the Wi-Fi spot
+        wifiSpotService.verifyOwnershipOrPermission(uuid, userDetails.getId());
+
+        // Perform the update and return the updated Wi-Fi spot details
+        return wifiSpotService.updateWifiSpot(uuid, wifiSpotDto);
+    }
 }

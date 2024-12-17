@@ -7,7 +7,8 @@ export const wifiSpotApi = {
   getNumberWifiSpots,
   getFilteredWifiSpots,
   fetchWifiSpotsByUser,
-  getWifiSpotsIA
+  getWifiSpotsIA,
+  updateWifiSpot
 };
 
 function getNumberWifiSpots() {
@@ -25,6 +26,16 @@ function getWifiSpots(user) {
     headers: { 'Authorization': basicAuth(user) }
   });
 }
+
+function updateWifiSpot(uuid, spotDetails, user) {
+  return instance.put(`/api/wifi-spot/${uuid}`, spotDetails, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': basicAuth(user)
+    }
+  });
+}
+
 
 function fetchWifiSpotsByUser(user) {
   return instance.post('/api/wifi-spot/search-wifi-spots-by-user',null, {
