@@ -13,12 +13,17 @@ node "Database Server" {
 node "External GPS API" {
 }
 
-node "External AI API" {
+node "AI Server" {
+    [Query Constructor (Python)]
+}
+
+node "External AI Groq API" {
 }
 
 [Frontend (React)] --> [Backend (Java Spring Boot)] : HTTP/REST
 [Backend (Java Spring Boot)] --> [MySQL] : JDBC/ORM
-[Backend (Java Spring Boot)] -(0 [External GPS API] : HTTP/REST
-[Backend (Java Spring Boot)] -(0 [External AI API] : HTTP/REST
+[Frontend (React)] -(0 [External GPS API] : HTTP/REST
+[Backend (Java Spring Boot)] -(0 [Query Constructor (Python)] : HTTP/REST
+[Query Constructor (Python)] -(0 [External AI Groq API] : HTTP/REST
 
 @enduml
