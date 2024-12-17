@@ -46,13 +46,17 @@ class WifiSpotServiceTest {
     private UserDto userDto;
     private User user;
     private WifiSpot wifiSpot;
+    private WifiSpotDto wifiSpotDtoUpdated;
     private WifiSpotDto wifiSpotDto;
+    private UUID wifiSpotId;
+    private WifiSpot existingWifiSpot;
+
 
     @BeforeEach
     void setUp() {
         // UUID for the User
         UUID userId = UUID.randomUUID();
-
+        wifiSpotId = UUID.randomUUID();
         // Initialize UserDto
         userDto = new UserDto(
             userId,
@@ -72,6 +76,7 @@ class WifiSpotServiceTest {
             "USA",
             "62704"
         );
+
 
         // Initialize User with embedded fields
         user = new User(
@@ -99,6 +104,20 @@ class WifiSpotServiceTest {
             new WifiSpotAddressCity("San Francisco"),
             new WifiSpotAddressDistrict("CA")
         );
+        existingWifiSpot = new WifiSpot(
+            new WifiSpotName("Old Spot"),
+            new WifiSpotDescription("Old description"),
+            new WifiSpotCoordinates(37.7749, -122.4194),
+            new WifiSpotLocationType(LocationType.CAFE),
+            new WifiSpotQualityIndicators(QualityType.MEDIUM, StrengthType.MEDIUM, BandwithType.LIMITED, new WifiSpotPeakUsageInterval(LocalTime.of(10, 0), LocalTime.of(18, 0))),
+            new WifiSpotEnvironmentalFeatures(false, false, false, false, false, NoiseType.QUIET, false, false, false),
+            new WifiSpotFacilities(false, false, false, false, false, false),
+            new WifiSpotWeatherFeatures(false, false, false, false, false),
+            wifiSpotAddress,
+            new WifiSpotManagement(WifiSpotManagementType.VERIFIED),
+            null
+        );
+
         wifiSpot = new WifiSpot(
             new WifiSpotName("Test Spot"),
             new WifiSpotDescription("A cozy place with good WiFi."),
@@ -136,6 +155,43 @@ class WifiSpotServiceTest {
             QualityType.HIGH,         // WiFi quality
             StrengthType.STRONG,      // Signal strength
             BandwithType.UNLIMITED,   // Bandwidth
+            LocalTime.of(9, 0),       // Peak usage start time
+            LocalTime.of(17, 0),      // Peak usage end time
+            false,                    // Crowded
+            true,                     // Covered area
+            true,                     // Air conditioning
+            true,                     // Outdoor seating
+            true,                     // Good view
+            NoiseType.MODERATE,       // Noise level
+            true,                     // Pet friendly
+            true,                     // Child friendly
+            true,                     // Disable access
+            true,                     // Available power outlets
+            true,                     // Charging stations
+            true,                     // Restrooms available
+            true,                     // Parking availability
+            true,                     // Food options
+            true,                     // Drink options
+            true,                     // Open during rain
+            true,                     // Open during heat
+            false,                    // Heated in winter
+            true,                     // Shaded areas
+            true,                     // Outdoor fans
+            wifiSpotAddressDto,       // Address DTO
+            WifiSpotManagementType.UNVERIFIED, // Management type
+            LocalDateTime.now()       // Date/time created
+        );
+        wifiSpotDtoUpdated = new WifiSpotDto(
+            wifiSpotId,
+            UUID.randomUUID(),
+            "Updated Spot",
+            "Updated description",
+            40.7128,
+            -74.0060,
+            LocationType.PARK,
+            QualityType.HIGH,
+            StrengthType.STRONG,
+            BandwithType.UNLIMITED,  // Bandwidth
             LocalTime.of(9, 0),       // Peak usage start time
             LocalTime.of(17, 0),      // Peak usage end time
             false,                    // Crowded
@@ -206,6 +262,26 @@ class WifiSpotServiceTest {
         verify(wifiSpotRepository, times(1)).findByUserId(user.getUserId());
         verify(wifiSpotMapper, times(1)).wifiSpotDomainToDto(wifiSpot);
     }
-    
+
+    @Test
+    void testUpdateWifiSpot_Success() {
+        // Arrange
+        when(wifiSpotRepository.findById(new WifiSpotId(wifiSpotId))).thenReturn(Optional.of(existingWifiSpot));
+        when(wifiSpotRepository.save(any(WifiSpot.class))).thenReturn(existingWifiSpot);
+        when(wifiSpotMapper.wifiSpotDomainToDto(any(WifiSpot.class))).thenReturn(wifiSpotDtoUpdated);
+
+        // Act
+        WifiSpotDto result = wifiSpotService.updateWifiSpot(wifiSpotId, wifiSpotDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Updated Spot", result.name());
+        assertEquals("Updated description", result.description());
+        assertEquals(40.7128, result.latitude());
+        assertEquals(-74.0060, result.longitude());
+        verify(wifiSpotRepository, times(1)).findById(new WifiSpotId(wifiSpotId));
+        verify(wifiSpotRepository, times(1)).save(any(WifiSpot.class));
+        verify(wifiSpotMapper, times(1)).wifiSpotDomainToDto(any(WifiSpot.class));
+    }
 
 }
