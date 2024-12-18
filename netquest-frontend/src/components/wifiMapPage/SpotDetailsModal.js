@@ -55,20 +55,21 @@ function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
     // eslint-disable-next-line
   }, [spot]);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      if (!spot) return;
-      try {
-        const response = await reviewApi.getReviewsOfWifiSpot(user, spot.uuid);
-        if (response && response.status === 200) {
-          const reviewsData = response.data;
-          setReviews(reviewsData);
-          setSortedReviews(sortReviews(reviewsData, filter));
-        }
-      } catch (err) {
-        errorNotification(err.response?.data?.message || "Error fetching reviews");
+  const fetchReviews = async () => {
+    if (!spot) return;
+    try {
+      const response = await reviewApi.getReviewsOfWifiSpot(user, spot.uuid);
+      if (response && response.status === 200) {
+        const reviewsData = response.data;
+        setReviews(reviewsData);
+        setSortedReviews(sortReviews(reviewsData, filter));
       }
-    };
+    } catch (err) {
+      errorNotification(err.response?.data?.message || "Error fetching reviews");
+    }
+  };
+
+  useEffect(() => {
     fetchReviews();
   }, [spot, filter]);
 
@@ -326,9 +327,10 @@ function SpotDetailsModal({ userLocation, spot, onClose, justDetails }) {
       )}
         <AddReviewModal
           spot={spot}
-          onClose={() => setReviewModalOpen(false)}
+          onClose={() => setReviewModalOpen(false)  }
           open = {reviewModalOpen}
           user = {user}
+          onModalClose = {fetchReviews}
         >
 
         </AddReviewModal>

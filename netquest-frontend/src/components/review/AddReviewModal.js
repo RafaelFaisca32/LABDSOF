@@ -3,7 +3,7 @@ import { Button, Modal, Form, Segment, Header } from "semantic-ui-react";
 import {errorNotification, successNotification} from "../misc/Helpers";
 import {reviewApi} from "../misc/ReviewApi";
 
-function AddReviewModal({ spot, open, onClose,user }) {
+function AddReviewModal({ spot, open, onClose,user, onModalClose }) {
     const initialReviewDetails = {
         reviewComment: "",
         reviewOverallClassification: "",
@@ -56,6 +56,7 @@ function AddReviewModal({ spot, open, onClose,user }) {
             const response = await reviewApi.createReview(user,reviewDetails);
             if (response && response.status === 201) {
                 onClose(); // Close the modal
+                onModalClose();
                 successNotification("Review posted successfully.");
             }
         } catch (err) {
@@ -80,7 +81,7 @@ function AddReviewModal({ spot, open, onClose,user }) {
     };
 
     return (
-        <Modal open={open} onClose={onClose} size="large">
+        <Modal open={open} onClose={onClose} size="large" onModalClose={onModalClose}>
             <Modal.Header>Make a Review for Wifi Spot - {spot.name}</Modal.Header>
             <Modal.Content scrolling style={{ maxHeight: "70vh", overflowY: "auto" }}>
                 <Form>
