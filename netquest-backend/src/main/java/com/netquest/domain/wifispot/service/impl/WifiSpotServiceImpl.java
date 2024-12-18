@@ -361,7 +361,7 @@ public class WifiSpotServiceImpl implements WifiSpotService {
         WifiSpot updatedSpot = existingSpot.update(
             wifiSpotDto.name() != null ? new WifiSpotName(wifiSpotDto.name()) : null,
             wifiSpotDto.description() != null ? new WifiSpotDescription(wifiSpotDto.description()) : null,
-            new WifiSpotCoordinates(wifiSpotDto.latitude(), wifiSpotDto.longitude()),
+            new WifiSpotCoordinates(wifiSpotDto.longitude(),wifiSpotDto.latitude()),
             new WifiSpotLocationType(wifiSpotDto.locationType()),
             new WifiSpotQualityIndicators(
                 wifiSpotDto.wifiQuality(),
